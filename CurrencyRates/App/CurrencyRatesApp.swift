@@ -6,9 +6,10 @@ struct CurrencyRatesApp: App {
     @State private var store = RatesStore.live()
 
     init() {
-        // Верхняя панель без разделительной линии: при прокрутке — только мягкое размытие.
+        // Системная панель полностью прозрачная: у её размытия резкий нижний край.
+        // Размытие под кнопками рисует TopFade — плавно, без линии.
         let standard = UINavigationBarAppearance()
-        standard.configureWithDefaultBackground()
+        standard.configureWithTransparentBackground()
         standard.shadowColor = .clear
         let edge = UINavigationBarAppearance()
         edge.configureWithTransparentBackground()

@@ -437,31 +437,43 @@ struct AccentBubbleStyle: ButtonStyle {
 /// Мягкий переход под верхней панелью: размытие и цвет фона плавно сходят на нет к низу,
 /// без видимой линии при прокрутке.
 struct TopFade: View {
-    /// Цвет фона экрана, в который уходит затухание.
-    var background = Color(.systemGroupedBackground)
+    /// На сколько ниже панели размытие плавно сходит на нет.
+    private let fadeLength: CGFloat = 28
 
     var body: some View {
         GeometryReader { proxy in
-            ZStack {
-                Rectangle().fill(.ultraThinMaterial)
-                background.opacity(0.75)
-            }
-            .mask {
-                LinearGradient(
-                    stops: [
-                        .init(color: .black, location: 0),
-                        .init(color: .black, location: 0.55),
-                        .init(color: .clear, location: 1),
-                    ],
-                    startPoint: .top,
-                    endPoint: .bottom
-                )
-            }
-            .frame(height: proxy.safeAreaInsets.top + 28)
+            let barBottom = Self.barHeight(reported: proxy.safeAreaInsets.top)
+            let height = barBottom + fadeLength
+            // Материал панели: под кнопками — сплошное размытие, ниже — плавно исчезает.
+            Rectangle()
+                .fill(.bar)
+                .mask {
+                    LinearGradient(
+                        stops: [
+                            .init(color: .black, location: 0),
+                            .init(color: .black, location: barBottom / height),
+                            .init(color: .clear, location: 1),
+                        ],
+                        startPoint: .top,
+                        endPoint: .bottom
+                    )
+                }
+                .frame(height: height)
         }
         .ignoresSafeArea(edges: .top)
         .allowsHitTesting(false)
         .accessibilityHidden(true)
+    }
+
+    /// Высота статус-бара и панели навигации. Если SwiftUI сообщил подозрительно малый отступ,
+    /// берём отступ окна плюс стандартную высоту панели.
+    @MainActor
+    private static func barHeight(reported: CGFloat) -> CGFloat {
+        if reported > 30 { return reported }
+        let window = UIApplication.shared.connectedScenes
+            .compactMap { ($0 as? UIWindowScene)?.keyWindow }
+            .first
+        return (window?.safeAreaInsets.top ?? 59) + 44
     }
 }
 
