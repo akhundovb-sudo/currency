@@ -50,9 +50,10 @@ struct CurrencyListView: View {
 
     private var list: some View {
         Group {
-            // Клавиатура стоит под списком, а не поверх него: список действительно становится
-            // ниже, и прокрутка к выбранной валюте всегда ставит её в видимую часть.
-            VStack(spacing: 0) {
+            // Клавиатура лежит поверх списка, а список не меняет размер — только снизу
+            // добавляется место для прокрутки. Так клавиатура и подъём списка движутся
+            // одним плавным движением, без пересчёта высоты списка на ходу.
+            ZStack(alignment: .bottom) {
             List {
                 Section {
                     ForEach(store.selectedCodes, id: \.self) { code in
@@ -174,8 +175,8 @@ struct CurrencyListView: View {
                         // Высота клавиатуры — чтобы в следующий раз заранее знать, где будет её верх.
                         GeometryReader { geo in
                             Color.clear
-                                .onAppear { rowSizes.keypadHeight = geo.size.height }
-                                .onChange(of: geo.size.height) { _, height in rowSizes.keypadHeight = height }
+                                .onAppear { rowSizes.updateKeypadHeight(geo.size.height) }
+                                .onChange(of: geo.size.height) { _, height in rowSizes.updateKeypadHeight(height) }
                         }
                     }
                     .transition(.move(edge: .bottom).combined(with: .opacity))
@@ -194,6 +195,7 @@ struct CurrencyListView: View {
                 showBlockedToast(for: code)
                 return
             }
+            UIImpactFeedbackGenerator(style: .medium).impactOccurred()
             withAnimation(.snappy) { store.remove(code) }
         } label: {
             AppIcon("icon-minus", size: 18)
@@ -272,12 +274,8 @@ struct CurrencyListView: View {
         // заранее считаем, где окажется её верх, и прокручиваем средствами UIKit
         // (ScrollViewProxy.scrollTo в List на iOS 27 этого не делал). Видимая карточка
         // остаётся на месте.
-        rowSizes.liftAboveKeypad(code, keypadIsShown: wasVisible)
-        Task {
-            // Страховка: когда клавиатура встала на место, докручиваем, если вдруг не хватило.
-            try? await Task.sleep(for: .milliseconds(500))
-            rowSizes.scrollToVisible(code)
-        }
+        if !wasVisible { rowSizes.showKeypadSpace() }
+        rowSizes.liftAboveKeypad(code)
     }
 
     private func startPullRefresh() {
@@ -294,7 +292,9 @@ struct CurrencyListView: View {
     }
 
     private func hideKeypad() {
+        guard isKeypadVisible else { return }
         withAnimation(Self.keypadAnimation) { isKeypadVisible = false }
+        rowSizes.hideKeypadSpace()
     }
 
     /// Одна и та же плавная кривая для клавиатуры и подъёма списка — движутся как одно целое.
@@ -481,44 +481,64 @@ final class RowSizeStore {
     }
 
     /// Высота клавиатуры (без области под полоской «домой»); до первого показа — примерная.
-    var keypadHeight: CGFloat = 330
+    private(set) var keypadHeight: CGFloat = 330
+    private var isKeypadSpaceShown = false
 
-    /// Если клавиатура закроет строку, плавно поднимает список ровно настолько, чтобы строка
-    /// оказалась над ней, — одновременно с выездом клавиатуры. Видимую строку не трогает.
+    /// Одна кривая для всех движений списка — та же длительность, что у клавиатуры.
     @MainActor
-    func liftAboveKeypad(_ code: String, keypadIsShown: Bool) {
-        guard let view = anchors.object(forKey: code as NSString), let window = view.window,
-              let scrollView = Self.enclosingScrollView(of: view) else { return }
-        let row = view.convert(view.bounds, to: nil)
-        let scrollFrame = scrollView.convert(scrollView.bounds, to: nil)
-        let inset = scrollView.adjustedContentInset
-        // Низ видимой части списка, когда клавиатура уже на месте.
-        let visibleBottom = keypadIsShown
-            ? scrollFrame.maxY - inset.bottom
-            : window.bounds.height - window.safeAreaInsets.bottom - keypadHeight
-        let delta = row.maxY - visibleBottom
-        guard delta > 0 else { return }
-        let visibleHeight = visibleBottom - (scrollFrame.minY + inset.top)
-        let maxOffset = max(-inset.top, scrollView.contentSize.height - inset.top - visibleHeight)
-        let target = min(scrollView.contentOffset.y + delta, maxOffset)
+    private func animate(_ changes: @escaping () -> Void) {
         UIView.animate(
             withDuration: 0.4,
             delay: 0,
             usingSpringWithDamping: 1,
             initialSpringVelocity: 0,
-            options: [.allowUserInteraction, .beginFromCurrentState]
-        ) {
-            scrollView.contentOffset.y = target
+            options: [.allowUserInteraction, .beginFromCurrentState],
+            animations: changes
+        )
+    }
+
+    /// Место снизу списка под клавиатурой — чтобы нижние строки можно было поднять над ней.
+    @MainActor
+    func showKeypadSpace() {
+        isKeypadSpaceShown = true
+        scrollView()?.contentInset.bottom = keypadHeight
+    }
+
+    /// Убирает место под клавиатурой; если список был прокручен в это место — плавно возвращает.
+    @MainActor
+    func hideKeypadSpace() {
+        isKeypadSpaceShown = false
+        guard let scrollView = scrollView() else { return }
+        animate {
+            scrollView.contentInset.bottom = 0
+            let inset = scrollView.adjustedContentInset
+            let maxOffset = max(-inset.top, scrollView.contentSize.height + inset.bottom - scrollView.bounds.height)
+            if scrollView.contentOffset.y > maxOffset { scrollView.contentOffset.y = maxOffset }
         }
     }
 
-    /// Прокручивает список так, чтобы строка была видна целиком, с небольшим запасом.
     @MainActor
-    func scrollToVisible(_ code: String) {
-        guard let view = anchors.object(forKey: code as NSString), view.window != nil,
+    func updateKeypadHeight(_ height: CGFloat) {
+        guard height > 0, abs(height - keypadHeight) > 0.5 else { return }
+        keypadHeight = height
+        if isKeypadSpaceShown { scrollView()?.contentInset.bottom = height }
+    }
+
+    /// Если клавиатура закроет строку, плавно поднимает список ровно настолько, чтобы строка
+    /// оказалась над ней, — одновременно с выездом клавиатуры. Видимую строку не трогает.
+    @MainActor
+    func liftAboveKeypad(_ code: String) {
+        guard let view = anchors.object(forKey: code as NSString), let window = view.window,
               let scrollView = Self.enclosingScrollView(of: view) else { return }
-        let rect = view.convert(view.bounds, to: scrollView).insetBy(dx: 0, dy: -8)
-        scrollView.scrollRectToVisible(rect, animated: true)
+        let row = view.convert(view.bounds, to: nil)
+        // Верх клавиатуры на экране (она лежит поверх списка у нижнего края).
+        let keypadTop = window.bounds.height - window.safeAreaInsets.bottom - keypadHeight
+        let delta = row.maxY - keypadTop
+        guard delta > 0 else { return }
+        let inset = scrollView.adjustedContentInset
+        let maxOffset = max(-inset.top, scrollView.contentSize.height + inset.bottom - scrollView.bounds.height)
+        let target = min(scrollView.contentOffset.y + delta, maxOffset)
+        animate { scrollView.contentOffset.y = target }
     }
 }
 

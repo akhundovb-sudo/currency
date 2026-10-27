@@ -247,8 +247,11 @@ struct SwipeToDelete: ViewModifier {
     @State private var offset: CGFloat = 0
     @State private var startOffset: CGFloat = 0
     @State private var isDragging = false
+    /// Свайп дотянут до удаления — отпускание удалит строку.
+    @State private var isPastDeleteThreshold = false
 
     private let revealWidth: CGFloat = 88
+    private let deleteThreshold: CGFloat = 220
     private let gap: CGFloat = 10
 
     func body(content: Content) -> some View {
@@ -290,12 +293,19 @@ struct SwipeToDelete: ViewModifier {
             startOffset = offset
         }
         offset = min(0, startOffset + translation)
+        // Лёгкий щелчок, когда длинный свайп переходит порог удаления (и обратно).
+        let isPast = -offset > deleteThreshold
+        if isPast != isPastDeleteThreshold {
+            isPastDeleteThreshold = isPast
+            UIImpactFeedbackGenerator(style: .light).impactOccurred()
+        }
     }
 
     private func dragEnded() {
         guard isDragging else { return }
         isDragging = false
-        if -offset > 220 {
+        isPastDeleteThreshold = false
+        if -offset > deleteThreshold {
             delete()
         } else {
             withAnimation(.snappy) { offset = -offset > revealWidth / 2 ? -(revealWidth + gap) : 0 }
@@ -309,6 +319,7 @@ struct SwipeToDelete: ViewModifier {
             onBlocked()
             return
         }
+        UIImpactFeedbackGenerator(style: .medium).impactOccurred()
         withAnimation(.snappy) {
             offset = 0
             onDelete()
