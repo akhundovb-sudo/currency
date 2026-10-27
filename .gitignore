@@ -1,0 +1,9 @@
+# Xcode
+xcuserdata/
+DerivedData/
+build/
+*.xcuserstate
+*.xcscmblueprint
+.DS_Store
+# Секреты (ключи API), если появятся
+Secrets.xcconfig

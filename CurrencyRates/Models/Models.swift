@@ -1,0 +1,252 @@
+import Foundation
+
+enum CurrencyKind: String, CaseIterable, Identifiable, Sendable {
+    case fiat, crypto
+
+    var id: String { rawValue }
+
+    var title: String {
+        switch self {
+        case .fiat: L(.fiatShort)
+        case .crypto: L(.cryptoShort)
+        }
+    }
+}
+
+/// Валюта: фиатная (код ISO 4217) или криптовалюта из `CryptoAsset.all`.
+struct Currency: Identifiable, Hashable, Sendable {
+    let code: String
+
+    var id: String { code }
+    var name: String { Currency.name(for: code) }
+    var kind: CurrencyKind { CryptoAsset.byCode[code] == nil ? .fiat : .crypto }
+
+    /// Локаль выбранного языка: названия валют, числа и даты.
+    static var locale: Locale { L10n.current.locale }
+
+    /// Русское название валюты, с заглавной буквы.
+    static func name(for code: String) -> String {
+        if let crypto = CryptoAsset.byCode[code] {
+            if L10n.current == .ru, let ru = ["BTC": "Биткоин", "ETH": "Эфириум"][code] { return ru }
+            return crypto.name
+        }
+        guard let name = locale.localizedString(forCurrencyCode: code), !name.isEmpty else {
+            return code
+        }
+        return name.prefix(1).uppercased(with: locale) + name.dropFirst()
+    }
+
+    /// Код страны (или «EU») для флага валюты, если его можно определить по коду ISO 4217.
+    var flagRegion: String? {
+        guard kind == .fiat else { return nil }
+        // Первые две буквы кода — обычно код страны; исключения задаём вручную.
+        let overrides = ["EUR": "EU", "ANG": "CW", "XCG": "CW"]
+        if let region = overrides[code] { return region }
+        guard !code.hasPrefix("X") else { return nil } // наднациональные: XAF, XOF, XDR…
+        let region = String(code.prefix(2))
+        return Locale.Region.isoRegions.contains(Locale.Region(region)) ? region : nil
+    }
+
+    /// Эмодзи флага — запасной вариант, если в макете нет флага этой страны.
+    var flagEmoji: String? {
+        flagRegion.map { region in
+            region.unicodeScalars
+                .compactMap { UnicodeScalar(0x1F1A5 + $0.value) }
+                .map(String.init)
+                .joined()
+        }
+    }
+
+    func matches(_ query: String) -> Bool {
+        let query = query.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !query.isEmpty else { return true }
+        return code.localizedStandardContains(query) || name.localizedStandardContains(query)
+    }
+}
+
+/// Поддерживаемые криптовалюты; `id` — идентификатор в CoinGecko.
+struct CryptoAsset: Sendable {
+    let code: String
+    let id: String
+    let name: String
+
+    static let all: [CryptoAsset] = [
+        .init(code: "BTC", id: "bitcoin", name: "Bitcoin"),
+        .init(code: "ETH", id: "ethereum", name: "Ethereum"),
+        .init(code: "USDT", id: "tether", name: "Tether"),
+        .init(code: "XRP", id: "ripple", name: "XRP"),
+        .init(code: "BNB", id: "binancecoin", name: "BNB"),
+        .init(code: "SOL", id: "solana", name: "Solana"),
+        .init(code: "USDC", id: "usd-coin", name: "USD Coin"),
+        .init(code: "DOGE", id: "dogecoin", name: "Dogecoin"),
+        .init(code: "TRX", id: "tron", name: "TRON"),
+        .init(code: "ADA", id: "cardano", name: "Cardano"),
+        .init(code: "TON", id: "the-open-network", name: "Toncoin"),
+        .init(code: "LINK", id: "chainlink", name: "Chainlink"),
+        .init(code: "AVAX", id: "avalanche-2", name: "Avalanche"),
+        .init(code: "XLM", id: "stellar", name: "Stellar"),
+        .init(code: "LTC", id: "litecoin", name: "Litecoin"),
+        .init(code: "BCH", id: "bitcoin-cash", name: "Bitcoin Cash"),
+        .init(code: "DOT", id: "polkadot", name: "Polkadot"),
+        .init(code: "SHIB", id: "shiba-inu", name: "Shiba Inu"),
+    ]
+
+    static let byCode = Dictionary(uniqueKeysWithValues: all.map { ($0.code, $0) })
+}
+
+/// Набор курсов из одного источника: сколько единиц валюты стоит 1 USD.
+struct RateSet: Codable, Equatable, Sendable {
+    let rates: [String: Double]
+    /// Время публикации курсов поставщиком.
+    let updatedAt: Date
+    /// Время, когда приложение получило эти данные.
+    let fetchedAt: Date
+}
+
+/// Последние известные курсы фиатных валют и криптовалют.
+struct RatesSnapshot: Codable, Equatable, Sendable {
+    var fiat: RateSet?
+    var crypto: RateSet?
+    /// `true` только для данных из SwiftUI Preview — не реальные курсы.
+    var isDemo = false
+
+    func rateSet(for kind: CurrencyKind) -> RateSet? {
+        switch kind {
+        case .fiat: fiat
+        case .crypto: crypto
+        }
+    }
+
+    /// Сколько единиц `code` стоит 1 USD.
+    private func unitsPerUSD(_ code: String) -> Double? {
+        rateSet(for: Currency(code: code).kind)?.rates[code]
+    }
+
+    /// Сколько единиц `target` стоит 1 единица `source`.
+    func rate(from source: String, to target: String) -> Double? {
+        guard let sourceRate = unitsPerUSD(source), let targetRate = unitsPerUSD(target), sourceRate > 0 else {
+            return nil
+        }
+        return targetRate / sourceRate
+    }
+}
+
+enum AppTheme: String, CaseIterable, Identifiable {
+    case system, light, dark
+
+    var id: String { rawValue }
+
+    var title: String {
+        switch self {
+        case .system: L(.themeSystem)
+        case .light: L(.themeLight)
+        case .dark: L(.themeDark)
+        }
+    }
+}
+
+enum RateFormat {
+    /// Курс: больше знаков, чтобы были видны мелкие изменения.
+    static func rate(_ value: Double) -> String {
+        if value >= 1000 {
+            value.formatted(.number.locale(Currency.locale).precision(.fractionLength(0...2)))
+        } else if value >= 1 {
+            value.formatted(.number.locale(Currency.locale).precision(.fractionLength(2...4)))
+        } else {
+            value.formatted(.number.locale(Currency.locale).precision(.significantDigits(2...4)))
+        }
+    }
+
+    /// Сумма: до двух знаков после запятой, для малых значений — значащие цифры.
+    static func amount(_ value: Double) -> String {
+        if value >= 1 || value == 0 {
+            value.formatted(.number.locale(Currency.locale).precision(.fractionLength(0...2)))
+        } else {
+            value.formatted(.number.locale(Currency.locale).precision(.significantDigits(2...4)))
+        }
+    }
+
+    /// Сумма для поля ввода: без разделителей разрядов.
+    static func editable(_ value: Double) -> String {
+        let style = FloatingPointFormatStyle<Double>.number.locale(Currency.locale).grouping(.never)
+        if value >= 1 || value == 0 {
+            return value.formatted(style.precision(.fractionLength(0...2)))
+        }
+        return value.formatted(style.precision(.significantDigits(1...4)))
+    }
+
+    static func date(_ date: Date) -> String {
+        date.formatted(Date.FormatStyle(date: .abbreviated, time: .shortened).locale(Currency.locale))
+    }
+}
+
+/// Вычисление выражения из строки ввода, например «12,5+3×2». Умножение и деление — раньше сложения.
+enum Calculator {
+    static let operators: Set<Character> = ["+", "−", "×", "÷"]
+
+    static func symbol(for key: KeypadKey) -> Character {
+        switch key {
+        case .add: "+"
+        case .subtract: "−"
+        case .multiply: "×"
+        default: "÷"
+        }
+    }
+
+    /// Разделитель дробной части выбранного языка: «,» или «.».
+    static var decimalSeparator: String { Currency.locale.decimalSeparator ?? "," }
+
+    static func number(_ text: String) -> Double? {
+        Double(text.replacingOccurrences(of: ",", with: "."))
+    }
+
+    /// Число, которое вводится сейчас (после последнего знака действия).
+    static func lastNumber(in expression: String) -> String {
+        guard let index = expression.lastIndex(where: operators.contains) else { return expression }
+        return String(expression[expression.index(after: index)...])
+    }
+
+    static func evaluate(_ expression: String) -> Double? {
+        var numbers: [Double] = []
+        var ops: [Character] = []
+        var current = ""
+        for character in expression {
+            if operators.contains(character) {
+                guard let value = number(current) else { return nil }
+                numbers.append(value)
+                ops.append(character)
+                current = ""
+            } else {
+                current.append(character)
+            }
+        }
+        if let value = number(current) {
+            numbers.append(value)
+        } else if !ops.isEmpty {
+            ops.removeLast() // незаконченное «12+» считаем как «12»
+        } else {
+            return nil
+        }
+
+        // Сначала × и ÷, затем + и −.
+        var terms = [numbers[0]]
+        var additive: [Character] = []
+        for (index, op) in ops.enumerated() {
+            let rhs = numbers[index + 1]
+            switch op {
+            case "×": terms[terms.count - 1] *= rhs
+            case "÷":
+                guard rhs != 0 else { return nil }
+                terms[terms.count - 1] /= rhs
+            default:
+                additive.append(op)
+                terms.append(rhs)
+            }
+        }
+        var result = terms[0]
+        for (index, op) in additive.enumerated() {
+            result = op == "+" ? result + terms[index + 1] : result - terms[index + 1]
+        }
+        return result.isFinite ? result : nil
+    }
+}
