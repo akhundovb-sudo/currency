@@ -169,6 +169,14 @@ struct CurrencyListView: View {
                         onClear: { withAnimation { store.amountText = "" } },
                         onDone: hideKeypad
                     )
+                    .background {
+                        // Высота клавиатуры — чтобы в следующий раз заранее знать, где будет её верх.
+                        GeometryReader { geo in
+                            Color.clear
+                                .onAppear { rowSizes.keypadHeight = geo.size.height }
+                                .onChange(of: geo.size.height) { _, height in rowSizes.keypadHeight = height }
+                        }
+                    }
                     .transition(.move(edge: .bottom).combined(with: .opacity))
                 }
             }
@@ -206,7 +214,7 @@ struct CurrencyListView: View {
     /// Строка ввода показывает выражение; остальные — пересчитанную сумму.
     private func displayValue(for code: String) -> String {
         if code == store.sourceCode {
-            return store.amountText.isEmpty ? "1" : store.amountText
+            return store.amountText.isEmpty ? "1" : RateFormat.groupedInput(store.amountText)
         }
         return store.convertedAmount(to: code).map(RateFormat.amount) ?? "—"
     }
@@ -259,18 +267,15 @@ struct CurrencyListView: View {
         store.beginEditing(code)
         let wasVisible = isKeypadVisible
         withAnimation(Self.keypadAnimation) { isKeypadVisible = true }
+        // Список поднимается одним плавным движением одновременно с клавиатурой:
+        // заранее считаем, где окажется её верх, и прокручиваем средствами UIKit
+        // (ScrollViewProxy.scrollTo в List на iOS 27 этого не делал). Видимая карточка
+        // остаётся на месте.
+        rowSizes.liftAboveKeypad(code, keypadIsShown: wasVisible)
         Task {
-            // Прокрутка средствами UIKit по настоящему положению строки на экране:
-            // ровно настолько, чтобы карточка была видна целиком; видимая остаётся на месте.
-            // (ScrollViewProxy.scrollTo в List на iOS 27 этого не делал.)
-            // Первый раз — сразу, как клавиатура начала выезжать; второй — когда она встала
-            // на место и список окончательно стал ниже: иначе прокрутки могло не хватить.
-            if !wasVisible { try? await Task.sleep(for: .milliseconds(120)) }
+            // Страховка: когда клавиатура встала на место, докручиваем, если вдруг не хватило.
+            try? await Task.sleep(for: .milliseconds(500))
             rowSizes.scrollToVisible(code)
-            if !wasVisible {
-                try? await Task.sleep(for: .milliseconds(380))
-                rowSizes.scrollToVisible(code)
-            }
         }
     }
 
@@ -472,6 +477,38 @@ final class RowSizeStore {
         var parent = view.superview
         while let current = parent, !(current is UIScrollView) { parent = current.superview }
         return parent as? UIScrollView
+    }
+
+    /// Высота клавиатуры (без области под полоской «домой»); до первого показа — примерная.
+    var keypadHeight: CGFloat = 330
+
+    /// Если клавиатура закроет строку, плавно поднимает список ровно настолько, чтобы строка
+    /// оказалась над ней, — одновременно с выездом клавиатуры. Видимую строку не трогает.
+    @MainActor
+    func liftAboveKeypad(_ code: String, keypadIsShown: Bool) {
+        guard let view = anchors.object(forKey: code as NSString), let window = view.window,
+              let scrollView = Self.enclosingScrollView(of: view) else { return }
+        let row = view.convert(view.bounds, to: nil)
+        let scrollFrame = scrollView.convert(scrollView.bounds, to: nil)
+        let inset = scrollView.adjustedContentInset
+        // Низ видимой части списка, когда клавиатура уже на месте.
+        let visibleBottom = keypadIsShown
+            ? scrollFrame.maxY - inset.bottom
+            : window.bounds.height - window.safeAreaInsets.bottom - keypadHeight
+        let delta = row.maxY - visibleBottom
+        guard delta > 0 else { return }
+        let visibleHeight = visibleBottom - (scrollFrame.minY + inset.top)
+        let maxOffset = max(-inset.top, scrollView.contentSize.height - inset.top - visibleHeight)
+        let target = min(scrollView.contentOffset.y + delta, maxOffset)
+        UIView.animate(
+            withDuration: 0.4,
+            delay: 0,
+            usingSpringWithDamping: 1,
+            initialSpringVelocity: 0,
+            options: [.allowUserInteraction, .beginFromCurrentState]
+        ) {
+            scrollView.contentOffset.y = target
+        }
     }
 
     /// Прокручивает список так, чтобы строка была видна целиком, с небольшим запасом.

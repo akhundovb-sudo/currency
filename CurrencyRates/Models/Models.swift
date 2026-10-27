@@ -175,6 +175,38 @@ enum RateFormat {
         return value.formatted(style.precision(.significantDigits(1...4)))
     }
 
+    /// Вводимое выражение с разделителями разрядов, как у остальных сумм:
+    /// при выборе валюты число не меняет вид. Дробная часть и знаки действий — как набраны.
+    static func groupedInput(_ expression: String) -> String {
+        let grouping = Currency.locale.groupingSeparator ?? ","
+        let decimal = Calculator.decimalSeparator
+        var result = ""
+        var number = ""
+        func flush() {
+            guard !number.isEmpty else { return }
+            let parts = number.components(separatedBy: decimal)
+            var integer = parts[0]
+            var grouped = ""
+            while integer.count > 3 {
+                grouped = grouping + String(integer.suffix(3)) + grouped
+                integer = String(integer.dropLast(3))
+            }
+            result += integer + grouped
+            if parts.count > 1 { result += decimal + parts.dropFirst().joined(separator: decimal) }
+            number = ""
+        }
+        for character in expression {
+            if Calculator.operators.contains(character) {
+                flush()
+                result.append(character)
+            } else {
+                number.append(character)
+            }
+        }
+        flush()
+        return result
+    }
+
     static func date(_ date: Date) -> String {
         date.formatted(Date.FormatStyle(date: .abbreviated, time: .shortened).locale(Currency.locale))
     }
