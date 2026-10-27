@@ -258,7 +258,7 @@ private struct ProBadge: View {
             .foregroundStyle(Color.accentColor)
             .padding(.horizontal, 8)
             .frame(height: 22)
-            // Белая плашка с синим текстом; тонкий ободок и тень отделяют её от светлого фона.
+            // Белая плашка с текстом цвета акцента; тонкий ободок и тень отделяют её от светлого фона.
             .background {
                 Capsule()
                     .fill(.white)

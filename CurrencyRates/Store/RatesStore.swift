@@ -158,17 +158,29 @@ final class RatesStore {
         selectedCodes.contains(code)
     }
 
-    /// Сколько валют можно держать в списке без подписки: USD и EUR плюс ещё две.
-    static let freeLimit = 4
+    /// Сколько валют можно держать в списке без подписки: USD и EUR плюс ещё три.
+    static let freeLimit = 5
 
     /// Подписка Pro снимает ограничения. Покупки пока не подключены.
     var isPro = false
 
-    /// Можно ли добавить валюту без подписки: только фиат и только в пределах лимита.
-    /// Криптовалюты доступны лишь с Pro.
+    /// Фиатные валюты, доступные для выбора: из загруженных курсов или стандартный список.
+    var fiatCodes: [String] {
+        let codes = snapshot?.fiat.map { Array($0.rates.keys) } ?? Locale.commonISOCurrencyCodes
+        return codes.filter { CryptoAsset.byCode[$0] == nil }.sorted()
+    }
+
+    /// Бесплатные валюты: USD, EUR и первые пять остальных по алфавиту.
+    var freeCodes: Set<String> {
+        let first = fiatCodes.filter { !Self.defaultSelection.contains($0) }.prefix(5)
+        return Set(Self.defaultSelection).union(first)
+    }
+
+    /// Можно ли добавить валюту без подписки: только из бесплатных и в пределах лимита.
+    /// Остальной фиат и вся крипта — только с Pro.
     func canAdd(_ code: String) -> Bool {
         if isPro { return true }
-        return CryptoAsset.byCode[code] == nil && selectedCodes.count < Self.freeLimit
+        return freeCodes.contains(code) && selectedCodes.count < Self.freeLimit
     }
 
     func add(_ code: String) {

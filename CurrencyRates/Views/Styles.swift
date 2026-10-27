@@ -29,8 +29,8 @@ extension Color {
     /// Цвет вводимой суммы и курсора.
     static let amountHighlight = Color.accentColor
 
-    /// Рамка выбранной карточки — светлый приглушённый синий.
-    static let selectionBorder = Color.dynamic(light: 0xB6DAF6, dark: 0x2E5878)
+    /// Рамка выбранной карточки — светлый приглушённый оттенок акцента.
+    static let selectionBorder = Color.dynamic(light: 0xC0B6F6, dark: 0x392E78)
 
     /// Фон карточки валюты (Semantic/Background/Primary в макете).
     static let cardBackground = Color(UIColor { traits in
