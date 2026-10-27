@@ -46,7 +46,7 @@ struct CurrencyListView: View {
     // MARK: - Список
 
     private var list: some View {
-        ScrollViewReader { proxy in
+        Group {
             // Клавиатура стоит под списком, а не поверх него: список действительно становится
             // ниже, и прокрутка к выбранной валюте всегда ставит её в видимую часть.
             VStack(spacing: 0) {
@@ -76,6 +76,8 @@ struct CurrencyListView: View {
                         // Отступы вокруг карточки — часть строки: нажатие в них закрывает клавиатуру.
                         .padding(.vertical, Self.rowPadding.height)
                         .padding(.horizontal, Self.rowPadding.width)
+                        // Невидимая метка строки — по ней список прокручивается средствами UIKit.
+                        .background(RowAnchor(code: code, store: rowSizes))
                         .background {
                             GeometryReader { geo in
                                 Color.clear
@@ -93,7 +95,7 @@ struct CurrencyListView: View {
                         // в карточку — выбор валюты, в отступ вокруг — закрыть клавиатуру.
                         .onTapGesture(coordinateSpace: .local) { location in
                             if isInsideCard(location, rowSize: rowSizes.sizes[code]) {
-                                startEditing(code, proxy: proxy)
+                                startEditing(code)
                             } else {
                                 hideKeypad()
                             }
@@ -233,7 +235,7 @@ struct CurrencyListView: View {
         }
     }
 
-    private func startEditing(_ code: String, proxy: ScrollViewProxy) {
+    private func startEditing(_ code: String) {
         guard !editMode.isEditing else { return }
         if code != store.sourceCode || !isKeypadVisible {
             UISelectionFeedbackGenerator().selectionChanged()
@@ -242,11 +244,12 @@ struct CurrencyListView: View {
         let wasVisible = isKeypadVisible
         withAnimation(Self.keypadAnimation) { isKeypadVisible = true }
         Task {
-            // Ждём, пока клавиатура займёт место внизу списка: тогда прокрутка её учитывает.
-            if !wasVisible { try? await Task.sleep(for: .milliseconds(80)) }
-            // Без якоря список прокручивается ровно настолько, чтобы карточка стала видна
-            // целиком над клавиатурой; если она и так видна — ничего не двигается.
-            withAnimation(Self.keypadAnimation) { proxy.scrollTo(code) }
+            // Ждём, пока клавиатура займёт место и список станет ниже.
+            if !wasVisible { try? await Task.sleep(for: .milliseconds(120)) }
+            // Прокрутка средствами UIKit по настоящему положению строки на экране:
+            // ровно настолько, чтобы карточка была видна целиком; видимая остаётся на месте.
+            // (ScrollViewProxy.scrollTo в List на iOS 27 этого не делал.)
+            rowSizes.scrollToVisible(code)
         }
     }
 
@@ -417,6 +420,41 @@ struct SourceFooter: View {
 /// Хранилище размеров строк без наблюдения SwiftUI.
 final class RowSizeStore {
     var sizes: [String: CGSize] = [:]
+    /// UIView каждой строки (слабые ссылки) — для прокрутки средствами UIKit.
+    private let anchors = NSMapTable<NSString, UIView>.strongToWeakObjects()
+
+    func setAnchor(_ view: UIView, for code: String) {
+        anchors.setObject(view, forKey: code as NSString)
+    }
+
+    /// Прокручивает список так, чтобы строка была видна целиком, с небольшим запасом.
+    @MainActor
+    func scrollToVisible(_ code: String) {
+        guard let view = anchors.object(forKey: code as NSString), view.window != nil else { return }
+        var parent = view.superview
+        while let current = parent, !(current is UIScrollView) { parent = current.superview }
+        guard let scrollView = parent as? UIScrollView else { return }
+        let rect = view.convert(view.bounds, to: scrollView).insetBy(dx: 0, dy: -8)
+        scrollView.scrollRectToVisible(rect, animated: true)
+    }
+}
+
+/// Невидимая метка строки: отдаёт её UIView в `RowSizeStore`.
+struct RowAnchor: UIViewRepresentable {
+    let code: String
+    let store: RowSizeStore
+
+    func makeUIView(context: Context) -> UIView {
+        let view = UIView()
+        view.isUserInteractionEnabled = false
+        view.backgroundColor = .clear
+        store.setAnchor(view, for: code)
+        return view
+    }
+
+    func updateUIView(_ view: UIView, context: Context) {
+        store.setAnchor(view, for: code)
+    }
 }
 
 /// Скруглённый прямоугольник карточки внутри строки с отступами.
