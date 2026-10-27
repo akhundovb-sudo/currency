@@ -27,7 +27,8 @@ struct CurrencyListView: View {
     var body: some View {
         NavigationStack {
             // Смена языка перестраивает список с новыми строками; открытые окна при этом не закрываются.
-            list.id(store.language)
+            // Смена формата чисел — тоже: суммы пересчитываются в новом виде.
+            list.id("\(store.language.rawValue)-\(store.numberStyle.rawValue)-\(store.decimalPlaces ?? -1)")
             // Заголовок не показывается, но остаётся для VoiceOver и переключателя приложений.
             .navigationTitle(L(.title))
             .navigationBarTitleDisplayMode(.inline)
