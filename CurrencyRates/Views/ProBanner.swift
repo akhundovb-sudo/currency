@@ -47,9 +47,12 @@ struct ProBanner: View {
     /// «Откройте PRO …» — слово PRO выделено жирным.
     private var subtitle: Text {
         let parts = L(.proDiscover).components(separatedBy: "%@")
-        let before = parts.first ?? ""
-        let after = parts.count > 1 ? parts[1] : ""
-        return Text("\(before)\(Text(verbatim: "PRO").bold())\(after)")
+        var pro = AttributedString("PRO")
+        pro.inlinePresentationIntent = .stronglyEmphasized
+        var result = AttributedString(parts.first ?? "")
+        result += pro
+        result += AttributedString(parts.count > 1 ? parts[1] : "")
+        return Text(result)
     }
 
     private var background: some View {
