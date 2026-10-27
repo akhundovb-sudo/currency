@@ -35,6 +35,8 @@ struct CurrencyListView: View {
             .sheet(isPresented: $isAddPresented) {
                 AddCurrencyView()
             }
+            // Вместо системного индикатора — капли из Dynamic Island.
+            .overlay { IslandRefreshIndicator(isActive: isRefreshing) }
             .sheet(isPresented: $isSettingsPresented) {
                 SettingsView()
             }
@@ -139,14 +141,6 @@ struct CurrencyListView: View {
                         .padding(.top, 8)
                         .transition(.move(edge: .top).combined(with: .opacity))
                         .onTapGesture { withAnimation { self.toast = nil } }
-                }
-            }
-            // Вместо системного индикатора — крутящиеся монеты.
-            .overlay(alignment: .top) {
-                if isRefreshing {
-                    SpinningCoins()
-                        .padding(.top, 8)
-                        .transition(.scale(scale: 0.6).combined(with: .opacity))
                 }
             }
             .onAppear { UIRefreshControl.appearance().tintColor = .clear }
@@ -499,126 +493,129 @@ struct ShakeEffect: GeometryEffect {
     }
 }
 
-/// Индикатор обновления: две стеклянные монеты с $ и ₿ кружат друг вокруг друга
-/// и, встречаясь, перетекают одна в другую, как капли жидкости.
-struct SpinningCoins: View {
-    private let orbit: CGFloat = 20
-    private let coinRadius: CGFloat = 19
+/// Индикатор обновления: из Dynamic Island вытекают две чёрные капли-монеты с белыми $ и ₿,
+/// кружат под ним, а по окончании втягиваются обратно. Капли и остров сливаются, как жидкость:
+/// круги размываются и обрезаются по порогу прозрачности. Без Dynamic Island капли
+/// появляются из-за верхнего края экрана.
+struct IslandRefreshIndicator: View {
+    let isActive: Bool
+
+    @State private var startedAt: Date?
+    @State private var endedAt: Date?
+
+    private let dropDistance: CGFloat = 60
+    private let coinRadius: CGFloat = 17
+    private let orbit: CGFloat = 22
     private let period: Double = 1.4
+    private let inDuration: Double = 0.55
+    private let outDuration: Double = 0.4
 
     var body: some View {
-        TimelineView(.animation) { context in
-            let t = context.date.timeIntervalSinceReferenceDate
-            let angle = (t.truncatingRemainder(dividingBy: period) / period) * 2 * .pi
-            let coins = [coin(angle: angle, glyph: "$"), coin(angle: angle + .pi, glyph: "₿")]
-            ZStack {
-                LiquidGlass(blobs: coins.map { ($0.offset, $0.radius) })
-                ForEach(coins.indices, id: \.self) { index in
-                    let item = coins[index]
-                    Text(verbatim: item.glyph)
-                        .font(.system(size: 21, weight: .bold, design: .rounded))
-                        .foregroundStyle(Color.primary)
-                        .scaleEffect(item.scale)
-                        .opacity(0.45 + 0.55 * item.depth)
-                        .offset(x: item.offset)
-                        .zIndex(item.depth)
+        GeometryReader { proxy in
+            if let startedAt {
+                TimelineView(.animation) { context in
+                    drops(at: context.date, startedAt: startedAt, width: proxy.size.width)
                 }
             }
-            .frame(width: (orbit + coinRadius) * 2 + 8, height: coinRadius * 2 + 10)
         }
+        .ignoresSafeArea()
+        .allowsHitTesting(false)
         .accessibilityElement()
         .accessibilityLabel(L(.loading))
+        .accessibilityHidden(!isActive)
+        .onChange(of: isActive) { _, active in
+            if active {
+                startedAt = .now
+                endedAt = nil
+            } else if startedAt != nil {
+                endedAt = .now
+                Task {
+                    try? await Task.sleep(for: .seconds(outDuration))
+                    // Если за это время началось новое обновление, endedAt уже сброшен.
+                    if endedAt != nil {
+                        startedAt = nil
+                        endedAt = nil
+                    }
+                }
+            }
+        }
     }
 
-    private struct Coin {
+    private struct Drop {
         let glyph: String
-        let offset: CGFloat
+        let center: CGPoint
         let radius: CGFloat
-        let scale: CGFloat
         let depth: Double
     }
 
-    private func coin(angle: Double, glyph: String) -> Coin {
-        let depth = (cos(angle) + 1) / 2   // 1 — спереди, 0 — сзади
-        let scale = 0.8 + 0.2 * depth
-        return Coin(
-            glyph: glyph,
-            offset: orbit * sin(angle),
-            radius: coinRadius * scale,
-            scale: scale,
-            depth: depth
-        )
-    }
-}
-
-/// Стеклянные капли, сливающиеся при сближении: круги размываются и обрезаются по порогу
-/// прозрачности (метаболы). Прозрачное стекло: еле заметная заливка, блик сверху и яркий ободок.
-private struct LiquidGlass: View {
-    /// Смещение центра по горизонтали и радиус каждой капли.
-    let blobs: [(CGFloat, CGFloat)]
-
-    var body: some View {
-        ZStack {
-            // Тело стекла.
-            ZStack {
-                LinearGradient(
-                    colors: [Color.white.opacity(0.18), Color.glassNeutral.opacity(0.08)],
-                    startPoint: .top,
-                    endPoint: .bottom
-                )
-                // Блик сверху.
-                LinearGradient(
-                    colors: [.white.opacity(0.55), .white.opacity(0)],
-                    startPoint: .top,
-                    endPoint: .center
-                )
-            }
-            .mask { shape(threshold: 0.5) }
-
-            // Ободок: капля без чуть уменьшенной копии самой себя.
-            LinearGradient(
-                colors: [.white, Color.glassNeutral.opacity(0.5)],
-                startPoint: .top,
-                endPoint: .bottom
+    private func drops(at date: Date, startedAt: Date, width: CGFloat) -> some View {
+        let elapsed = date.timeIntervalSince(startedAt)
+        // Насколько капли вытекли: быстро в начале, мягко в конце; при завершении — обратно.
+        var amount = 1 - pow(1 - min(1, elapsed / inDuration), 3)
+        if let endedAt {
+            let back = min(1, date.timeIntervalSince(endedAt) / outDuration)
+            amount *= 1 - back * back
+        }
+        let angle = (elapsed.truncatingRemainder(dividingBy: period) / period) * 2 * .pi
+        let island = Self.islandRect(screenWidth: width)
+        let center = CGPoint(x: width / 2, y: island.midY + dropDistance * amount)
+        let items = [("$", 0.0), ("₿", Double.pi)].map { pair in
+            let (glyph, shift) = pair
+            let a = angle + shift
+            let depth = (cos(a) + 1) / 2   // 1 — спереди, 0 — сзади
+            return Drop(
+                glyph: glyph,
+                center: CGPoint(x: center.x + orbit * amount * sin(a), y: center.y),
+                radius: coinRadius * (0.45 + 0.55 * amount) * (0.82 + 0.18 * depth),
+                depth: depth
             )
-            .mask {
-                ZStack {
-                    shape(threshold: 0.5)
-                    shape(threshold: 0.78).blendMode(.destinationOut)
-                }
-                .compositingGroup()
-            }
-
-            // Тонкий внешний контур — чтобы прозрачную каплю было видно на светлом фоне.
-            Color.glassNeutral.opacity(0.45)
-                .mask {
-                    ZStack {
-                        shape(threshold: 0.5)
-                        shape(threshold: 0.56).blendMode(.destinationOut)
-                    }
-                    .compositingGroup()
-                }
         }
-        .allowsHitTesting(false)
+
+        return ZStack(alignment: .topLeading) {
+            Canvas { context, _ in
+                context.addFilter(.alphaThreshold(min: 0.5, color: .black))
+                context.addFilter(.blur(radius: 7))
+                context.drawLayer { layer in
+                    layer.fill(Path(roundedRect: island, cornerRadius: island.height / 2), with: .color(.black))
+                    for item in items {
+                        let rect = CGRect(
+                            x: item.center.x - item.radius,
+                            y: item.center.y - item.radius,
+                            width: item.radius * 2,
+                            height: item.radius * 2
+                        )
+                        layer.fill(Path(ellipseIn: rect), with: .color(.black))
+                    }
+                }
+            }
+            ForEach(items.indices, id: \.self) { index in
+                let item = items[index]
+                Text(verbatim: item.glyph)
+                    .font(.system(size: 18, weight: .bold, design: .rounded))
+                    .foregroundStyle(.white)
+                    .scaleEffect(0.82 + 0.18 * item.depth)
+                    .opacity(Double(amount) * (0.5 + 0.5 * item.depth))
+                    .position(item.center)
+                    .zIndex(item.depth)
+            }
+        }
     }
 
-    /// Слитый силуэт капель; чем выше порог, тем он тоньше.
-    private func shape(threshold: Double) -> some View {
-        Canvas { context, size in
-            context.addFilter(.alphaThreshold(min: threshold, color: .white))
-            context.addFilter(.blur(radius: 6))
-            context.drawLayer { layer in
-                for (offset, radius) in blobs {
-                    let rect = CGRect(
-                        x: size.width / 2 + offset - radius,
-                        y: size.height / 2 - radius,
-                        width: radius * 2,
-                        height: radius * 2
-                    )
-                    layer.fill(Path(ellipseIn: rect), with: .color(.white))
-                }
-            }
-        }
+    /// Где на экране Dynamic Island (чуть меньше настоящего, чтобы прятаться под ним).
+    /// Без него — капсула за верхним краем экрана, капли выходят оттуда.
+    @MainActor
+    private static func islandRect(screenWidth: CGFloat) -> CGRect {
+        let topInset = UIApplication.shared.connectedScenes
+            .compactMap { ($0 as? UIWindowScene)?.keyWindow?.safeAreaInsets.top }
+            .first ?? 0
+        let hasIsland = topInset >= 51
+        let size = CGSize(width: 120, height: 34)
+        return CGRect(
+            x: (screenWidth - size.width) / 2,
+            y: hasIsland ? 12 : -size.height - 4,
+            width: size.width,
+            height: size.height
+        )
     }
 }
 
