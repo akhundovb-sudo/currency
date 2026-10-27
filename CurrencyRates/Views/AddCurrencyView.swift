@@ -92,6 +92,7 @@ struct AddCurrencyView: View {
             .contentMargins(.top, 8, for: .scrollContent)
             .environment(\.defaultMinListHeaderHeight, 0)
             .listSectionSpacing(0)
+            .softTopBar()
             .navigationTitle(L(.addCurrency))
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {

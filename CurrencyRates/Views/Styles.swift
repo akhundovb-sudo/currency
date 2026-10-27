@@ -426,3 +426,54 @@ struct AccentBubbleStyle: ButtonStyle {
             .animation(.spring(response: 0.25, dampingFraction: 0.55), value: configuration.isPressed)
     }
 }
+
+/// Мягкий системный край прокрутки сверху (iOS 26); в более ранних версиях его нет.
+struct SoftTopEdge: ViewModifier {
+    func body(content: Content) -> some View {
+        if #available(iOS 26, *) {
+            content.scrollEdgeEffectStyle(.soft, for: .top)
+        } else {
+            content
+        }
+    }
+}
+
+/// Мягкий переход под верхней панелью: размытие и цвет фона плавно сходят на нет к низу,
+/// без видимой линии при прокрутке.
+struct TopFade: View {
+    /// Цвет фона экрана, в который уходит затухание.
+    var background = Color(.systemGroupedBackground)
+
+    var body: some View {
+        GeometryReader { proxy in
+            ZStack {
+                Rectangle().fill(.ultraThinMaterial)
+                background.opacity(0.75)
+            }
+            .mask {
+                LinearGradient(
+                    stops: [
+                        .init(color: .black, location: 0),
+                        .init(color: .black, location: 0.55),
+                        .init(color: .clear, location: 1),
+                    ],
+                    startPoint: .top,
+                    endPoint: .bottom
+                )
+            }
+            .frame(height: proxy.safeAreaInsets.top + 28)
+        }
+        .ignoresSafeArea(edges: .top)
+        .allowsHitTesting(false)
+        .accessibilityHidden(true)
+    }
+}
+
+extension View {
+    /// Верхняя панель без фона и без линии: содержимое под ней мягко размывается и затухает.
+    func softTopBar() -> some View {
+        toolbarBackground(.hidden, for: .navigationBar)
+            .modifier(SoftTopEdge())
+            .overlay(alignment: .top) { TopFade() }
+    }
+}
