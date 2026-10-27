@@ -9,9 +9,10 @@ struct CurrencyRatesApp: App {
         // В iOS 26 у панели системный мягкий край прокрутки; своё оформление
         // возвращало бы старую панель с размытием и резкой нижней границей.
         if #available(iOS 26, *) { return }
-        // Верхняя панель без разделительной линии: при прокрутке — только мягкое размытие.
+        // Раньше iOS 26 системная панель полностью прозрачная: у её размытия резкий нижний край.
+        // Плавное размытие под кнопками рисует TopFade.
         let standard = UINavigationBarAppearance()
-        standard.configureWithDefaultBackground()
+        standard.configureWithTransparentBackground()
         standard.shadowColor = .clear
         let edge = UINavigationBarAppearance()
         edge.configureWithTransparentBackground()

@@ -458,27 +458,91 @@ struct SoftTopEdge: ViewModifier {
 /// без видимой линии при прокрутке.
 struct TopFade: View {
     var body: some View {
-        GeometryReader { proxy in
-            ZStack {
-                Rectangle().fill(.ultraThinMaterial)
-                Color(.systemGroupedBackground).opacity(0.75)
+        if #available(iOS 26, *) {
+            // В iOS 26 основное делает системный мягкий край; здесь — лёгкая дымка поверх.
+            GeometryReader { proxy in
+                ZStack {
+                    Rectangle().fill(.ultraThinMaterial)
+                    Color(.systemGroupedBackground).opacity(0.75)
+                }
+                .mask {
+                    LinearGradient(
+                        stops: [
+                            .init(color: .black, location: 0),
+                            .init(color: .black, location: 0.55),
+                            .init(color: .clear, location: 1),
+                        ],
+                        startPoint: .top,
+                        endPoint: .bottom
+                    )
+                }
+                .frame(height: proxy.safeAreaInsets.top + 28)
             }
-            .mask {
+            .ignoresSafeArea(edges: .top)
+            .allowsHitTesting(false)
+            .accessibilityHidden(true)
+        } else {
+            ProgressiveTopBlur()
+        }
+    }
+}
+
+/// Постепенное размытие под панелью для iOS до 26, где нет системного мягкого края:
+/// несколько слоёв матового стекла, каждый заканчивается чуть ниже предыдущего, —
+/// сверху размытие сильное, к низу плавно сходит на нет, без резкой границы.
+private struct ProgressiveTopBlur: View {
+    /// На сколько ниже кнопок продолжается затухание.
+    private let fadeLength: CGFloat = 44
+
+    var body: some View {
+        GeometryReader { proxy in
+            let barBottom = Self.barHeight(reported: proxy.safeAreaInsets.top)
+            let height = barBottom + fadeLength
+            let solid = barBottom / height
+            ZStack {
+                ForEach(0..<3, id: \.self) { layer in
+                    let step = Double(layer)
+                    Rectangle()
+                        .fill(.ultraThinMaterial)
+                        .mask {
+                            LinearGradient(
+                                stops: [
+                                    .init(color: .black, location: 0),
+                                    .init(color: .black, location: solid * (1 - 0.3 * step)),
+                                    .init(color: .clear, location: 1 - 0.25 * step),
+                                ],
+                                startPoint: .top,
+                                endPoint: .bottom
+                            )
+                        }
+                }
+                // Лёгкий оттенок фона, чтобы кнопки читались на любом содержимом.
                 LinearGradient(
                     stops: [
-                        .init(color: .black, location: 0),
-                        .init(color: .black, location: 0.55),
-                        .init(color: .clear, location: 1),
+                        .init(color: Color(.systemGroupedBackground).opacity(0.55), location: 0),
+                        .init(color: Color(.systemGroupedBackground).opacity(0.35), location: solid),
+                        .init(color: Color(.systemGroupedBackground).opacity(0), location: 1),
                     ],
                     startPoint: .top,
                     endPoint: .bottom
                 )
             }
-            .frame(height: proxy.safeAreaInsets.top + 28)
+            .frame(height: height)
         }
         .ignoresSafeArea(edges: .top)
         .allowsHitTesting(false)
         .accessibilityHidden(true)
+    }
+
+    /// Высота статус-бара и панели. Если SwiftUI сообщил подозрительно малый отступ,
+    /// берём отступ окна плюс стандартную высоту панели.
+    @MainActor
+    private static func barHeight(reported: CGFloat) -> CGFloat {
+        if reported > 30 { return reported }
+        let window = UIApplication.shared.connectedScenes
+            .compactMap { ($0 as? UIWindowScene)?.keyWindow }
+            .first
+        return (window?.safeAreaInsets.top ?? 59) + 44
     }
 }
 
