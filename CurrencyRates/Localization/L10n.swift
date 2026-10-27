@@ -52,7 +52,7 @@ enum L10n {
         case appearance, theme, language, source, updated, fiatCurrencies, fiatFooter
         case cryptoCurrencies, cryptoFooter, refreshRates, offlineFooter, version, noData, demoShort
         case themeSystem, themeLight, themeDark
-        case minTwoCurrencies, proOnly
+        case minTwoCurrencies, proOnly, proDiscover, seeDetails
         case errNoInternet, errTimeout, errServer, errRateLimited, errBadResponse
     }
 
@@ -112,6 +112,8 @@ enum L10n {
         .themeDark: ["Тёмная", "Dark", "Koyu", "Sombre", "Oscuro", "Dunkel"],
         .minTwoCurrencies: ["Нельзя удалить: нужно минимум две валюты", "Can’t delete: at least two currencies are required", "Silinemez: en az iki para birimi gerekli", "Suppression impossible : au moins deux devises sont requises", "No se puede eliminar: se necesitan al menos dos divisas", "Löschen nicht möglich: mindestens zwei Währungen nötig"],
         .proOnly: ["Доступно с подпиской Pro", "Available with Pro subscription", "Pro abonelikle kullanılabilir", "Disponible avec l’abonnement Pro", "Disponible con la suscripción Pro", "Mit Pro-Abo verfügbar"],
+        .proDiscover: ["Откройте %@ — валюты без ограничений", "Discover %@ for unlimited currencies", "Sınırsız para birimi için %@’yu keşfedin", "Découvrez %@ pour des devises illimitées", "Descubre %@ para divisas ilimitadas", "Entdecke %@ für unbegrenzte Währungen"],
+        .seeDetails: ["Подробнее", "See details", "Ayrıntıları gör", "Voir les détails", "Ver detalles", "Details ansehen"],
         .errNoInternet: ["нет подключения к интернету.", "no internet connection.", "internet bağlantısı yok.", "pas de connexion Internet.", "no hay conexión a Internet.", "keine Internetverbindung."],
         .errTimeout: ["сервер не ответил вовремя.", "the server didn’t respond in time.", "sunucu zamanında yanıt vermedi.", "le serveur n’a pas répondu à temps.", "el servidor no respondió a tiempo.", "der Server hat nicht rechtzeitig geantwortet."],
         .errServer: ["не удалось связаться с сервером.", "couldn’t reach the server.", "sunucuya ulaşılamadı.", "impossible de joindre le serveur.", "no se pudo conectar con el servidor.", "Server nicht erreichbar."],
