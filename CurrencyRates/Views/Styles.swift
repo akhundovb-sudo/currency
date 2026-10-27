@@ -372,6 +372,8 @@ struct EmptySpaceTapCatcher: UIViewRepresentable {
         @objc func handle(_ recognizer: UITapGestureRecognizer) { onTap() }
 
         func gestureRecognizer(_ g: UIGestureRecognizer, shouldReceive touch: UITouch) -> Bool {
+            // Окно видит каждое касание — запоминаем, где оно было (координаты окна = .global).
+            TouchTracker.lastLocation = touch.location(in: nil)
             guard let view = touch.view else { return false }
             // Пустое место списка — нажатие пришлось на сам скролл, а не на ячейку.
             if view is UIScrollView { return true }
@@ -407,6 +409,11 @@ struct EmptySpaceTapCatcher: UIViewRepresentable {
             super.willMove(toWindow: newWindow)
         }
     }
+}
+
+/// Последнее касание экрана в координатах окна; его записывает `EmptySpaceTapCatcher`.
+enum TouchTracker {
+    nonisolated(unsafe) static var lastLocation: CGPoint?
 }
 
 /// Главная кнопка («Готово»): заливка основным цветом, белый текст, светлый ободок.
