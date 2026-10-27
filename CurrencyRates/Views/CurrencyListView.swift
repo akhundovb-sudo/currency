@@ -1,3 +1,4 @@
+import Observation
 import SwiftUI
 import UIKit
 
@@ -18,6 +19,7 @@ struct CurrencyListView: View {
     /// Размеры строк для определения, куда пришлось нажатие. Обычный класс, а не состояние:
     /// запись при прокрутке не должна перерисовывать весь список.
     @State private var rowSizes = RowSizeStore()
+    @State private var pullTracker = PullTracker()
 
     /// Отступы вокруг карточки внутри строки списка.
     private static let rowPadding = CGSize(width: 16, height: 6)
@@ -36,7 +38,7 @@ struct CurrencyListView: View {
                 AddCurrencyView()
             }
             // Вместо системного индикатора — капли из Dynamic Island.
-            .overlay { IslandRefreshIndicator(isActive: isRefreshing) }
+            .overlay { IslandRefreshIndicator(isActive: isRefreshing, pull: pullTracker.progress) }
             .sheet(isPresented: $isSettingsPresented) {
                 SettingsView()
             }
@@ -114,14 +116,15 @@ struct CurrencyListView: View {
             .scrollContentBackground(.hidden)
             .background(Color(.systemGroupedBackground))
             .environment(\.editMode, $editMode)
-            .refreshable {
-                withAnimation(.snappy) { isRefreshing = true }
-                let started = Date.now
-                await store.refresh()
-                // Монеты успевают сделать хотя бы пару оборотов.
-                let elapsed = Date.now.timeIntervalSince(started)
-                if elapsed < 1.2 { try? await Task.sleep(for: .seconds(1.2 - elapsed)) }
-                withAnimation(.snappy) { isRefreshing = false }
+            // «Потяните, чтобы обновить» — своё: капли из Dynamic Island следуют за пальцем,
+            // обновление начинается, когда список отпустили, потянув до конца.
+            .onAppear {
+                pullTracker.onRelease = { startPullRefresh() }
+                // Строки должны успеть появиться — через них находим прокрутку списка.
+                Task {
+                    try? await Task.sleep(for: .milliseconds(300))
+                    if let scrollView = rowSizes.scrollView() { pullTracker.attach(scrollView) }
+                }
             }
             // Системный край прокрутки выключен — размытие под панелью рисует TopFade.
             .modifier(SoftTopEdge())
@@ -140,7 +143,6 @@ struct CurrencyListView: View {
                         )
                 }
             }
-            .onAppear { UIRefreshControl.appearance().tintColor = .clear }
             .background {
                 EmptySpaceTapCatcher { if isKeypadVisible { hideKeypad() } }
             }
@@ -264,6 +266,19 @@ struct CurrencyListView: View {
             // ровно настолько, чтобы карточка была видна целиком; видимая остаётся на месте.
             // (ScrollViewProxy.scrollTo в List на iOS 27 этого не делал.)
             rowSizes.scrollToVisible(code)
+        }
+    }
+
+    private func startPullRefresh() {
+        guard !isRefreshing else { return }
+        Task {
+            withAnimation(.snappy) { isRefreshing = true }
+            let started = Date.now
+            await store.refresh()
+            // Капли успевают сделать хотя бы пару оборотов.
+            let elapsed = Date.now.timeIntervalSince(started)
+            if elapsed < 1.2 { try? await Task.sleep(for: .seconds(1.2 - elapsed)) }
+            withAnimation(.snappy) { isRefreshing = false }
         }
     }
 
@@ -441,15 +456,82 @@ final class RowSizeStore {
         anchors.setObject(view, forKey: code as NSString)
     }
 
+    /// Прокрутка списка — ближайший UIScrollView над любой из строк.
+    @MainActor
+    func scrollView() -> UIScrollView? {
+        let views = anchors.objectEnumerator()?.allObjects as? [UIView] ?? []
+        return views.lazy.compactMap { Self.enclosingScrollView(of: $0) }.first
+    }
+
+    private static func enclosingScrollView(of view: UIView) -> UIScrollView? {
+        var parent = view.superview
+        while let current = parent, !(current is UIScrollView) { parent = current.superview }
+        return parent as? UIScrollView
+    }
+
     /// Прокручивает список так, чтобы строка была видна целиком, с небольшим запасом.
     @MainActor
     func scrollToVisible(_ code: String) {
-        guard let view = anchors.object(forKey: code as NSString), view.window != nil else { return }
-        var parent = view.superview
-        while let current = parent, !(current is UIScrollView) { parent = current.superview }
-        guard let scrollView = parent as? UIScrollView else { return }
+        guard let view = anchors.object(forKey: code as NSString), view.window != nil,
+              let scrollView = Self.enclosingScrollView(of: view) else { return }
         let rect = view.convert(view.bounds, to: scrollView).insetBy(dx: 0, dy: -8)
         scrollView.scrollRectToVisible(rect, animated: true)
+    }
+}
+
+/// Следит, насколько список потянут вниз за верхний край, и сообщает, когда его отпустили.
+@MainActor
+@Observable
+final class PullTracker {
+    /// 0…1: насколько потянули относительно порога обновления.
+    private(set) var progress: CGFloat = 0
+    @ObservationIgnored var onRelease: @MainActor () -> Void = {}
+
+    /// Сколько точек нужно потянуть, чтобы началось обновление.
+    private let threshold: CGFloat = 96
+    @ObservationIgnored private weak var scrollView: UIScrollView?
+    @ObservationIgnored private var observation: NSKeyValueObservation?
+    @ObservationIgnored private let panTarget = PanTarget()
+    @ObservationIgnored private var didReachThreshold = false
+
+    func attach(_ scrollView: UIScrollView) {
+        guard scrollView !== self.scrollView else { return }
+        self.scrollView = scrollView
+        // Тянуть можно, даже если список короткий.
+        scrollView.alwaysBounceVertical = true
+        observation = scrollView.observe(\.contentOffset, options: [.new]) { [weak self] scrollView, _ in
+            MainActor.assumeIsolated { self?.update(scrollView) }
+        }
+        panTarget.onEnd = { [weak self] in self?.released() }
+        scrollView.panGestureRecognizer.addTarget(panTarget, action: #selector(PanTarget.handle(_:)))
+    }
+
+    private func update(_ scrollView: UIScrollView) {
+        let pulled = -(scrollView.contentOffset.y + scrollView.adjustedContentInset.top)
+        let value = min(1, max(0, pulled / threshold))
+        // Пока палец на экране — капли следуют за ним; после отпускания список
+        // возвращается сам, и капли уходят обратно вместе с ним.
+        if abs(value - progress) > 0.005 || (value == 0 && progress != 0) { progress = value }
+        if scrollView.isTracking, value >= 1, !didReachThreshold {
+            didReachThreshold = true
+            UIImpactFeedbackGenerator(style: .medium).impactOccurred()
+        } else if value < 1, scrollView.isTracking {
+            didReachThreshold = false
+        }
+    }
+
+    private func released() {
+        if didReachThreshold { onRelease() }
+        didReachThreshold = false
+    }
+
+    @MainActor
+    private final class PanTarget: NSObject {
+        var onEnd: @MainActor () -> Void = {}
+
+        @objc func handle(_ recognizer: UIPanGestureRecognizer) {
+            if recognizer.state == .ended || recognizer.state == .cancelled { onEnd() }
+        }
     }
 }
 
@@ -504,6 +586,8 @@ struct ShakeEffect: GeometryEffect {
 /// появляются из-за верхнего края экрана.
 struct IslandRefreshIndicator: View {
     let isActive: Bool
+    /// Насколько список потянут вниз: 0 — нет, 1 — до конца (сейчас начнётся обновление).
+    var pull: CGFloat = 0
 
     @State private var startedAt: Date?
     @State private var endedAt: Date?
@@ -521,6 +605,10 @@ struct IslandRefreshIndicator: View {
                 TimelineView(.animation) { context in
                     drops(at: context.date, startedAt: startedAt, width: proxy.size.width)
                 }
+            } else if pull > 0 {
+                // Пока тянут — капли выходят из острова ровно настолько, насколько потянули,
+                // и чуть поворачиваются.
+                drops(amount: pull, angle: Double(pull) * .pi * 0.6, width: proxy.size.width)
             }
         }
         .ignoresSafeArea()
@@ -530,7 +618,8 @@ struct IslandRefreshIndicator: View {
         .accessibilityHidden(!isActive)
         .onChange(of: isActive) { _, active in
             if active {
-                startedAt = .now
+                // Если капли уже вытянуты жестом, не начинаем выход заново.
+                startedAt = pull > 0.5 ? Date.now.addingTimeInterval(-inDuration) : .now
                 endedAt = nil
             } else if startedAt != nil {
                 endedAt = .now
@@ -562,6 +651,10 @@ struct IslandRefreshIndicator: View {
             amount *= 1 - back * back
         }
         let angle = (elapsed.truncatingRemainder(dividingBy: period) / period) * 2 * .pi
+        return drops(amount: amount, angle: angle, width: width)
+    }
+
+    private func drops(amount: CGFloat, angle: Double, width: CGFloat) -> some View {
         let island = Self.islandRect(screenWidth: width)
         let center = CGPoint(x: width / 2, y: island.midY + dropDistance * amount)
         let items = [("$", 0.0), ("₿", Double.pi)].map { pair in

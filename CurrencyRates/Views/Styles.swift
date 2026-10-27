@@ -73,28 +73,22 @@ struct CardStyle: ViewModifier {
                 shape
                     .fill(Color(.secondarySystemGroupedBackground))
                     .shadow(color: Color(red: 0.2, green: 0.25, blue: 0.4).opacity(0.06), radius: 12, y: 4)
-                // Фокус — приподнятое цветное стекло: карточка подсвечивается оттенком акцента
-                // по диагонали, сверху блик, вокруг мягкая глубокая тень. Без рамки.
+                // Фокус — приподнятое прозрачное стекло без цвета: карточка светлее остальных,
+                // с бликом сверху и глубокой мягкой тенью, будто парит над списком.
                 ZStack {
                     if isSelected {
                         ZStack {
+                            shape.fill(Color.glassBase)
                             shape.fill(
                                 LinearGradient(
-                                    colors: [Color.accentColor.opacity(0.16), Color.accentColor.opacity(0.04)],
-                                    startPoint: .topLeading,
-                                    endPoint: .bottomTrailing
-                                )
-                            )
-                            shape.fill(
-                                LinearGradient(
-                                    colors: [Color.glassRim.opacity(0.7), Color.glassRim.opacity(0)],
+                                    colors: [Color.glassRim.opacity(0.9), Color.glassRim.opacity(0)],
                                     startPoint: .top,
-                                    endPoint: UnitPoint(x: 0.5, y: 0.45)
+                                    endPoint: UnitPoint(x: 0.5, y: 0.5)
                                 )
                             )
                         }
-                        .shadow(color: Color.accentColor.opacity(0.18), radius: 18, y: 8)
-                        .shadow(color: .black.opacity(0.06), radius: 4, y: 2)
+                        .shadow(color: .black.opacity(0.12), radius: 22, y: 10)
+                        .shadow(color: .black.opacity(0.05), radius: 3, y: 1)
                         .transition(.opacity)
                     }
                 }
@@ -105,14 +99,14 @@ struct CardStyle: ViewModifier {
                 // текст, и при смене валюты подписи курса накладываются друг на друга.
                 ZStack {
                     if isSelected {
-                        // Тонкий светлый ободок стекла, ярче сверху.
+                        // Стеклянный ободок: яркий светлый сверху, тонкая нейтральная грань снизу.
                         shape.strokeBorder(
                             LinearGradient(
-                                colors: [Color.glassRim, Color.glassRim.opacity(0.2)],
+                                colors: [Color.glassRim, Color.primary.opacity(0.1)],
                                 startPoint: .top,
                                 endPoint: .bottom
                             ),
-                            lineWidth: 1
+                            lineWidth: 1.5
                         )
                         .transition(.opacity)
                     } else {
