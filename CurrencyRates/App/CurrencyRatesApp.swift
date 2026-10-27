@@ -6,9 +6,6 @@ struct CurrencyRatesApp: App {
     @State private var store = RatesStore.live()
 
     init() {
-        // В iOS 26 у панели системный мягкий край прокрутки; своё оформление
-        // возвращало бы старую панель с размытием и резкой нижней границей.
-        if #available(iOS 26, *) { return }
         // Верхняя панель без разделительной линии: при прокрутке — только мягкое размытие.
         let standard = UINavigationBarAppearance()
         standard.configureWithDefaultBackground()

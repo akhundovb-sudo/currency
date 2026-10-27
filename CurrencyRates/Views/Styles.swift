@@ -427,17 +427,6 @@ struct AccentBubbleStyle: ButtonStyle {
     }
 }
 
-/// Мягкий системный край прокрутки сверху (iOS 26); в более ранних версиях его нет.
-struct SoftTopEdge: ViewModifier {
-    func body(content: Content) -> some View {
-        if #available(iOS 26, *) {
-            content.scrollEdgeEffectStyle(.soft, for: .top)
-        } else {
-            content
-        }
-    }
-}
-
 /// Мягкий переход под верхней панелью: размытие и цвет фона плавно сходят на нет к низу,
 /// без видимой линии при прокрутке.
 struct TopFade: View {
@@ -473,7 +462,6 @@ extension View {
     /// Верхняя панель без фона и без линии: содержимое под ней мягко размывается и затухает.
     func softTopBar() -> some View {
         toolbarBackground(.hidden, for: .navigationBar)
-            .modifier(SoftTopEdge())
             .overlay(alignment: .top) { TopFade() }
     }
 }
