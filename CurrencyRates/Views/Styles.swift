@@ -29,9 +29,6 @@ extension Color {
     /// Цвет вводимой суммы и курсора.
     static let amountHighlight = Color.accentColor
 
-    /// Рамка выбранной карточки — светлый приглушённый оттенок акцента.
-    static let selectionBorder = Color.dynamic(light: 0xC0B6F6, dark: 0x392E78)
-
     /// Фон карточки валюты (Semantic/Background/Primary в макете).
     static let cardBackground = Color(UIColor { traits in
         traits.userInterfaceStyle == .dark
@@ -76,14 +73,47 @@ struct CardStyle: ViewModifier {
                 shape
                     .fill(Color(.secondarySystemGroupedBackground))
                     .shadow(color: Color(red: 0.2, green: 0.25, blue: 0.4).opacity(0.06), radius: 12, y: 4)
+                // Фокус — стекло: лёгкое свечение акцента внутри, блик сверху и мягкий ореол вокруг.
+                ZStack {
+                    if isSelected {
+                        ZStack {
+                            shape.fill(
+                                RadialGradient(
+                                    colors: [Color.accentColor.opacity(0.13), Color.accentColor.opacity(0.03)],
+                                    center: .center,
+                                    startRadius: 0,
+                                    endRadius: 220
+                                )
+                            )
+                            shape.fill(
+                                LinearGradient(
+                                    colors: [Color.glassRim.opacity(0.6), Color.glassRim.opacity(0)],
+                                    startPoint: .top,
+                                    endPoint: .center
+                                )
+                            )
+                        }
+                        .shadow(color: Color.accentColor.opacity(0.22), radius: 14, y: 4)
+                        .transition(.opacity)
+                    }
+                }
+                .animation(.easeInOut(duration: 0.25), value: isSelected)
             }
             .overlay {
-                // Анимация привязана к самой рамке, а не ко всей карточке: иначе она захватывает
+                // Анимация привязана к самому ободку, а не ко всей карточке: иначе она захватывает
                 // текст, и при смене валюты подписи курса накладываются друг на друга.
                 ZStack {
                     if isSelected {
-                        shape.strokeBorder(Color.selectionBorder, lineWidth: 2.5)
-                            .transition(.opacity.combined(with: .scale(scale: 1.04)))
+                        // Стеклянный ободок: светлый сверху, с оттенком акцента снизу.
+                        shape.strokeBorder(
+                            LinearGradient(
+                                colors: [Color.glassRim, Color.accentColor.opacity(0.45)],
+                                startPoint: .top,
+                                endPoint: .bottom
+                            ),
+                            lineWidth: 1.5
+                        )
+                        .transition(.opacity.combined(with: .scale(scale: 1.04)))
                     } else {
                         // Светлый ободок: ярче сверху, к низу почти исчезает.
                         shape.strokeBorder(Color.primary.opacity(0.05), lineWidth: 1)
