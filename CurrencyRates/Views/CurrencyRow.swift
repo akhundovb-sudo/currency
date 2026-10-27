@@ -160,6 +160,28 @@ struct CurrencyIcon: View {
         artwork
             .frame(width: size, height: size)
             .clipShape(Circle())
+            // Мягкое стекло: блик сверху слева и светлый ободок, ярче сверху.
+            .overlay {
+                ZStack {
+                    Circle().fill(
+                        RadialGradient(
+                            colors: [.white.opacity(0.28), .white.opacity(0)],
+                            center: UnitPoint(x: 0.3, y: 0.18),
+                            startRadius: 0,
+                            endRadius: size * 0.5
+                        )
+                    )
+                    Circle().strokeBorder(
+                        LinearGradient(
+                            colors: [.white.opacity(0.7), .white.opacity(0.1)],
+                            startPoint: .top,
+                            endPoint: .bottom
+                        ),
+                        lineWidth: 1.5
+                    )
+                }
+                .allowsHitTesting(false)
+            }
             // Еле заметный серый контур — отделяет белые края флагов (Россия, Япония…) от фона.
             .overlay(Circle().strokeBorder(Color.primary.opacity(0.1), lineWidth: 0.75))
             .accessibilityHidden(true)
