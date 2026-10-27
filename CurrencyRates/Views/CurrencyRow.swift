@@ -255,10 +255,16 @@ private struct ProBadge: View {
         Text("PRO")
             .font(.system(size: 11, weight: .heavy, design: .rounded))
             .tracking(0.5)
-            .foregroundStyle(.white)
+            .foregroundStyle(Color.accentColor)
             .padding(.horizontal, 8)
             .frame(height: 22)
-            .background(Capsule().fill(Color.accentColor.gradient))
+            // Белая плашка с синим текстом; тонкий ободок и тень отделяют её от светлого фона.
+            .background {
+                Capsule()
+                    .fill(.white)
+                    .overlay(Capsule().strokeBorder(Color.accentColor.opacity(0.3), lineWidth: 1))
+                    .shadow(color: Color.accentColor.opacity(0.15), radius: 3, y: 1)
+            }
             .accessibilityHidden(true)
     }
 }
