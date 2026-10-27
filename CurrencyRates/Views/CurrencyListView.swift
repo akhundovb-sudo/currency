@@ -11,7 +11,10 @@ struct CurrencyListView: View {
     @State private var toast: String?
     @State private var toastTask: Task<Void, Never>?
     /// Счётчик «тряски» карточки ввода при переполнении суммы.
-    @State private var shakeCount = 0
+    /// Какая карточка трясётся и фаза тряски (0…1). Вне тряски фаза всегда 0 — поэтому
+    /// смена выбранной валюты не «проигрывает» тряску.
+    @State private var shakingCode: String?
+    @State private var shakePhase: CGFloat = 0
     /// Размеры строк для определения, куда пришлось нажатие. Обычный класс, а не состояние:
     /// запись при прокрутке не должна перерисовывать весь список.
     @State private var rowSizes = RowSizeStore()
@@ -58,7 +61,7 @@ struct CurrencyListView: View {
                             idleSourceCaption: idleSourceCaption
                         )
                         .card(selected: code == store.sourceCode && isKeypadVisible)
-                        .modifier(ShakeEffect(shakes: code == store.sourceCode ? CGFloat(shakeCount) : 0))
+                        .modifier(ShakeEffect(shakes: shakingCode == code ? shakePhase : 0))
                         }
                         .swipeToDelete(isEnabled: !editMode.isEditing, canDelete: store.canRemove, onBlocked: showMinToast, label: L(.delete)) {
                             store.remove(code)
@@ -155,7 +158,7 @@ struct CurrencyListView: View {
                             if !accepted {
                                 // Не помещается: тряска карточки и вибрация ошибки.
                                 UINotificationFeedbackGenerator().notificationOccurred(.error)
-                                withAnimation(.linear(duration: 0.3)) { shakeCount += 1 }
+                                shake(store.sourceCode)
                             }
                         },
                         onClear: { withAnimation { store.amountText = "" } },
@@ -220,12 +223,23 @@ struct CurrencyListView: View {
         }
     }
 
+    private func shake(_ code: String) {
+        var reset = Transaction()
+        reset.disablesAnimations = true
+        withTransaction(reset) { shakingCode = code; shakePhase = 0 }
+        withAnimation(.linear(duration: 0.3)) { shakePhase = 1 }
+        Task {
+            try? await Task.sleep(for: .seconds(0.32))
+            withTransaction(reset) { shakePhase = 0; shakingCode = nil }
+        }
+    }
+
     private func startEditing(_ code: String, proxy: ScrollViewProxy) {
         guard !editMode.isEditing else { return }
         if code != store.sourceCode || !isKeypadVisible {
             UISelectionFeedbackGenerator().selectionChanged()
         }
-        withAnimation(.easeInOut(duration: 0.25)) { store.beginEditing(code) }
+        store.beginEditing(code)
         withAnimation(.snappy) { isKeypadVisible = true }
         withAnimation { proxy.scrollTo(code) }
     }

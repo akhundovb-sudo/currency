@@ -61,6 +61,10 @@ struct AmountKeypad: View {
             PanelGlass()
                 .ignoresSafeArea(edges: .bottom)
         }
+        // Вся панель, включая зазоры между клавишами и безопасную зону, ловит нажатия:
+        // иначе они проходят сквозь стекло к карточке под ней и выбирают её.
+        .contentShape(Rectangle())
+        .onTapGesture {}
     }
 }
 

@@ -78,17 +78,21 @@ struct CardStyle: ViewModifier {
                     .shadow(color: Color(red: 0.2, green: 0.25, blue: 0.4).opacity(0.06), radius: 12, y: 4)
             }
             .overlay {
-                if isSelected {
-                    shape.strokeBorder(Color.selectionBorder, lineWidth: 2.5)
-                        .transition(.opacity.combined(with: .scale(scale: 1.04)))
-                } else {
-                    // Светлый ободок: ярче сверху, к низу почти исчезает.
-                    shape.strokeBorder(Color.primary.opacity(0.05), lineWidth: 1)
+                // Анимация привязана к самой рамке, а не ко всей карточке: иначе она захватывает
+                // текст, и при смене валюты подписи курса накладываются друг на друга.
+                ZStack {
+                    if isSelected {
+                        shape.strokeBorder(Color.selectionBorder, lineWidth: 2.5)
+                            .transition(.opacity.combined(with: .scale(scale: 1.04)))
+                    } else {
+                        // Светлый ободок: ярче сверху, к низу почти исчезает.
+                        shape.strokeBorder(Color.primary.opacity(0.05), lineWidth: 1)
+                    }
                 }
+                .animation(.easeInOut(duration: 0.25), value: isSelected)
             }
             // Выбор: короткий «пружинящий» отклик карточки.
             .scaleEffect(isPopped ? 1.035 : 1)
-            .animation(.easeInOut(duration: 0.25), value: isSelected)
             .onChange(of: isSelected) { _, selected in
                 guard selected else { return }
                 withAnimation(.snappy(duration: 0.14)) { isPopped = true }

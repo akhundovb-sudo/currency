@@ -5,6 +5,19 @@ import UIKit
 struct CurrencyRatesApp: App {
     @State private var store = RatesStore.live()
 
+    init() {
+        // Верхняя панель без разделительной линии: при прокрутке — только мягкое размытие.
+        let standard = UINavigationBarAppearance()
+        standard.configureWithDefaultBackground()
+        standard.shadowColor = .clear
+        let edge = UINavigationBarAppearance()
+        edge.configureWithTransparentBackground()
+        edge.shadowColor = .clear
+        UINavigationBar.appearance().standardAppearance = standard
+        UINavigationBar.appearance().compactAppearance = standard
+        UINavigationBar.appearance().scrollEdgeAppearance = edge
+    }
+
     @Environment(\.scenePhase) private var scenePhase
 
     var body: some Scene {
