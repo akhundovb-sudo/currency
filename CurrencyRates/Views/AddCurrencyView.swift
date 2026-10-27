@@ -69,6 +69,7 @@ struct AddCurrencyView: View {
                     CurrencySelectRow(currency: currency, isSelected: isAdded, isLocked: isLocked)
                 }
                 .buttonStyle(.plain)
+                .listRowInsets(EdgeInsets(top: 8, leading: 16, bottom: 8, trailing: 16))
                 .disabled(isAdded && !store.canDelete(currency.code))
                 .accessibilityHint(isLocked ? L(.proOnly) : isAdded ? L(.alreadyAdded) : L(.addToList))
             }

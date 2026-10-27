@@ -40,7 +40,7 @@ extension Color {
     static let secondaryLabel = Color(UIColor { traits in
         traits.userInterfaceStyle == .dark
             ? UIColor(red: 0xA1 / 255, green: 0xA1 / 255, blue: 0xA6 / 255, alpha: 1)
-            : UIColor(red: 0x59 / 255, green: 0x59 / 255, blue: 0x59 / 255, alpha: 1)
+            : UIColor(red: 0x76 / 255, green: 0x76 / 255, blue: 0x7B / 255, alpha: 1)
     })
 }
 
@@ -73,27 +73,28 @@ struct CardStyle: ViewModifier {
                 shape
                     .fill(Color(.secondarySystemGroupedBackground))
                     .shadow(color: Color(red: 0.2, green: 0.25, blue: 0.4).opacity(0.06), radius: 12, y: 4)
-                // Фокус — стекло: лёгкое свечение акцента внутри, блик сверху и мягкий ореол вокруг.
+                // Фокус — приподнятое цветное стекло: карточка подсвечивается оттенком акцента
+                // по диагонали, сверху блик, вокруг мягкая глубокая тень. Без рамки.
                 ZStack {
                     if isSelected {
                         ZStack {
                             shape.fill(
-                                RadialGradient(
-                                    colors: [Color.accentColor.opacity(0.13), Color.accentColor.opacity(0.03)],
-                                    center: .center,
-                                    startRadius: 0,
-                                    endRadius: 220
+                                LinearGradient(
+                                    colors: [Color.accentColor.opacity(0.16), Color.accentColor.opacity(0.04)],
+                                    startPoint: .topLeading,
+                                    endPoint: .bottomTrailing
                                 )
                             )
                             shape.fill(
                                 LinearGradient(
-                                    colors: [Color.glassRim.opacity(0.6), Color.glassRim.opacity(0)],
+                                    colors: [Color.glassRim.opacity(0.7), Color.glassRim.opacity(0)],
                                     startPoint: .top,
-                                    endPoint: .center
+                                    endPoint: UnitPoint(x: 0.5, y: 0.45)
                                 )
                             )
                         }
-                        .shadow(color: Color.accentColor.opacity(0.22), radius: 14, y: 4)
+                        .shadow(color: Color.accentColor.opacity(0.18), radius: 18, y: 8)
+                        .shadow(color: .black.opacity(0.06), radius: 4, y: 2)
                         .transition(.opacity)
                     }
                 }
@@ -104,16 +105,16 @@ struct CardStyle: ViewModifier {
                 // текст, и при смене валюты подписи курса накладываются друг на друга.
                 ZStack {
                     if isSelected {
-                        // Стеклянный ободок: светлый сверху, с оттенком акцента снизу.
+                        // Тонкий светлый ободок стекла, ярче сверху.
                         shape.strokeBorder(
                             LinearGradient(
-                                colors: [Color.glassRim, Color.accentColor.opacity(0.45)],
+                                colors: [Color.glassRim, Color.glassRim.opacity(0.2)],
                                 startPoint: .top,
                                 endPoint: .bottom
                             ),
-                            lineWidth: 1.5
+                            lineWidth: 1
                         )
-                        .transition(.opacity.combined(with: .scale(scale: 1.04)))
+                        .transition(.opacity)
                     } else {
                         // Светлый ободок: ярче сверху, к низу почти исчезает.
                         shape.strokeBorder(Color.primary.opacity(0.05), lineWidth: 1)

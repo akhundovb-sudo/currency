@@ -43,7 +43,7 @@ struct CurrencyRow: View {
                     // Две строки: код и сумма, затем название и курс — каждая пара на одной линии.
                     // Выравнивание по центру, а не по базовой линии: уменьшенная длинная сумма
                     // иначе съезжает вниз на строку курса, и карточка «прыгает».
-                    VStack(spacing: 2) {
+                    VStack(spacing: 4) {
                         HStack(alignment: .center, spacing: 8) {
                             codeText
                             Spacer(minLength: 8)
@@ -69,7 +69,7 @@ struct CurrencyRow: View {
 
     private var codeText: some View {
         Text(code)
-            .font(.body.weight(.medium))
+            .font(.body.weight(.semibold))
             .foregroundStyle(Color.primary)
             .fixedSize()
     }
@@ -298,18 +298,20 @@ struct CurrencySelectRow: View {
     var isLocked = false
 
     var body: some View {
-        HStack(spacing: 12) {
+        HStack(spacing: 14) {
             CurrencyIcon(currency: currency)
-            VStack(alignment: .leading, spacing: 2) {
+            VStack(alignment: .leading, spacing: 3) {
                 Text(currency.code)
-                    .font(.headline)
+                    .font(.body.weight(.semibold))
                     .foregroundStyle(Color.primary)
                 Text(currency.name)
                     .font(.subheadline)
-                    .foregroundStyle(Color.secondary)
+                    .foregroundStyle(Color.secondaryLabel)
                     .lineLimit(1)
             }
-            Spacer(minLength: 8)
+            // Разделитель строк начинается под текстом, а не под флагом.
+            .alignmentGuide(.listRowSeparatorLeading) { $0[.leading] }
+            Spacer(minLength: 12)
             if isLocked {
                 ProBadge()
                     .transition(.scale.combined(with: .opacity))
@@ -317,6 +319,7 @@ struct CurrencySelectRow: View {
                 SelectionBubble(isSelected: isSelected)
             }
         }
+        .padding(.vertical, 4)
         .contentShape(.rect)
         .accessibilityElement(children: .ignore)
         .accessibilityLabel("\(currency.name), \(currency.code)")
