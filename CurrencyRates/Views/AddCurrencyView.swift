@@ -69,7 +69,7 @@ struct AddCurrencyView: View {
                     CurrencySelectRow(currency: currency, isSelected: isAdded, isLocked: isLocked)
                 }
                 .buttonStyle(.plain)
-                .disabled(isAdded && !store.canRemove)
+                .disabled(isAdded && !store.canDelete(currency.code))
                 .accessibilityHint(isLocked ? L(.proOnly) : isAdded ? L(.alreadyAdded) : L(.addToList))
             }
             .overlay {

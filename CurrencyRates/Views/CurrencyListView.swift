@@ -65,7 +65,7 @@ struct CurrencyListView: View {
                         .card(selected: code == store.sourceCode && isKeypadVisible)
                         .modifier(ShakeEffect(shakes: shakingCode == code ? shakePhase : 0))
                         }
-                        .swipeToDelete(isEnabled: !editMode.isEditing, canDelete: store.canRemove, onBlocked: showMinToast, label: L(.delete)) {
+                        .swipeToDelete(isEnabled: !editMode.isEditing, canDelete: store.canDelete(code), onBlocked: { showBlockedToast(for: code) }, label: L(.delete)) {
                             store.remove(code)
                         }
                         // Отступы вокруг карточки — часть строки: нажатие в них закрывает клавиатуру.
@@ -100,6 +100,7 @@ struct CurrencyListView: View {
                         .listRowBackground(Color.clear)
                         .listRowSeparator(.hidden)
                         .listRowInsets(EdgeInsets())
+                        .moveDisabled(store.isPinned(code))
                     }
                     .onMove { store.move(fromOffsets: $0, toOffset: $1) }
                 }
@@ -130,6 +131,8 @@ struct CurrencyListView: View {
                 if elapsed < 1.2 { try? await Task.sleep(for: .seconds(1.2 - elapsed)) }
                 withAnimation(.snappy) { isRefreshing = false }
             }
+            // В iOS 26 — системный мягкий край под панелью вместо резкой линии.
+            .modifier(SoftTopEdge())
             // Под тостом и монетами, чтобы не приглушать их.
             .overlay(alignment: .top) { TopFade() }
             .overlay(alignment: .top) {
@@ -196,9 +199,9 @@ struct CurrencyListView: View {
     /// Минимум две валюты — последние две удалить нельзя.
     private func deleteButton(for code: String) -> some View {
         Button {
-            guard store.canRemove else {
+            guard store.canDelete(code) else {
                 UINotificationFeedbackGenerator().notificationOccurred(.error)
-                showMinToast()
+                showBlockedToast(for: code)
                 return
             }
             withAnimation(.snappy) { store.remove(code) }
@@ -206,7 +209,7 @@ struct CurrencyListView: View {
             AppIcon("icon-minus", size: 18)
                 .foregroundStyle(.white)
                 .frame(width: 36, height: 36)
-                .background { DeleteBlock(cornerRadius: 18, isDisabled: !store.canRemove) } // круг: половина стороны 36
+                .background { DeleteBlock(cornerRadius: 18, isDisabled: !store.canDelete(code)) } // круг: половина стороны 36
         }
         .buttonStyle(.plain)
         .accessibilityLabel("\(L(.delete)) \(code)")
@@ -235,9 +238,11 @@ struct CurrencyListView: View {
     }
 
     /// Всплывающее сообщение: последние две валюты удалить нельзя. Скрывается через 2,5 с.
-    private func showMinToast() {
+    /// Почему валюту нельзя удалить: без подписки USD и EUR закреплены, иначе — минимум две валюты.
+    private func showBlockedToast(for code: String) {
         toastTask?.cancel()
-        withAnimation(.spring(response: 0.35, dampingFraction: 0.8)) { toast = L(.minTwoCurrencies) }
+        let text = store.isPinned(code) ? L(.pinnedFree) : L(.minTwoCurrencies)
+        withAnimation(.spring(response: 0.35, dampingFraction: 0.8)) { toast = text }
         toastTask = Task {
             try? await Task.sleep(for: .seconds(2.5))
             guard !Task.isCancelled else { return }
@@ -545,6 +550,17 @@ struct ToastView: View {
         .background { CardBubbleBackground() }
         .padding(.horizontal, 24)
         .accessibilityAddTraits(.isStaticText)
+    }
+}
+
+/// Мягкий системный край прокрутки сверху (iOS 26); в более ранних версиях его нет.
+private struct SoftTopEdge: ViewModifier {
+    func body(content: Content) -> some View {
+        if #available(iOS 26, *) {
+            content.scrollEdgeEffectStyle(.soft, for: .top)
+        } else {
+            content
+        }
     }
 }
 
