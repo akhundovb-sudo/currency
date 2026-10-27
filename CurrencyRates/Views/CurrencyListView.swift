@@ -74,12 +74,8 @@ struct CurrencyListView: View {
                         .background {
                             GeometryReader { geo in
                                 Color.clear
-                                    .onAppear {
-                                        rowSizes.sizes[code] = geo.size
-                                        rowSizes.frames[code] = geo.frame(in: .global)
-                                    }
+                                    .onAppear { rowSizes.sizes[code] = geo.size }
                                     .onChange(of: geo.size) { _, size in rowSizes.sizes[code] = size }
-                                    .onChange(of: geo.frame(in: .global)) { _, frame in rowSizes.frames[code] = frame }
                             }
                         }
                         .contentShape(Rectangle())
@@ -90,9 +86,17 @@ struct CurrencyListView: View {
                         )
                         // В списке вся строка ловит нажатие, поэтому смотрим, куда оно пришлось:
                         // в карточку — выбор валюты, в отступ вокруг — закрыть клавиатуру.
+                        // Точка нажатия на экране — по ней видно, где сейчас карточка
+                        // (положение строк List при прокрутке не отслеживается надёжно).
+                        .simultaneousGesture(
+                            SpatialTapGesture(coordinateSpace: .global).onEnded { rowSizes.lastTap = $0.location }
+                        )
                         .onTapGesture(coordinateSpace: .local) { location in
                             if isInsideCard(location, rowSize: rowSizes.sizes[code]) {
-                                startEditing(code, proxy: proxy)
+                                // После обоих жестов: точка нажатия на экране уже записана.
+                                DispatchQueue.main.async {
+                                    startEditing(code, proxy: proxy, tapInRow: location)
+                                }
                             } else {
                                 hideKeypad()
                             }
@@ -156,10 +160,13 @@ struct CurrencyListView: View {
                 EmptySpaceTapCatcher { if isKeypadVisible { hideKeypad() } }
             }
             // Прокрутка списка прячет клавиатуру, как у системной клавиатуры.
+            // Жест включён только при открытой клавиатуре: иначе он перехватывает
+            // потягивание вниз, и «потяните, чтобы обновить» срабатывает через раз.
             .simultaneousGesture(
                 DragGesture(minimumDistance: 12).onChanged { value in
                     if isKeypadVisible, abs(value.translation.height) > 24 { hideKeypad() }
-                }
+                },
+                including: isKeypadVisible ? .all : .subviews
             )
             .safeAreaInset(edge: .bottom, spacing: 0) {
                 if isKeypadVisible {
@@ -261,7 +268,7 @@ struct CurrencyListView: View {
         }
     }
 
-    private func startEditing(_ code: String, proxy: ScrollViewProxy) {
+    private func startEditing(_ code: String, proxy: ScrollViewProxy, tapInRow: CGPoint) {
         guard !editMode.isEditing else { return }
         if code != store.sourceCode || !isKeypadVisible {
             UISelectionFeedbackGenerator().selectionChanged()
@@ -271,14 +278,17 @@ struct CurrencyListView: View {
         withAnimation(.snappy) { isKeypadVisible = true }
         // Список прокручивается, только если карточка окажется под клавиатурой;
         // видимая карточка остаётся на месте.
-        guard let frame = rowSizes.frames[code] else { return }
         let keypadTop = wasVisible
             ? rowSizes.keypadTop ?? rowSizes.listBottom - Self.estimatedKeypadHeight
             : rowSizes.listBottom - (rowSizes.keypadHeight ?? Self.estimatedKeypadHeight)
-        guard frame.maxY - Self.rowPadding.height > keypadTop else { return }
+        if let tap = rowSizes.lastTap, let rowHeight = rowSizes.sizes[code]?.height {
+            // Низ карточки на экране: точка нажатия минус её смещение внутри строки, плюс высота строки.
+            let cardBottom = tap.y - tapInRow.y + rowHeight - Self.rowPadding.height
+            guard cardBottom > keypadTop - 8 else { return }
+        }
         Task {
             // Ждём, пока клавиатура займёт место внизу, иначе прокрутка не учтёт её.
-            if !wasVisible { try? await Task.sleep(for: .milliseconds(120)) }
+            if !wasVisible { try? await Task.sleep(for: .milliseconds(250)) }
             withAnimation(.snappy) { proxy.scrollTo(code, anchor: .bottom) }
         }
     }
@@ -450,8 +460,8 @@ struct SourceFooter: View {
 /// Хранилище размеров строк без наблюдения SwiftUI.
 final class RowSizeStore {
     var sizes: [String: CGSize] = [:]
-    /// Положение строк на экране — чтобы понять, закроет ли их клавиатура.
-    var frames: [String: CGRect] = [:]
+    /// Последняя точка нажатия на строку, в координатах экрана.
+    var lastTap: CGPoint?
     /// Верх клавиатуры на экране, пока она показана.
     var keypadTop: CGFloat? {
         didSet { if let keypadTop { keypadHeight = listBottom - keypadTop } }
