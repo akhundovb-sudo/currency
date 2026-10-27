@@ -86,17 +86,9 @@ struct CurrencyListView: View {
                         )
                         // В списке вся строка ловит нажатие, поэтому смотрим, куда оно пришлось:
                         // в карточку — выбор валюты, в отступ вокруг — закрыть клавиатуру.
-                        // Точка нажатия на экране — по ней видно, где сейчас карточка
-                        // (положение строк List при прокрутке не отслеживается надёжно).
-                        .simultaneousGesture(
-                            SpatialTapGesture(coordinateSpace: .global).onEnded { rowSizes.lastTap = $0.location }
-                        )
                         .onTapGesture(coordinateSpace: .local) { location in
                             if isInsideCard(location, rowSize: rowSizes.sizes[code]) {
-                                // После обоих жестов: точка нажатия на экране уже записана.
-                                DispatchQueue.main.async {
-                                    startEditing(code, proxy: proxy, tapInRow: location)
-                                }
+                                startEditing(code, proxy: proxy, tapInRow: location)
                             } else {
                                 hideKeypad()
                             }
@@ -279,7 +271,9 @@ struct CurrencyListView: View {
         let keypadTop = wasVisible
             ? rowSizes.keypadTop ?? rowSizes.listBottom - Self.estimatedKeypadHeight
             : rowSizes.listBottom - (rowSizes.keypadHeight ?? Self.estimatedKeypadHeight)
-        if let tap = rowSizes.lastTap, let rowHeight = rowSizes.sizes[code]?.height {
+        // Точка касания на экране — по ней видно, где сейчас карточка
+        // (положение строк List при прокрутке не отслеживается надёжно).
+        if let tap = TouchTracker.lastLocation, let rowHeight = rowSizes.sizes[code]?.height {
             // Низ карточки на экране: точка нажатия минус её смещение внутри строки, плюс высота строки.
             let cardBottom = tap.y - tapInRow.y + rowHeight - Self.rowPadding.height
             guard cardBottom > keypadTop - 8 else { return }
@@ -458,8 +452,6 @@ struct SourceFooter: View {
 /// Хранилище размеров строк без наблюдения SwiftUI.
 final class RowSizeStore {
     var sizes: [String: CGSize] = [:]
-    /// Последняя точка нажатия на строку, в координатах экрана.
-    var lastTap: CGPoint?
     /// Верх клавиатуры на экране, пока она показана.
     var keypadTop: CGFloat? {
         didSet { if let keypadTop { keypadHeight = listBottom - keypadTop } }
@@ -550,7 +542,7 @@ struct SpinningCoins: View {
 }
 
 /// Стеклянные капли, сливающиеся при сближении: круги размываются и обрезаются по порогу
-/// прозрачности (метаболы). Заливка — прозрачное матовое стекло без оттенка, блик и белый ободок.
+/// прозрачности (метаболы). Прозрачное стекло: еле заметная заливка, блик сверху и яркий ободок.
 private struct LiquidGlass: View {
     /// Смещение центра по горизонтали и радиус каждой капли.
     let blobs: [(CGFloat, CGFloat)]
@@ -559,9 +551,8 @@ private struct LiquidGlass: View {
         ZStack {
             // Тело стекла.
             ZStack {
-                Rectangle().fill(.ultraThinMaterial)
                 LinearGradient(
-                    colors: [Color.white.opacity(0.35), Color.glassNeutral.opacity(0.12)],
+                    colors: [Color.white.opacity(0.18), Color.glassNeutral.opacity(0.08)],
                     startPoint: .top,
                     endPoint: .bottom
                 )
@@ -576,7 +567,7 @@ private struct LiquidGlass: View {
 
             // Ободок: капля без чуть уменьшенной копии самой себя.
             LinearGradient(
-                colors: [.white.opacity(0.95), Color.glassNeutral.opacity(0.35)],
+                colors: [.white, Color.glassNeutral.opacity(0.5)],
                 startPoint: .top,
                 endPoint: .bottom
             )
@@ -587,6 +578,16 @@ private struct LiquidGlass: View {
                 }
                 .compositingGroup()
             }
+
+            // Тонкий внешний контур — чтобы прозрачную каплю было видно на светлом фоне.
+            Color.glassNeutral.opacity(0.45)
+                .mask {
+                    ZStack {
+                        shape(threshold: 0.5)
+                        shape(threshold: 0.56).blendMode(.destinationOut)
+                    }
+                    .compositingGroup()
+                }
         }
         .allowsHitTesting(false)
     }
