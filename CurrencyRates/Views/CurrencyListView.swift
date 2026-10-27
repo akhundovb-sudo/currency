@@ -90,7 +90,7 @@ struct CurrencyListView: View {
                         // в карточку — выбор валюты, в отступ вокруг — закрыть клавиатуру.
                         .onTapGesture(coordinateSpace: .local) { location in
                             if isInsideCard(location, rowSize: rowSizes.sizes[code]) {
-                                startEditing(code, proxy: proxy, tapInRow: location)
+                                startEditing(code, proxy: proxy)
                             } else {
                                 hideKeypad()
                             }
@@ -171,23 +171,7 @@ struct CurrencyListView: View {
                         onClear: { withAnimation { store.amountText = "" } },
                         onDone: hideKeypad
                     )
-                    .background {
-                        GeometryReader { geo in
-                            Color.clear
-                                // Берём высоту, а не положение: клавиатура выезжает снизу,
-                                // и в момент появления её верх ещё за краем экрана.
-                                .onAppear { rowSizes.keypadHeight = geo.size.height }
-                                .onChange(of: geo.size.height) { _, height in rowSizes.keypadHeight = height }
-                        }
-                    }
                     .transition(.move(edge: .bottom).combined(with: .opacity))
-                }
-            }
-            .background {
-                GeometryReader { geo in
-                    Color.clear
-                        .onAppear { rowSizes.listBottom = geo.frame(in: .global).maxY }
-                        .onChange(of: geo.frame(in: .global).maxY) { _, bottom in rowSizes.listBottom = bottom }
                 }
             }
         }
@@ -259,7 +243,7 @@ struct CurrencyListView: View {
         }
     }
 
-    private func startEditing(_ code: String, proxy: ScrollViewProxy, tapInRow: CGPoint) {
+    private func startEditing(_ code: String, proxy: ScrollViewProxy) {
         guard !editMode.isEditing else { return }
         if code != store.sourceCode || !isKeypadVisible {
             UISelectionFeedbackGenerator().selectionChanged()
@@ -267,31 +251,14 @@ struct CurrencyListView: View {
         store.beginEditing(code)
         let wasVisible = isKeypadVisible
         withAnimation(Self.keypadAnimation) { isKeypadVisible = true }
-        // Список прокручивается, только если карточка окажется под клавиатурой;
-        // видимая карточка остаётся на месте.
-        let keypadHeight = max(rowSizes.keypadHeight ?? Self.estimatedKeypadHeight, Self.minimumKeypadHeight)
-        let keypadTop = rowSizes.listBottom - keypadHeight
-        // Точка касания на экране — по ней видно, где сейчас карточка
-        // (положение строк List при прокрутке не отслеживается надёжно).
-        if let tap = TouchTracker.lastLocation, let rowHeight = rowSizes.sizes[code]?.height {
-            // Низ карточки на экране: точка нажатия минус её смещение внутри строки, плюс высота строки.
-            let cardBottom = tap.y - tapInRow.y + rowHeight - Self.rowPadding.height
-            guard cardBottom > keypadTop - 8 else { return }
-        }
         Task {
-            // Кадр на то, чтобы под списком появился запас для прокрутки; дальше список
-            // поднимается одним плавным движением вместе с выезжающей клавиатурой.
-            if !wasVisible { try? await Task.sleep(for: .milliseconds(30)) }
-            // Не к нижнему краю (он может оказаться под клавиатурой), а чуть выше середины экрана —
-            // там карточка точно видна.
-            withAnimation(Self.keypadAnimation) { proxy.scrollTo(code, anchor: UnitPoint(x: 0.5, y: 0.35)) }
+            // Ждём, пока клавиатура займёт место внизу списка: тогда прокрутка её учитывает.
+            if !wasVisible { try? await Task.sleep(for: .milliseconds(80)) }
+            // Без якоря список прокручивается ровно настолько, чтобы карточка стала видна
+            // целиком над клавиатурой; если она и так видна — ничего не двигается.
+            withAnimation(Self.keypadAnimation) { proxy.scrollTo(code) }
         }
     }
-
-    /// Высота клавиатуры до первого показа, пока её не измерили.
-    private static let estimatedKeypadHeight: CGFloat = 380
-    /// Меньше клавиатура не бывает — защита от неверного замера.
-    private static let minimumKeypadHeight: CGFloat = 280
 
     private func hideKeypad() {
         withAnimation(Self.keypadAnimation) { isKeypadVisible = false }
@@ -460,10 +427,6 @@ struct SourceFooter: View {
 /// Хранилище размеров строк без наблюдения SwiftUI.
 final class RowSizeStore {
     var sizes: [String: CGSize] = [:]
-    /// Высота клавиатуры, измеренная при прошлом показе.
-    var keypadHeight: CGFloat?
-    /// Низ списка на экране.
-    var listBottom: CGFloat = 0
 }
 
 /// Скруглённый прямоугольник карточки внутри строки с отступами.
