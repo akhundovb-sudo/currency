@@ -281,9 +281,11 @@ struct CurrencyListView: View {
             guard cardBottom > keypadTop - 8 else { return }
         }
         Task {
-            // Ждём, пока клавиатура займёт место внизу, иначе прокрутка не учтёт её.
-            if !wasVisible { try? await Task.sleep(for: .milliseconds(250)) }
-            withAnimation(.snappy) { proxy.scrollTo(code, anchor: .bottom) }
+            // Ждём, пока клавиатура займёт место внизу и под списком появится запас для прокрутки.
+            if !wasVisible { try? await Task.sleep(for: .milliseconds(300)) }
+            // Не к нижнему краю (он может оказаться под клавиатурой), а чуть выше середины экрана —
+            // там карточка точно видна.
+            withAnimation(.snappy) { proxy.scrollTo(code, anchor: UnitPoint(x: 0.5, y: 0.35)) }
         }
     }
 
