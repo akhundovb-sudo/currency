@@ -539,8 +539,9 @@ struct HiddenBarBackground: ViewModifier {
 /// Размытие под панелью: лёгкое матовое стекло под кнопками и заголовком,
 /// ниже плавно сходит на нет — без линии и без плотной белой дымки.
 private struct ProgressiveTopBlur: View {
-    /// На сколько ниже панели продолжается затухание.
-    private let fadeLength: CGFloat = 32
+    /// Размытие заканчивается чуть ниже панели: содержимое в покое под него не попадает
+    /// (в модальных окнах оно начинается сразу под заголовком).
+    private let fadeLength: CGFloat = 6
 
     var body: some View {
         GeometryReader { proxy in
@@ -552,7 +553,7 @@ private struct ProgressiveTopBlur: View {
                     LinearGradient(
                         stops: [
                             .init(color: .black, location: 0),
-                            .init(color: .black.opacity(0.85), location: barBottom / height * 0.8),
+                            .init(color: .black.opacity(0.85), location: barBottom / height * 0.55),
                             .init(color: .clear, location: 1),
                         ],
                         startPoint: .top,
