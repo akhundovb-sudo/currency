@@ -259,32 +259,30 @@ struct SwipeToDelete: ViewModifier {
                     .accessibilityLabel(label)
                 }
             }
-            .simultaneousGesture(
-                DragGesture(minimumDistance: 16)
-                    .onChanged { value in
-                        guard isEnabled else { return }
-                        // Только горизонтальный жест: вертикальный — прокрутка списка.
-                        if !isDragging {
-                            guard abs(value.translation.width) > abs(value.translation.height) else { return }
-                            isDragging = true
-                            startOffset = offset
-                        }
-                        offset = min(0, startOffset + value.translation.width)
-                    }
-                    .onEnded { _ in
-                        guard isDragging else { return }
-                        isDragging = false
-                        if -offset > 220 {
-                            delete()
-                        } else {
-                            withAnimation(.snappy) { offset = -offset > revealWidth / 2 ? -(revealWidth + gap) : 0 }
-                        }
-                    }
-            )
+            .modifier(HorizontalSwipe(onChanged: dragChanged, onEnded: dragEnded))
             .onChange(of: isEnabled) { _, enabled in
                 if !enabled { withAnimation(.snappy) { offset = 0 } }
             }
             .accessibilityAction(named: label) { if isEnabled { delete() } }
+    }
+
+    private func dragChanged(_ translation: CGFloat) {
+        guard isEnabled else { return }
+        if !isDragging {
+            isDragging = true
+            startOffset = offset
+        }
+        offset = min(0, startOffset + translation)
+    }
+
+    private func dragEnded() {
+        guard isDragging else { return }
+        isDragging = false
+        if -offset > 220 {
+            delete()
+        } else {
+            withAnimation(.snappy) { offset = -offset > revealWidth / 2 ? -(revealWidth + gap) : 0 }
+        }
     }
 
     private func delete() {
@@ -297,6 +295,64 @@ struct SwipeToDelete: ViewModifier {
         withAnimation(.snappy) {
             offset = 0
             onDelete()
+        }
+    }
+}
+
+/// Горизонтальный жест свайпа. Вертикальное движение всегда остаётся списку:
+/// иначе прокрутка и «потяните, чтобы обновить» срабатывали через раз.
+private struct HorizontalSwipe: ViewModifier {
+    let onChanged: (CGFloat) -> Void
+    let onEnded: () -> Void
+
+    func body(content: Content) -> some View {
+        if #available(iOS 18, *) {
+            // Системный жест UIKit: начинается, только если палец идёт вбок,
+            // и не отнимает вертикальный свайп у прокрутки.
+            content.gesture(HorizontalPanGesture(onChanged: onChanged, onEnded: onEnded))
+        } else {
+            content.simultaneousGesture(
+                DragGesture(minimumDistance: 16)
+                    .onChanged { value in
+                        guard abs(value.translation.width) > abs(value.translation.height) else { return }
+                        onChanged(value.translation.width)
+                    }
+                    .onEnded { _ in onEnded() }
+            )
+        }
+    }
+}
+
+@available(iOS 18, *)
+private struct HorizontalPanGesture: UIGestureRecognizerRepresentable {
+    let onChanged: (CGFloat) -> Void
+    let onEnded: () -> Void
+
+    func makeCoordinator(converter: CoordinateSpaceConverter) -> Coordinator { Coordinator() }
+
+    func makeUIGestureRecognizer(context: Context) -> UIPanGestureRecognizer {
+        let pan = UIPanGestureRecognizer()
+        pan.delegate = context.coordinator
+        return pan
+    }
+
+    func handleUIGestureRecognizerAction(_ recognizer: UIPanGestureRecognizer, context: Context) {
+        switch recognizer.state {
+        case .began, .changed:
+            onChanged(recognizer.translation(in: recognizer.view).x)
+        case .ended, .cancelled, .failed:
+            onEnded()
+        default:
+            break
+        }
+    }
+
+    final class Coordinator: NSObject, UIGestureRecognizerDelegate {
+        /// Начинаем только при движении вбок; вертикальное — прокрутка списка.
+        func gestureRecognizerShouldBegin(_ recognizer: UIGestureRecognizer) -> Bool {
+            guard let pan = recognizer as? UIPanGestureRecognizer else { return true }
+            let velocity = pan.velocity(in: pan.view)
+            return abs(velocity.x) > abs(velocity.y) * 1.2
         }
     }
 }
