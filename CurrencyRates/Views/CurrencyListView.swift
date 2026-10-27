@@ -503,9 +503,9 @@ struct IslandRefreshIndicator: View {
     @State private var startedAt: Date?
     @State private var endedAt: Date?
 
-    private let dropDistance: CGFloat = 60
-    private let coinRadius: CGFloat = 17
-    private let orbit: CGFloat = 22
+    private let dropDistance: CGFloat = 84
+    private let coinRadius: CGFloat = 21
+    private let orbit: CGFloat = 27
     private let period: Double = 1.4
     private let inDuration: Double = 0.55
     private let outDuration: Double = 0.4
@@ -591,7 +591,7 @@ struct IslandRefreshIndicator: View {
             ForEach(items.indices, id: \.self) { index in
                 let item = items[index]
                 Text(verbatim: item.glyph)
-                    .font(.system(size: 18, weight: .bold, design: .rounded))
+                    .font(.system(size: 22, weight: .bold, design: .rounded))
                     .foregroundStyle(.white)
                     .scaleEffect(0.82 + 0.18 * item.depth)
                     .opacity(Double(amount) * (0.5 + 0.5 * item.depth))
