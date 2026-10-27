@@ -487,12 +487,13 @@ struct TopFade: View {
     }
 }
 
-/// Постепенное размытие под панелью для iOS до 26, где нет системного мягкого края:
-/// несколько слоёв матового стекла, каждый заканчивается чуть ниже предыдущего, —
-/// сверху размытие сильное, к низу плавно сходит на нет, без резкой границы.
+/// Размытие под панелью для iOS до 26, где нет системного мягкого края.
+/// Под кнопками и заголовком — тот же плотный материал, что у системной панели;
+/// ниже он не обрывается линией, а плавно растворяется, и дальше ещё немного
+/// тянется лёгкое размытие.
 private struct ProgressiveTopBlur: View {
-    /// На сколько ниже кнопок продолжается затухание.
-    private let fadeLength: CGFloat = 44
+    /// На сколько ниже панели продолжается затухание.
+    private let fadeLength: CGFloat = 48
 
     var body: some View {
         GeometryReader { proxy in
@@ -500,32 +501,34 @@ private struct ProgressiveTopBlur: View {
             let height = barBottom + fadeLength
             let solid = barBottom / height
             ZStack {
-                ForEach(0..<3, id: \.self) { layer in
-                    let step = Double(layer)
-                    Rectangle()
-                        .fill(.ultraThinMaterial)
-                        .mask {
-                            LinearGradient(
-                                stops: [
-                                    .init(color: .black, location: 0),
-                                    .init(color: .black, location: solid * (1 - 0.3 * step)),
-                                    .init(color: .clear, location: 1 - 0.25 * step),
-                                ],
-                                startPoint: .top,
-                                endPoint: .bottom
-                            )
-                        }
-                }
-                // Лёгкий оттенок фона, чтобы кнопки читались на любом содержимом.
-                LinearGradient(
-                    stops: [
-                        .init(color: Color(.systemGroupedBackground).opacity(0.55), location: 0),
-                        .init(color: Color(.systemGroupedBackground).opacity(0.35), location: solid),
-                        .init(color: Color(.systemGroupedBackground).opacity(0), location: 1),
-                    ],
-                    startPoint: .top,
-                    endPoint: .bottom
-                )
+                // Лёгкое размытие, уходящее ниже всего.
+                Rectangle()
+                    .fill(.ultraThinMaterial)
+                    .mask {
+                        LinearGradient(
+                            stops: [
+                                .init(color: .black, location: 0),
+                                .init(color: .black, location: solid),
+                                .init(color: .clear, location: 1),
+                            ],
+                            startPoint: .top,
+                            endPoint: .bottom
+                        )
+                    }
+                // Плотный материал панели: сплошной под кнопками, затем плавно сходит на нет.
+                Rectangle()
+                    .fill(.bar)
+                    .mask {
+                        LinearGradient(
+                            stops: [
+                                .init(color: .black, location: 0),
+                                .init(color: .black, location: solid * 0.92),
+                                .init(color: .clear, location: solid + (1 - solid) * 0.6),
+                            ],
+                            startPoint: .top,
+                            endPoint: .bottom
+                        )
+                    }
             }
             .frame(height: height)
         }
