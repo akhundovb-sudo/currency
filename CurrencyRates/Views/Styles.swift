@@ -443,46 +443,42 @@ struct AccentBubbleStyle: ButtonStyle {
     }
 }
 
+/// Мягкий системный край прокрутки сверху (iOS 26); в более ранних версиях его нет.
+struct SoftTopEdge: ViewModifier {
+    func body(content: Content) -> some View {
+        if #available(iOS 26, *) {
+            content.scrollEdgeEffectStyle(.soft, for: .top)
+        } else {
+            content
+        }
+    }
+}
+
 /// Мягкий переход под верхней панелью: размытие и цвет фона плавно сходят на нет к низу,
 /// без видимой линии при прокрутке.
 struct TopFade: View {
-    /// На сколько ниже панели размытие плавно сходит на нет.
-    private let fadeLength: CGFloat = 28
-
     var body: some View {
         GeometryReader { proxy in
-            let barBottom = Self.barHeight(reported: proxy.safeAreaInsets.top)
-            let height = barBottom + fadeLength
-            // Материал панели: под кнопками — сплошное размытие, ниже — плавно исчезает.
-            Rectangle()
-                .fill(.bar)
-                .mask {
-                    LinearGradient(
-                        stops: [
-                            .init(color: .black, location: 0),
-                            .init(color: .black, location: barBottom / height),
-                            .init(color: .clear, location: 1),
-                        ],
-                        startPoint: .top,
-                        endPoint: .bottom
-                    )
-                }
-                .frame(height: height)
+            ZStack {
+                Rectangle().fill(.ultraThinMaterial)
+                Color(.systemGroupedBackground).opacity(0.75)
+            }
+            .mask {
+                LinearGradient(
+                    stops: [
+                        .init(color: .black, location: 0),
+                        .init(color: .black, location: 0.55),
+                        .init(color: .clear, location: 1),
+                    ],
+                    startPoint: .top,
+                    endPoint: .bottom
+                )
+            }
+            .frame(height: proxy.safeAreaInsets.top + 28)
         }
         .ignoresSafeArea(edges: .top)
         .allowsHitTesting(false)
         .accessibilityHidden(true)
-    }
-
-    /// Высота статус-бара и панели навигации. Если SwiftUI сообщил подозрительно малый отступ,
-    /// берём отступ окна плюс стандартную высоту панели.
-    @MainActor
-    private static func barHeight(reported: CGFloat) -> CGFloat {
-        if reported > 30 { return reported }
-        let window = UIApplication.shared.connectedScenes
-            .compactMap { ($0 as? UIWindowScene)?.keyWindow }
-            .first
-        return (window?.safeAreaInsets.top ?? 59) + 44
     }
 }
 
@@ -490,6 +486,7 @@ extension View {
     /// Верхняя панель без фона и без линии: содержимое под ней мягко размывается и затухает.
     func softTopBar() -> some View {
         toolbarBackground(.hidden, for: .navigationBar)
+            .modifier(SoftTopEdge())
             .overlay(alignment: .top) { TopFade() }
     }
 }
