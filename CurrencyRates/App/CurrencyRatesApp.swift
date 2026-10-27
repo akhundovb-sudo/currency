@@ -6,10 +6,8 @@ struct CurrencyRatesApp: App {
     @State private var store = RatesStore.live()
 
     init() {
-        // В iOS 26 у панели системный мягкий край прокрутки; своё оформление
-        // возвращало бы старую панель с размытием и резкой нижней границей.
-        if #available(iOS 26, *) { return }
-        // Раньше iOS 26 системная панель полностью прозрачная: у её размытия резкий нижний край.
+        // Системная панель полностью прозрачная на всех версиях iOS: у её размытия резкий
+        // нижний край, а вид системного края прокрутки меняется от версии к версии.
         // Плавное размытие под кнопками рисует TopFade.
         let standard = UINavigationBarAppearance()
         standard.configureWithTransparentBackground()

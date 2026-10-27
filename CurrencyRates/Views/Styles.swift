@@ -499,43 +499,34 @@ struct AccentBubbleStyle: ButtonStyle {
     }
 }
 
-/// Мягкий системный край прокрутки сверху (iOS 26); в более ранних версиях его нет.
+/// Выключает системный край прокрутки сверху (iOS 26+): его вид меняется от версии к версии
+/// и даёт линию; размытие под панелью рисует TopFade.
 struct SoftTopEdge: ViewModifier {
     func body(content: Content) -> some View {
         if #available(iOS 26, *) {
-            content.scrollEdgeEffectStyle(.soft, for: .top)
+            content.scrollEdgeEffectHidden(true, for: .top)
         } else {
             content
         }
     }
 }
 
-/// Мягкий переход под верхней панелью: размытие и цвет фона плавно сходят на нет к низу,
-/// без видимой линии при прокрутке.
+/// Мягкий переход под верхней панелью: плотное размытие под кнопками,
+/// плавно сходящее на нет ниже, — одинаково на всех версиях iOS.
 struct TopFade: View {
     var body: some View {
-        if #available(iOS 26, *) {
-            // В iOS 26 всё делает системный мягкий край прокрутки.
-            EmptyView()
-        } else {
-            ProgressiveTopBlur()
-        }
+        ProgressiveTopBlur()
     }
 }
 
-/// Прячет фон системной панели только до iOS 26 — там размытие рисует TopFade.
-/// В iOS 26 скрытый фон панели выключает и системный мягкий край, и фона нет совсем.
+/// Прячет фон системной панели — размытие рисует TopFade.
 struct HiddenBarBackground: ViewModifier {
     func body(content: Content) -> some View {
-        if #available(iOS 26, *) {
-            content
-        } else {
-            content.toolbarBackground(.hidden, for: .navigationBar)
-        }
+        content.toolbarBackground(.hidden, for: .navigationBar)
     }
 }
 
-/// Размытие под панелью для iOS до 26, где нет системного мягкого края.
+/// Размытие под панелью.
 /// Под кнопками и заголовком — тот же плотный материал, что у системной панели;
 /// ниже он не обрывается линией, а плавно растворяется, и дальше ещё немного
 /// тянется лёгкое размытие.
