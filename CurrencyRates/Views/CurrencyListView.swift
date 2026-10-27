@@ -499,46 +499,117 @@ struct ShakeEffect: GeometryEffect {
     }
 }
 
-/// Индикатор обновления: монеты «$» и BTC кружат друг вокруг друга, как карусель —
-/// передняя крупнее и поверх, задняя меньше и бледнее.
+/// Индикатор обновления: две стеклянные монеты с $ и ₿ кружат друг вокруг друга
+/// и, встречаясь, перетекают одна в другую, как капли жидкости.
 struct SpinningCoins: View {
-    private let radius: CGFloat = 18
-    private let period: Double = 1.1
+    private let orbit: CGFloat = 16
+    private let coinRadius: CGFloat = 15
+    private let period: Double = 1.4
 
     var body: some View {
         TimelineView(.animation) { context in
             let t = context.date.timeIntervalSinceReferenceDate
             let angle = (t.truncatingRemainder(dividingBy: period) / period) * 2 * .pi
+            let coins = [coin(angle: angle, glyph: "$"), coin(angle: angle + .pi, glyph: "₿")]
             ZStack {
-                orbiting(CoinGlyph(text: "$", color: .primary), angle: angle)
-                orbiting(CoinGlyph(text: "₿", color: .primary), angle: angle + .pi)
+                LiquidGlass(blobs: coins.map { ($0.offset, $0.radius) })
+                ForEach(coins.indices, id: \.self) { index in
+                    let item = coins[index]
+                    Text(verbatim: item.glyph)
+                        .font(.system(size: 17, weight: .bold, design: .rounded))
+                        .foregroundStyle(Color.accentColor)
+                        .scaleEffect(item.scale)
+                        .opacity(0.45 + 0.55 * item.depth)
+                        .offset(x: item.offset)
+                        .zIndex(item.depth)
+                }
             }
-            .frame(width: 34 + radius * 2, height: 40)
+            .frame(width: (orbit + coinRadius) * 2 + 8, height: coinRadius * 2 + 10)
         }
         .accessibilityElement()
         .accessibilityLabel(L(.loading))
     }
 
-    private func orbiting(_ coin: some View, angle: Double) -> some View {
+    private struct Coin {
+        let glyph: String
+        let offset: CGFloat
+        let radius: CGFloat
+        let scale: CGFloat
+        let depth: Double
+    }
+
+    private func coin(angle: Double, glyph: String) -> Coin {
         let depth = (cos(angle) + 1) / 2   // 1 — спереди, 0 — сзади
-        return coin
-            .frame(width: 34, height: 34)
-            .scaleEffect(0.75 + 0.25 * depth)
-            .opacity(0.55 + 0.45 * depth)
-            .offset(x: radius * sin(angle))
-            .zIndex(depth)
+        let scale = 0.8 + 0.2 * depth
+        return Coin(
+            glyph: glyph,
+            offset: orbit * sin(angle),
+            radius: coinRadius * scale,
+            scale: scale,
+            depth: depth
+        )
     }
 }
 
-/// Знак валюты без фона, чёрный (в тёмной теме — белый).
-struct CoinGlyph: View {
-    let text: String
-    let color: Color
+/// Стеклянные капли, сливающиеся при сближении: круги размываются и обрезаются по порогу
+/// прозрачности (метаболы). Заливка — лёгкое матовое стекло с оттенком акцента, блик и белый ободок.
+private struct LiquidGlass: View {
+    /// Смещение центра по горизонтали и радиус каждой капли.
+    let blobs: [(CGFloat, CGFloat)]
 
     var body: some View {
-        Text(verbatim: text)
-            .font(.system(size: 30, weight: .bold, design: .rounded))
-            .foregroundStyle(color)
+        ZStack {
+            // Тело стекла.
+            ZStack {
+                Rectangle().fill(.ultraThinMaterial)
+                LinearGradient(
+                    colors: [Color.accentColor.opacity(0.28), Color.accentColor.opacity(0.1)],
+                    startPoint: .top,
+                    endPoint: .bottom
+                )
+                // Блик сверху.
+                LinearGradient(
+                    colors: [.white.opacity(0.55), .white.opacity(0)],
+                    startPoint: .top,
+                    endPoint: .center
+                )
+            }
+            .mask { shape(threshold: 0.5) }
+
+            // Ободок: капля без чуть уменьшенной копии самой себя.
+            LinearGradient(
+                colors: [.white.opacity(0.95), Color.accentColor.opacity(0.35)],
+                startPoint: .top,
+                endPoint: .bottom
+            )
+            .mask {
+                ZStack {
+                    shape(threshold: 0.5)
+                    shape(threshold: 0.78).blendMode(.destinationOut)
+                }
+                .compositingGroup()
+            }
+        }
+        .allowsHitTesting(false)
+    }
+
+    /// Слитый силуэт капель; чем выше порог, тем он тоньше.
+    private func shape(threshold: Double) -> some View {
+        Canvas { context, size in
+            context.addFilter(.alphaThreshold(min: threshold, color: .white))
+            context.addFilter(.blur(radius: 5))
+            context.drawLayer { layer in
+                for (offset, radius) in blobs {
+                    let rect = CGRect(
+                        x: size.width / 2 + offset - radius,
+                        y: size.height / 2 - radius,
+                        width: radius * 2,
+                        height: radius * 2
+                    )
+                    layer.fill(Path(ellipseIn: rect), with: .color(.white))
+                }
+            }
+        }
     }
 }
 
