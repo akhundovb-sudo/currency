@@ -178,11 +178,11 @@ struct CurrencyIcon: View {
                     )
                     Circle().strokeBorder(
                         LinearGradient(
-                            colors: [.white.opacity(0.7), .white.opacity(0.1)],
+                            colors: [.white.opacity(0.85), .white.opacity(0.2)],
                             startPoint: .top,
                             endPoint: .bottom
                         ),
-                        lineWidth: 1.5
+                        lineWidth: 2.5
                     )
                 }
                 .allowsHitTesting(false)

@@ -30,6 +30,8 @@ struct CurrencyListView: View {
             .navigationTitle(L(.title))
             .navigationBarTitleDisplayMode(.inline)
             .toolbar { toolbar }
+            // Вместо панели с резкой нижней границей — плавное затухание сверху.
+            .toolbarBackground(.hidden, for: .navigationBar)
             .sheet(isPresented: $isAddPresented) {
                 AddCurrencyView()
             }
@@ -124,6 +126,8 @@ struct CurrencyListView: View {
                 if elapsed < 1.2 { try? await Task.sleep(for: .seconds(1.2 - elapsed)) }
                 withAnimation(.snappy) { isRefreshing = false }
             }
+            // Под тостом и монетами, чтобы не приглушать их.
+            .overlay(alignment: .top) { TopFade() }
             .overlay(alignment: .top) {
                 if let toast {
                     ToastView(text: toast)
@@ -498,5 +502,33 @@ struct ToastView: View {
         .background { CardBubbleBackground() }
         .padding(.horizontal, 24)
         .accessibilityAddTraits(.isStaticText)
+    }
+}
+
+/// Мягкий переход под верхней панелью: размытие и цвет фона плавно сходят на нет к низу,
+/// без видимой линии при прокрутке.
+private struct TopFade: View {
+    var body: some View {
+        GeometryReader { proxy in
+            ZStack {
+                Rectangle().fill(.ultraThinMaterial)
+                Color(.systemGroupedBackground).opacity(0.75)
+            }
+            .mask {
+                LinearGradient(
+                    stops: [
+                        .init(color: .black, location: 0),
+                        .init(color: .black, location: 0.55),
+                        .init(color: .clear, location: 1),
+                    ],
+                    startPoint: .top,
+                    endPoint: .bottom
+                )
+            }
+            .frame(height: proxy.safeAreaInsets.top + 28)
+        }
+        .ignoresSafeArea(edges: .top)
+        .allowsHitTesting(false)
+        .accessibilityHidden(true)
     }
 }
