@@ -258,13 +258,31 @@ private struct ProBadge: View {
             .foregroundStyle(Color.accentColor)
             .padding(.horizontal, 8)
             .frame(height: 22)
-            // Белая плашка с текстом цвета акцента; тонкий ободок и тень отделяют её от светлого фона.
+            // Стекло, как у кружков выбора: лёгкое свечение акцента внутри, белый ободок
+            // и тонкая цветная обводка. Без тени.
             .background {
-                Capsule()
-                    .fill(.white)
-                    .overlay(Capsule().strokeBorder(Color.accentColor.opacity(0.3), lineWidth: 1))
-                    .shadow(color: Color.accentColor.opacity(0.15), radius: 3, y: 1)
+                ZStack {
+                    Capsule().fill(Color(.systemBackground))
+                    Capsule().fill(
+                        RadialGradient(
+                            colors: [Color.accentColor.opacity(0.14), Color.accentColor.opacity(0.03)],
+                            center: .center,
+                            startRadius: 0,
+                            endRadius: 30
+                        )
+                    )
+                    Capsule().strokeBorder(
+                        LinearGradient(
+                            colors: [.white, .white.opacity(0.7)],
+                            startPoint: .top,
+                            endPoint: .bottom
+                        ),
+                        lineWidth: 1.5
+                    )
+                    Capsule().strokeBorder(Color.accentColor.opacity(0.35), lineWidth: 0.75)
+                }
             }
+            .modifier(ClearGlassOverlay())
             .accessibilityHidden(true)
     }
 }
