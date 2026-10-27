@@ -51,6 +51,8 @@ struct AddCurrencyView: View {
         Group {
             List(results) { currency in
                 let isAdded = store.contains(currency.code)
+                // Бесплатный лимит исчерпан: остальные валюты — только с Pro.
+                let isLocked = !isAdded && !store.canAddMore
                 // Окно не закрывается: можно отметить несколько валют подряд.
                 // Повторное нажатие убирает валюту (минимум две остаются).
                 Button {
@@ -59,11 +61,11 @@ struct AddCurrencyView: View {
                         if isAdded { store.remove(currency.code) } else { store.add(currency.code) }
                     }
                 } label: {
-                    CurrencySelectRow(currency: currency, isSelected: isAdded)
+                    CurrencySelectRow(currency: currency, isSelected: isAdded, isLocked: isLocked)
                 }
                 .buttonStyle(.plain)
-                .disabled(isAdded && !store.canRemove)
-                .accessibilityHint(isAdded ? L(.alreadyAdded) : L(.addToList))
+                .disabled((isAdded && !store.canRemove) || isLocked)
+                .accessibilityHint(isLocked ? L(.proOnly) : isAdded ? L(.alreadyAdded) : L(.addToList))
             }
             .overlay {
                 if results.isEmpty {

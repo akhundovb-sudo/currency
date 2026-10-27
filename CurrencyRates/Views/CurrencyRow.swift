@@ -249,10 +249,25 @@ private struct SelectionBubble: View {
     }
 }
 
-/// Строка выбора валюты с галочкой.
+/// Тег «PRO» у валют, доступных только с подпиской.
+private struct ProBadge: View {
+    var body: some View {
+        Text("PRO")
+            .font(.system(size: 11, weight: .heavy, design: .rounded))
+            .tracking(0.5)
+            .foregroundStyle(.white)
+            .padding(.horizontal, 8)
+            .frame(height: 22)
+            .background(Capsule().fill(Color.accentColor.gradient))
+            .accessibilityHidden(true)
+    }
+}
+
+/// Строка выбора валюты с галочкой; без подписки сверх лимита — с тегом «PRO».
 struct CurrencySelectRow: View {
     let currency: Currency
     let isSelected: Bool
+    var isLocked = false
 
     var body: some View {
         HStack(spacing: 12) {
@@ -267,7 +282,12 @@ struct CurrencySelectRow: View {
                     .lineLimit(1)
             }
             Spacer(minLength: 8)
-            SelectionBubble(isSelected: isSelected)
+            if isLocked {
+                ProBadge()
+                    .transition(.scale.combined(with: .opacity))
+            } else {
+                SelectionBubble(isSelected: isSelected)
+            }
         }
         .contentShape(.rect)
         .accessibilityElement(children: .ignore)
@@ -282,6 +302,7 @@ struct CurrencySelectRow: View {
         CurrencyRow(code: "EUR", sourceCode: "USD", value: "92", unitRate: 0.92)
         CurrencyRow(code: "BTC", sourceCode: "USD", value: "0,00125", unitRate: 0.0000125)
         CurrencySelectRow(currency: Currency(code: "GBP"), isSelected: true)
+        CurrencySelectRow(currency: Currency(code: "JPY"), isSelected: false, isLocked: true)
     }
 }
 

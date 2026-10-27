@@ -9,6 +9,15 @@ struct SettingsView: View {
 
         NavigationStack {
             Form {
+                if !store.isPro {
+                    Section {
+                        // Покупки пока не подключены — экран подписки появится позже.
+                        ProBanner()
+                            .listRowInsets(EdgeInsets())
+                            .listRowBackground(Color.clear)
+                    }
+                }
+
                 Section(L(.appearance)) {
                     Picker(L(.language), selection: $store.language) {
                         ForEach(AppLanguage.allCases) { language in
