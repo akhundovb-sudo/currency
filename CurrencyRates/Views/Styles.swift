@@ -3,8 +3,8 @@ import UIKit
 import CoreText
 
 extension Font {
-    /// Шрифт сумм — SF Pro Rounded Semibold, масштабируется с Dynamic Type.
-    static let amount = Font.system(.title2, design: .rounded).weight(.semibold)
+    /// Шрифт сумм — SF Pro Rounded Bold, масштабируется с Dynamic Type.
+    static let amount = Font.system(.title2, design: .rounded).weight(.bold)
 }
 
 /// Иконка из Assets/Icons (Iconoir, MIT; толщина линий 2) нужного размера.
@@ -30,7 +30,7 @@ extension Color {
     static let amountHighlight = Color.accentColor
 
     /// Рамка выбранной карточки — светлый приглушённый синий.
-    static let selectionBorder = Color.dynamic(light: 0xB9C9F5, dark: 0x3A4E7A)
+    static let selectionBorder = Color.dynamic(light: 0xB6DAF6, dark: 0x2E5878)
 
     /// Фон карточки валюты (Semantic/Background/Primary в макете).
     static let cardBackground = Color(UIColor { traits in
@@ -207,6 +207,10 @@ extension ToolbarContent {
 /// Нажатие на блок или длинный свайп удаляют сразу.
 struct SwipeToDelete: ViewModifier {
     let isEnabled: Bool
+    /// Можно ли удалить. Если нет — блок серый, нажатие даёт вибрацию ошибки и закрывает свайп.
+    var canDelete = true
+    /// Вызывается при попытке удалить, когда удаление недоступно.
+    var onBlocked: () -> Void = {}
     let label: String
     let onDelete: () -> Void
 
@@ -235,7 +239,7 @@ struct SwipeToDelete: ViewModifier {
                         AppIcon("icon-trash", size: 24)
                             .foregroundStyle(.white)
                             .frame(maxWidth: .infinity, maxHeight: .infinity)
-                            .background { DeleteBlock(cornerRadius: 20) }
+                            .background { DeleteBlock(cornerRadius: 20, isDisabled: !canDelete) }
                     }
                     .buttonStyle(.plain)
                     .frame(width: max(0, -offset - gap))
@@ -271,6 +275,12 @@ struct SwipeToDelete: ViewModifier {
     }
 
     private func delete() {
+        guard canDelete else {
+            UINotificationFeedbackGenerator().notificationOccurred(.error)
+            withAnimation(.snappy) { offset = 0 }
+            onBlocked()
+            return
+        }
         withAnimation(.snappy) {
             offset = 0
             onDelete()
@@ -281,20 +291,28 @@ struct SwipeToDelete: ViewModifier {
 /// Красный блок удаления: ровная заливка, тонкий светлый ободок, лёгкая тень.
 struct DeleteBlock: View {
     var cornerRadius: CGFloat = 20
+    /// Удаление недоступно — серый блок.
+    var isDisabled = false
 
     static let red = Color.dynamic(light: 0xEF4444, dark: 0xF87171)
 
     var body: some View {
         let shape = RoundedRectangle(cornerRadius: cornerRadius, style: .continuous)
         shape
-            .fill(Self.red.gradient)
+            .fill(isDisabled ? Color(.systemGray3).gradient : Self.red.gradient)
             .overlay(shape.strokeBorder(.white.opacity(0.35), lineWidth: 1))
     }
 }
 
 extension View {
-    func swipeToDelete(isEnabled: Bool, label: String, onDelete: @escaping () -> Void) -> some View {
-        modifier(SwipeToDelete(isEnabled: isEnabled, label: label, onDelete: onDelete))
+    func swipeToDelete(
+        isEnabled: Bool,
+        canDelete: Bool = true,
+        onBlocked: @escaping () -> Void = {},
+        label: String,
+        onDelete: @escaping () -> Void
+    ) -> some View {
+        modifier(SwipeToDelete(isEnabled: isEnabled, canDelete: canDelete, onBlocked: onBlocked, label: label, onDelete: onDelete))
     }
 }
 
@@ -384,5 +402,23 @@ struct EmptySpaceTapCatcher: UIViewRepresentable {
             if newWindow == nil, let installed { installed.view?.removeGestureRecognizer(installed); self.installed = nil }
             super.willMove(toWindow: newWindow)
         }
+    }
+}
+
+/// Главная кнопка («Готово»): заливка основным цветом, белый текст, светлый ободок.
+struct AccentBubbleStyle: ButtonStyle {
+    func makeBody(configuration: Configuration) -> some View {
+        configuration.label
+            .foregroundStyle(.white)
+            .background {
+                Capsule()
+                    .fill(Color.accentColor.gradient)
+                    .overlay(Capsule().strokeBorder(.white.opacity(0.3), lineWidth: 1))
+                    .shadow(color: Color.accentColor.opacity(0.3), radius: 8, y: 2)
+            }
+            .contentShape(Capsule())
+            .scaleEffect(configuration.isPressed ? 0.9 : 1)
+            .brightness(configuration.isPressed ? -0.06 : 0)
+            .animation(.spring(response: 0.25, dampingFraction: 0.55), value: configuration.isPressed)
     }
 }

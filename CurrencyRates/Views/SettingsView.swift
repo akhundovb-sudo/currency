@@ -77,7 +77,7 @@ struct SettingsView: View {
                             .padding(.horizontal, 16)
                             .frame(height: 44)
                     }
-                    .buttonStyle(CardBubbleStyle())
+                    .buttonStyle(AccentBubbleStyle())
                 }
                 .hidingSharedGlass()
             }

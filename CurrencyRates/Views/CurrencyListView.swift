@@ -7,6 +7,11 @@ struct CurrencyListView: View {
     @State private var isSettingsPresented = false
     @State private var editMode: EditMode = .inactive
     @State private var isKeypadVisible = false
+    @State private var isRefreshing = false
+    @State private var toast: String?
+    @State private var toastTask: Task<Void, Never>?
+    /// Счётчик «тряски» карточки ввода при переполнении суммы.
+    @State private var shakeCount = 0
     /// Размеры строк для определения, куда пришлось нажатие. Обычный класс, а не состояние:
     /// запись при прокрутке не должна перерисовывать весь список.
     @State private var rowSizes = RowSizeStore()
@@ -53,8 +58,9 @@ struct CurrencyListView: View {
                             idleSourceCaption: idleSourceCaption
                         )
                         .card(selected: code == store.sourceCode && isKeypadVisible)
+                        .modifier(ShakeEffect(shakes: code == store.sourceCode ? CGFloat(shakeCount) : 0))
                         }
-                        .swipeToDelete(isEnabled: store.canRemove && !editMode.isEditing, label: L(.delete)) {
+                        .swipeToDelete(isEnabled: !editMode.isEditing, canDelete: store.canRemove, onBlocked: showMinToast, label: L(.delete)) {
                             store.remove(code)
                         }
                         // Отступы вокруг карточки — часть строки: нажатие в них закрывает клавиатуру.
@@ -68,6 +74,11 @@ struct CurrencyListView: View {
                             }
                         }
                         .contentShape(Rectangle())
+                        // При перетаскивании поднимается только карточка, без отступов вокруг.
+                        .contentShape(
+                            .dragPreview,
+                            CardInsetShape(inset: Self.rowPadding, cornerRadius: 20)
+                        )
                         // В списке вся строка ловит нажатие, поэтому смотрим, куда оно пришлось:
                         // в карточку — выбор валюты, в отступ вокруг — закрыть клавиатуру.
                         .onTapGesture(coordinateSpace: .local) { location in
@@ -101,7 +112,32 @@ struct CurrencyListView: View {
             .scrollContentBackground(.hidden)
             .background(Color(.systemGroupedBackground))
             .environment(\.editMode, $editMode)
-            .refreshable { await store.refresh() }
+            .refreshable {
+                withAnimation(.snappy) { isRefreshing = true }
+                let started = Date.now
+                await store.refresh()
+                // Монеты успевают сделать хотя бы пару оборотов.
+                let elapsed = Date.now.timeIntervalSince(started)
+                if elapsed < 1.2 { try? await Task.sleep(for: .seconds(1.2 - elapsed)) }
+                withAnimation(.snappy) { isRefreshing = false }
+            }
+            .overlay(alignment: .top) {
+                if let toast {
+                    ToastView(text: toast)
+                        .padding(.top, 8)
+                        .transition(.move(edge: .top).combined(with: .opacity))
+                        .onTapGesture { withAnimation { self.toast = nil } }
+                }
+            }
+            // Вместо системного индикатора — крутящиеся монеты.
+            .overlay(alignment: .top) {
+                if isRefreshing {
+                    SpinningCoins()
+                        .padding(.top, 8)
+                        .transition(.scale(scale: 0.6).combined(with: .opacity))
+                }
+            }
+            .onAppear { UIRefreshControl.appearance().tintColor = .clear }
             .background {
                 EmptySpaceTapCatcher { if isKeypadVisible { hideKeypad() } }
             }
@@ -115,7 +151,12 @@ struct CurrencyListView: View {
                 if isKeypadVisible {
                     AmountKeypad(
                         onKey: { key in
-                            withAnimation(.snappy(duration: 0.2)) { store.press(key) }
+                            let accepted = withAnimation(.snappy(duration: 0.2)) { store.press(key) }
+                            if !accepted {
+                                // Не помещается: тряска карточки и вибрация ошибки.
+                                UINotificationFeedbackGenerator().notificationOccurred(.error)
+                                withAnimation(.linear(duration: 0.3)) { shakeCount += 1 }
+                            }
                         },
                         onClear: { withAnimation { store.amountText = "" } },
                         onDone: hideKeypad
@@ -130,16 +171,19 @@ struct CurrencyListView: View {
     /// Минимум две валюты — последние две удалить нельзя.
     private func deleteButton(for code: String) -> some View {
         Button {
+            guard store.canRemove else {
+                UINotificationFeedbackGenerator().notificationOccurred(.error)
+                showMinToast()
+                return
+            }
             withAnimation(.snappy) { store.remove(code) }
         } label: {
             AppIcon("icon-minus", size: 18)
                 .foregroundStyle(.white)
                 .frame(width: 36, height: 36)
-                .background { DeleteBlock(cornerRadius: 18) } // круг: половина стороны 36
+                .background { DeleteBlock(cornerRadius: 18, isDisabled: !store.canRemove) } // круг: половина стороны 36
         }
         .buttonStyle(.plain)
-        .disabled(!store.canRemove)
-        .opacity(store.canRemove ? 1 : 0.4)
         .accessibilityLabel("\(L(.delete)) \(code)")
     }
 
@@ -163,6 +207,17 @@ struct CurrencyListView: View {
         let card = CGRect(origin: .zero, size: size)
             .insetBy(dx: Self.rowPadding.width, dy: Self.rowPadding.height)
         return card.contains(point)
+    }
+
+    /// Всплывающее сообщение: последние две валюты удалить нельзя. Скрывается через 2,5 с.
+    private func showMinToast() {
+        toastTask?.cancel()
+        withAnimation(.spring(response: 0.35, dampingFraction: 0.8)) { toast = L(.minTwoCurrencies) }
+        toastTask = Task {
+            try? await Task.sleep(for: .seconds(2.5))
+            guard !Task.isCancelled else { return }
+            withAnimation(.easeInOut(duration: 0.25)) { toast = nil }
+        }
     }
 
     private func startEditing(_ code: String, proxy: ScrollViewProxy) {
@@ -339,4 +394,95 @@ struct SourceFooter: View {
 /// Хранилище размеров строк без наблюдения SwiftUI.
 final class RowSizeStore {
     var sizes: [String: CGSize] = [:]
+}
+
+/// Скруглённый прямоугольник карточки внутри строки с отступами.
+struct CardInsetShape: Shape {
+    let inset: CGSize
+    let cornerRadius: CGFloat
+
+    func path(in rect: CGRect) -> Path {
+        Path(
+            roundedRect: rect.insetBy(dx: inset.width, dy: inset.height),
+            cornerRadius: cornerRadius,
+            style: .continuous
+        )
+    }
+}
+
+/// Лёгкая горизонтальная тряска: каждое увеличение `shakes` на 1 — два небольших колебания.
+struct ShakeEffect: GeometryEffect {
+    var shakes: CGFloat
+    var animatableData: CGFloat {
+        get { shakes }
+        set { shakes = newValue }
+    }
+
+    func effectValue(size: CGSize) -> ProjectionTransform {
+        ProjectionTransform(CGAffineTransform(translationX: 3 * sin(shakes * .pi * 4), y: 0))
+    }
+}
+
+/// Индикатор обновления: монеты «$» и BTC кружат друг вокруг друга, как карусель —
+/// передняя крупнее и поверх, задняя меньше и бледнее.
+struct SpinningCoins: View {
+    private let radius: CGFloat = 18
+    private let period: Double = 1.1
+
+    var body: some View {
+        TimelineView(.animation) { context in
+            let t = context.date.timeIntervalSinceReferenceDate
+            let angle = (t.truncatingRemainder(dividingBy: period) / period) * 2 * .pi
+            ZStack {
+                orbiting(CoinGlyph(text: "$", color: .primary), angle: angle)
+                orbiting(CoinGlyph(text: "₿", color: .primary), angle: angle + .pi)
+            }
+            .frame(width: 34 + radius * 2, height: 40)
+        }
+        .accessibilityElement()
+        .accessibilityLabel(L(.loading))
+    }
+
+    private func orbiting(_ coin: some View, angle: Double) -> some View {
+        let depth = (cos(angle) + 1) / 2   // 1 — спереди, 0 — сзади
+        return coin
+            .frame(width: 34, height: 34)
+            .scaleEffect(0.75 + 0.25 * depth)
+            .opacity(0.55 + 0.45 * depth)
+            .offset(x: radius * sin(angle))
+            .zIndex(depth)
+    }
+}
+
+/// Знак валюты без фона, чёрный (в тёмной теме — белый).
+struct CoinGlyph: View {
+    let text: String
+    let color: Color
+
+    var body: some View {
+        Text(verbatim: text)
+            .font(.system(size: 30, weight: .bold, design: .rounded))
+            .foregroundStyle(color)
+    }
+}
+
+/// Всплывающее сообщение в стиле кнопок приложения.
+struct ToastView: View {
+    let text: String
+
+    var body: some View {
+        Label {
+            Text(text)
+                .font(.subheadline.weight(.medium))
+                .multilineTextAlignment(.leading)
+        } icon: {
+            Image(systemName: "exclamationmark.circle.fill")
+                .foregroundStyle(Color(.systemGray))
+        }
+        .padding(.horizontal, 16)
+        .padding(.vertical, 12)
+        .background { CardBubbleBackground() }
+        .padding(.horizontal, 24)
+        .accessibilityAddTraits(.isStaticText)
+    }
 }

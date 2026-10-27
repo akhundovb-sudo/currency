@@ -6,6 +6,9 @@ struct AddCurrencyView: View {
     @Environment(\.dismiss) private var dismiss
     @State private var kind: CurrencyKind = .fiat
     @State private var query = ""
+    /// Валюты, выбранные на момент открытия окна, — они идут первыми.
+    /// Порядок фиксируется при открытии, чтобы строки не прыгали при отметке.
+    @State private var pinned: [String] = []
 
     private var currencies: [Currency] {
         switch kind {
@@ -22,7 +25,9 @@ struct AddCurrencyView: View {
     }
 
     private var results: [Currency] {
-        currencies.filter { $0.matches(query) }
+        let all = currencies.filter { $0.matches(query) }
+        let top = pinned.compactMap { code in all.first { $0.code == code } }
+        return top + all.filter { !pinned.contains($0.code) }
     }
 
     /// В iOS 26 поле поиска стоит внизу экрана, как в системных приложениях;
@@ -37,6 +42,13 @@ struct AddCurrencyView: View {
 
     var body: some View {
         NavigationStack {
+            listView
+        }
+        .onAppear { pinned = store.selectedCodes }
+    }
+
+    private var listView: some View {
+        Group {
             List(results) { currency in
                 let isAdded = store.contains(currency.code)
                 // Окно не закрывается: можно отметить несколько валют подряд.
@@ -69,23 +81,24 @@ struct AddCurrencyView: View {
             )
             // Во время поиска «Закрыть» и «Фиат / Крипта» остаются на месте.
             .modifier(KeepToolbarWhileSearching())
-            // Над списком — 24 pt.
-            .contentMargins(.top, 24, for: .scrollContent)
+            // Над списком — небольшой отступ.
+            .contentMargins(.top, 8, for: .scrollContent)
             .environment(\.defaultMinListHeaderHeight, 0)
             .listSectionSpacing(0)
             .navigationTitle(L(.addCurrency))
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
-                ToolbarItem(placement: .cancellationAction) {
+                ToolbarItem(placement: .confirmationAction) {
+                    // Можно выбрать несколько валют — поэтому «Готово», а не «Закрыть».
                     Button { dismiss() } label: {
-                        Text(L(.close))
+                        Text(L(.done))
                             .fontWeight(.semibold)
                             .lineLimit(1)
                             .fixedSize()
                             .padding(.horizontal, 16)
                             .frame(height: 44)
                     }
-                    .buttonStyle(CardBubbleStyle())
+                    .buttonStyle(AccentBubbleStyle())
                 }
                 .hidingSharedGlass()
                 ToolbarItem(placement: .principal) {

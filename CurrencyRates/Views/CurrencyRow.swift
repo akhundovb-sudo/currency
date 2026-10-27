@@ -57,6 +57,7 @@ struct CurrencyRow: View {
             }
         }
         .padding(20)
+        .frame(maxWidth: .infinity, alignment: .leading)
         .contentShape(.rect)
         .accessibilityElement(children: .ignore)
         .accessibilityLabel(accessibilityText)
@@ -76,6 +77,8 @@ struct CurrencyRow: View {
             .font(.footnote)
             .foregroundStyle(Color.secondaryLabel)
             .lineLimit(dynamicTypeSize.isAccessibilitySize ? nil : 1)
+            // Хотя бы пара букв с «…», а не пустая черта.
+            .frame(minWidth: 36, alignment: .leading)
     }
 
     private var amountText: some View {
@@ -85,8 +88,10 @@ struct CurrencyRow: View {
                 .monospacedDigit()
                 .foregroundStyle(valueColor)
                 .lineLimit(1)
-                // Размер суммы одинаков во всех строках и не меняется при вводе.
-                .fixedSize()
+                // Обычно размер суммы не меняется; уменьшается, только если не помещается
+                // (очень длинная сумма или узкая строка в режиме правки) — карточка не вылезает за край.
+                .minimumScaleFactor(0.55)
+                .layoutPriority(2)
                 // Цифры прокручиваются, как на счётчике, при каждом изменении суммы.
                 .contentTransition(.numericText(countsDown: false))
                 .animation(.snappy(duration: 0.35), value: value)

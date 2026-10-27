@@ -117,19 +117,24 @@ final class RatesStore {
     }
 
     /// Нажатие клавиши: цифры, запятая, стирание, действия калькулятора и «=».
-    func press(_ key: KeypadKey) {
+    /// Сколько символов помещается в строку ввода на карточке.
+    static let maxAmountLength = 15
+
+    /// Нажатие клавиши. Возвращает `false`, если ввод не принят (сумма не помещается).
+    @discardableResult
+    func press(_ key: KeypadKey) -> Bool {
         var text = amountText
         let lastNumber = Calculator.lastNumber(in: text)
         let endsWithOperator = text.last.map(Calculator.operators.contains) ?? false
 
         switch key {
         case .digit(let digit):
-            guard lastNumber.filter(\.isNumber).count < 12 else { return }
+            guard lastNumber.filter(\.isNumber).count < 12 else { return false }
             if lastNumber == "0" { text.removeLast() }
             text.append(String(digit))
         case .decimal:
             let separator = Calculator.decimalSeparator
-            guard !lastNumber.contains(separator) else { return }
+            guard !lastNumber.contains(separator) else { return true }
             text += lastNumber.isEmpty ? "0" + separator : separator
         case .backspace:
             if !text.isEmpty { text.removeLast() }
@@ -140,9 +145,11 @@ final class RatesStore {
         case .equals:
             if let value = Calculator.evaluate(text) { text = RateFormat.editable(value) }
         case .hide:
-            return
+            return true
         }
-        amountText = String(text.prefix(40))
+        guard text.count <= Self.maxAmountLength else { return false }
+        amountText = text
+        return true
     }
 
     // MARK: - Список валют
