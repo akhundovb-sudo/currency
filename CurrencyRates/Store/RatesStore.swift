@@ -71,6 +71,7 @@ final class RatesStore {
         for code in Self.defaultSelection where self.selectedCodes.count < Self.minimumCount {
             if !self.selectedCodes.contains(code) { self.selectedCodes.append(code) }
         }
+        pinFreeCurrencies()
         // Валюта ввода всегда одна из строк списка.
         if !self.selectedCodes.contains(self.sourceCode), let first = self.selectedCodes.first {
             self.sourceCode = first
@@ -168,7 +169,10 @@ final class RatesStore {
     /// Подписка Pro снимает ограничения. Покупки пока не подключены —
     /// для проверки флаг переключается в настройках.
     var isPro: Bool {
-        didSet { defaults?.set(isPro, forKey: Keys.isPro) }
+        didSet {
+            defaults?.set(isPro, forKey: Keys.isPro)
+            pinFreeCurrencies()
+        }
     }
 
     /// Фиатные валюты, доступные для выбора: из загруженных курсов или стандартный список.
@@ -206,6 +210,23 @@ final class RatesStore {
         selectedCodes.count > Self.minimumCount
     }
 
+    /// Без подписки USD и EUR всегда в списке и всегда первые: их нельзя удалить или сдвинуть.
+    func isPinned(_ code: String) -> Bool {
+        !isPro && Self.defaultSelection.contains(code)
+    }
+
+    func canDelete(_ code: String) -> Bool {
+        canRemove && !isPinned(code)
+    }
+
+    /// Ставит USD и EUR в начало списка (без подписки), добавляя их, если их нет.
+    private func pinFreeCurrencies() {
+        guard !isPro else { return }
+        let pinned = Self.defaultSelection
+        let ordered = pinned + selectedCodes.filter { !pinned.contains($0) }
+        if ordered != selectedCodes { selectedCodes = ordered }
+    }
+
     func remove(_ code: String) {
         remove(codes: [code])
     }
@@ -216,11 +237,13 @@ final class RatesStore {
 
     func move(fromOffsets source: IndexSet, toOffset destination: Int) {
         selectedCodes.move(fromOffsets: source, toOffset: destination)
+        pinFreeCurrencies()
     }
 
     /// Если удаляется валюта ввода, ввод переходит к первой оставшейся с тем же эквивалентом.
     private func remove(codes: [String]) {
-        let removed = Set(codes)
+        let removed = Set(codes.filter { !isPinned($0) })
+        guard !removed.isEmpty else { return }
         let remaining = selectedCodes.filter { !removed.contains($0) }
         guard remaining.count >= Self.minimumCount else { return }
         if removed.contains(sourceCode), let next = remaining.first {
