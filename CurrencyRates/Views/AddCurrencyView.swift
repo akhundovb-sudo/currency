@@ -30,6 +30,9 @@ struct AddCurrencyView: View {
         return top + all.filter { !pinned.contains($0.code) }
     }
 
+    /// Нажатие на валюту с тегом «PRO». Экран покупки подписки появится здесь позже.
+    private func showPro() {}
+
     /// В iOS 26 поле поиска стоит внизу экрана, как в системных приложениях;
     /// в более ранних версиях такого размещения нет, и поиск остаётся под заголовком.
     private var searchPlacement: SearchFieldPlacement {
@@ -51,11 +54,17 @@ struct AddCurrencyView: View {
         Group {
             List(results) { currency in
                 let isAdded = store.contains(currency.code)
-                // Бесплатный лимит исчерпан: остальные валюты — только с Pro.
-                let isLocked = !isAdded && !store.canAddMore
+                // Крипта и фиат сверх бесплатного лимита — только с Pro.
+                let isLocked = !isAdded && !store.canAdd(currency.code)
                 // Окно не закрывается: можно отметить несколько валют подряд.
                 // Повторное нажатие убирает валюту (минимум две остаются).
+                // Строка с тегом «PRO» не тускнеет и нажимается — дальше по ней откроется покупка.
                 Button {
+                    if isLocked {
+                        UIImpactFeedbackGenerator(style: .light).impactOccurred()
+                        showPro()
+                        return
+                    }
                     UISelectionFeedbackGenerator().selectionChanged()
                     withAnimation(.snappy) {
                         if isAdded { store.remove(currency.code) } else { store.add(currency.code) }
@@ -64,7 +73,7 @@ struct AddCurrencyView: View {
                     CurrencySelectRow(currency: currency, isSelected: isAdded, isLocked: isLocked)
                 }
                 .buttonStyle(.plain)
-                .disabled((isAdded && !store.canRemove) || isLocked)
+                .disabled(isAdded && !store.canRemove)
                 .accessibilityHint(isLocked ? L(.proOnly) : isAdded ? L(.alreadyAdded) : L(.addToList))
             }
             .overlay {
