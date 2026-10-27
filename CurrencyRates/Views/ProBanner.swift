@@ -1,6 +1,6 @@
 import SwiftUI
 
-/// Плашка подписки Pro в настройках: тёмно-синяя карточка со свечением цвета акцента,
+/// Плашка подписки Pro в настройках: тёмная карточка в оттенке акцента со свечением цвета акцента,
 /// название приложения с тегом «PRO», подпись и светлая кнопка «Подробнее».
 struct ProBanner: View {
     var onDetails: () -> Void = {}
@@ -107,9 +107,9 @@ private struct ProBannerButtonStyle: ButtonStyle {
 }
 
 extension Color {
-    /// Фон плашки Pro — тёмные оттенки акцентного синего; плашка тёмная в обеих темах.
-    static let proBannerTop = Color.dynamic(light: 0x123B66, dark: 0x0F3358)
-    static let proBannerDeep = Color.dynamic(light: 0x0A1A30, dark: 0x081526)
+    /// Фон плашки Pro — тёмные оттенки акцентного цвета; плашка тёмная в обеих темах.
+    static let proBannerTop = Color.dynamic(light: 0x251266, dark: 0x1F0F58)
+    static let proBannerDeep = Color.dynamic(light: 0x150A30, dark: 0x110826)
 }
 
 #Preview {
