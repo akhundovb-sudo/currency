@@ -158,8 +158,19 @@ final class RatesStore {
         selectedCodes.contains(code)
     }
 
+    /// Сколько валют можно держать в списке без подписки: USD и EUR плюс ещё четыре.
+    static let freeLimit = 6
+
+    /// Подписка Pro снимает ограничение на число валют. Покупки пока не подключены.
+    var isPro = false
+
+    /// Можно ли добавить ещё одну валюту.
+    var canAddMore: Bool {
+        isPro || selectedCodes.count < Self.freeLimit
+    }
+
     func add(_ code: String) {
-        guard !contains(code) else { return }
+        guard !contains(code), canAddMore else { return }
         if selectedCodes.isEmpty {
             sourceCode = code
             amountText = ""
@@ -287,7 +298,8 @@ final class RatesStore {
         static let language = "language"
     }
 
-    private static let defaultSelection = ["USD", "EUR", "AZN", "RUB", "TRY", "BTC"]
+    /// При первом запуске в списке только доллар и евро.
+    private static let defaultSelection = ["USD", "EUR"]
 
     private static func isCancellation(_ error: Error) -> Bool {
         error is CancellationError || (error as? URLError)?.code == .cancelled
