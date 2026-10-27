@@ -31,7 +31,7 @@ struct CurrencyListView: View {
             .navigationBarTitleDisplayMode(.inline)
             .toolbar { toolbar }
             // Вместо панели с резкой нижней границей — плавное затухание сверху.
-            .toolbarBackground(.hidden, for: .navigationBar)
+            .modifier(HiddenBarBackground())
             .sheet(isPresented: $isAddPresented) {
                 AddCurrencyView()
             }

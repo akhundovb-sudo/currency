@@ -515,30 +515,22 @@ struct SoftTopEdge: ViewModifier {
 struct TopFade: View {
     var body: some View {
         if #available(iOS 26, *) {
-            // В iOS 26 основное делает системный мягкий край; здесь — лёгкая дымка поверх.
-            GeometryReader { proxy in
-                ZStack {
-                    Rectangle().fill(.ultraThinMaterial)
-                    Color(.systemGroupedBackground).opacity(0.75)
-                }
-                .mask {
-                    LinearGradient(
-                        stops: [
-                            .init(color: .black, location: 0),
-                            .init(color: .black, location: 0.55),
-                            .init(color: .clear, location: 1),
-                        ],
-                        startPoint: .top,
-                        endPoint: .bottom
-                    )
-                }
-                .frame(height: proxy.safeAreaInsets.top + 28)
-            }
-            .ignoresSafeArea(edges: .top)
-            .allowsHitTesting(false)
-            .accessibilityHidden(true)
+            // В iOS 26 всё делает системный мягкий край прокрутки.
+            EmptyView()
         } else {
             ProgressiveTopBlur()
+        }
+    }
+}
+
+/// Прячет фон системной панели только до iOS 26 — там размытие рисует TopFade.
+/// В iOS 26 скрытый фон панели выключает и системный мягкий край, и фона нет совсем.
+struct HiddenBarBackground: ViewModifier {
+    func body(content: Content) -> some View {
+        if #available(iOS 26, *) {
+            content
+        } else {
+            content.toolbarBackground(.hidden, for: .navigationBar)
         }
     }
 }
@@ -608,7 +600,7 @@ private struct ProgressiveTopBlur: View {
 extension View {
     /// Верхняя панель без фона и без линии: содержимое под ней мягко размывается и затухает.
     func softTopBar() -> some View {
-        toolbarBackground(.hidden, for: .navigationBar)
+        modifier(HiddenBarBackground())
             .modifier(SoftTopEdge())
             .overlay(alignment: .top) { TopFade() }
     }
