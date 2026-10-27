@@ -22,7 +22,7 @@ struct ProBanner: View {
             }
             .foregroundStyle(.white)
 
-            Text(subtitle)
+            subtitle
                 .font(.subheadline)
                 .foregroundStyle(.white.opacity(0.9))
                 .multilineTextAlignment(.center)
