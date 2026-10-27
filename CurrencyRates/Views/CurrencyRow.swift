@@ -266,7 +266,7 @@ private struct ProBadge: View {
             // и тонкая цветная обводка. Без тени.
             .background {
                 ZStack {
-                    Capsule().fill(Color(.systemBackground))
+                    Capsule().fill(Color.glassBase)
                     Capsule().fill(
                         RadialGradient(
                             colors: [Color.accentColor.opacity(0.14), Color.accentColor.opacity(0.03)],
@@ -277,7 +277,7 @@ private struct ProBadge: View {
                     )
                     Capsule().strokeBorder(
                         LinearGradient(
-                            colors: [.white, .white.opacity(0.7)],
+                            colors: [Color.glassRim, Color.glassRim.opacity(0.7)],
                             startPoint: .top,
                             endPoint: .bottom
                         ),

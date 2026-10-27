@@ -150,7 +150,7 @@ private struct KindSwitch: View {
                         .background {
                             if kind == option {
                                 Capsule()
-                                    .fill(Color(.systemBackground))
+                                    .fill(Color.glassBase)
                                     .overlay(Capsule().strokeBorder(Color.primary.opacity(0.06), lineWidth: 1))
                                     .matchedGeometryEffect(id: "segment", in: selection)
                             }

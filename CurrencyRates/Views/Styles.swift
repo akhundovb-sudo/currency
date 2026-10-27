@@ -147,7 +147,7 @@ struct GlassBubbleStyle: ButtonStyle {
                 GeometryReader { proxy in
                     let radius = max(proxy.size.width, proxy.size.height) * 0.6
                     ZStack {
-                        Capsule().fill(Color(.systemBackground))
+                        Capsule().fill(Color.glassBase)
                         Capsule().fill(
                             RadialGradient(
                                 colors: prominent
@@ -161,7 +161,7 @@ struct GlassBubbleStyle: ButtonStyle {
                         // Белый ободок со светлым бликом сверху.
                         Capsule().strokeBorder(
                             LinearGradient(
-                                colors: [.white, .white.opacity(0.7)],
+                                colors: [Color.glassRim, Color.glassRim.opacity(0.7)],
                                 startPoint: .top,
                                 endPoint: .bottom
                             ),
@@ -193,6 +193,15 @@ struct ClearGlassOverlay: ViewModifier {
 /// Нейтральный тон стеклянных кнопок.
 extension Color {
     static let glassNeutral = Color.dynamic(light: 0x94A3B8, dark: 0x64748B)
+
+    /// Основа стеклянных кнопок: белая в светлой теме, тёмно-серая (чуть светлее фона) — в тёмной.
+    static let glassBase = Color.dynamic(light: 0xFFFFFF, dark: 0x2C2C2E)
+
+    /// Светлый ободок стекла: белый в светлой теме; в тёмной — едва заметный,
+    /// иначе на чёрном фоне получаются резкие белые кольца.
+    static let glassRim = Color(UIColor { traits in
+        traits.userInterfaceStyle == .dark ? UIColor(white: 1, alpha: 0.16) : .white
+    })
 }
 
 extension ToolbarContent {
@@ -340,7 +349,7 @@ struct CardBubbleBackground: View {
         ZStack {
             Capsule().fill(.thinMaterial)
             Capsule().fill(Color(.secondarySystemGroupedBackground).opacity(0.8))
-            Capsule().strokeBorder(Color.white.opacity(0.9), lineWidth: 1)
+            Capsule().strokeBorder(Color.glassRim.opacity(0.9), lineWidth: 1)
             Capsule().strokeBorder(Color.primary.opacity(0.06), lineWidth: 0.5)
         }
         .shadow(color: Color(red: 0.35, green: 0.37, blue: 0.5).opacity(0.12), radius: 8, y: 0)
