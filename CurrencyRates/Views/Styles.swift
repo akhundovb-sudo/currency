@@ -519,50 +519,30 @@ struct HiddenBarBackground: ViewModifier {
     }
 }
 
-/// Размытие под панелью.
-/// Под кнопками и заголовком — тот же плотный материал, что у системной панели;
-/// ниже он не обрывается линией, а плавно растворяется, и дальше ещё немного
-/// тянется лёгкое размытие.
+/// Размытие под панелью: лёгкое матовое стекло под кнопками и заголовком,
+/// ниже плавно сходит на нет — без линии и без плотной белой дымки.
 private struct ProgressiveTopBlur: View {
     /// На сколько ниже панели продолжается затухание.
-    private let fadeLength: CGFloat = 48
+    private let fadeLength: CGFloat = 32
 
     var body: some View {
         GeometryReader { proxy in
             let barBottom = Self.barHeight(reported: proxy.safeAreaInsets.top)
             let height = barBottom + fadeLength
-            let solid = barBottom / height
-            ZStack {
-                // Лёгкое размытие, уходящее ниже всего.
-                Rectangle()
-                    .fill(.ultraThinMaterial)
-                    .mask {
-                        LinearGradient(
-                            stops: [
-                                .init(color: .black, location: 0),
-                                .init(color: .black, location: solid),
-                                .init(color: .clear, location: 1),
-                            ],
-                            startPoint: .top,
-                            endPoint: .bottom
-                        )
-                    }
-                // Плотный материал панели: сплошной под кнопками, затем плавно сходит на нет.
-                Rectangle()
-                    .fill(.bar)
-                    .mask {
-                        LinearGradient(
-                            stops: [
-                                .init(color: .black, location: 0),
-                                .init(color: .black, location: solid * 0.92),
-                                .init(color: .clear, location: solid + (1 - solid) * 0.6),
-                            ],
-                            startPoint: .top,
-                            endPoint: .bottom
-                        )
-                    }
-            }
-            .frame(height: height)
+            Rectangle()
+                .fill(.ultraThinMaterial)
+                .mask {
+                    LinearGradient(
+                        stops: [
+                            .init(color: .black, location: 0),
+                            .init(color: .black.opacity(0.85), location: barBottom / height * 0.8),
+                            .init(color: .clear, location: 1),
+                        ],
+                        startPoint: .top,
+                        endPoint: .bottom
+                    )
+                }
+                .frame(height: height)
         }
         .ignoresSafeArea(edges: .top)
         .allowsHitTesting(false)

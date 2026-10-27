@@ -47,6 +47,9 @@ struct CurrencyListView: View {
 
     private var list: some View {
         ScrollViewReader { proxy in
+            // Клавиатура стоит под списком, а не поверх него: список действительно становится
+            // ниже, и прокрутка к выбранной валюте всегда ставит её в видимую часть.
+            VStack(spacing: 0) {
             List {
                 Section {
                     ForEach(store.selectedCodes, id: \.self) { code in
@@ -103,22 +106,9 @@ struct CurrencyListView: View {
                     .onMove { store.move(fromOffsets: $0, toOffset: $1) }
                 }
 
-                // Запас под списком, чтобы нижние валюты можно было поднять над клавиатурой.
-                // Строка есть всегда и плавно меняет высоту — без рывка при появлении.
-                // Нажатие в это пустое место закрывает клавиатуру.
-                Color.clear
-                    .frame(height: isKeypadVisible ? 360 : 0)
-                    .contentShape(Rectangle())
-                    .onTapGesture { hideKeypad() }
-                    .listRowBackground(Color.clear)
-                    .listRowSeparator(.hidden)
-                    .listRowInsets(EdgeInsets())
-
                 statusSection
             }
             .listStyle(.plain)
-            // Иначе пустая строка-запас под списком занимала бы минимальную высоту строки.
-            .environment(\.defaultMinListRowHeight, 0)
             .scrollContentBackground(.hidden)
             .background(Color(.systemGroupedBackground))
             .environment(\.editMode, $editMode)
@@ -157,7 +147,6 @@ struct CurrencyListView: View {
                 },
                 including: isKeypadVisible ? .all : .subviews
             )
-            .safeAreaInset(edge: .bottom, spacing: 0) {
                 if isKeypadVisible {
                     AmountKeypad(
                         onKey: { key in
@@ -174,6 +163,7 @@ struct CurrencyListView: View {
                     .transition(.move(edge: .bottom).combined(with: .opacity))
                 }
             }
+            .background(Color(.systemGroupedBackground).ignoresSafeArea())
         }
     }
 
