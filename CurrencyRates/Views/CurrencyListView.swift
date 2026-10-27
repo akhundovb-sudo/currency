@@ -8,7 +8,7 @@ struct CurrencyListView: View {
     @State private var editMode: EditMode = .inactive
     @State private var isKeypadVisible = false
     @State private var isRefreshing = false
-    @State private var toast: String?
+    @State private var toast: Toast?
     @State private var toastTask: Task<Void, Never>?
     /// Счётчик «тряски» карточки ввода при переполнении суммы.
     /// Какая карточка трясётся и фаза тряски (0…1). Вне тряски фаза всегда 0 — поэтому
@@ -125,14 +125,19 @@ struct CurrencyListView: View {
             }
             // Системный край прокрутки выключен — размытие под панелью рисует TopFade.
             .modifier(SoftTopEdge())
-            // Под тостом и монетами, чтобы не приглушать их.
             .overlay(alignment: .top) { TopFade() }
-            .overlay(alignment: .top) {
+            // Сообщения — снизу, над клавиатурой; смахиваются вниз или закрываются крестиком.
+            .overlay(alignment: .bottom) {
                 if let toast {
-                    ToastView(text: toast)
-                        .padding(.top, 8)
-                        .transition(.move(edge: .top).combined(with: .opacity))
-                        .onTapGesture { withAnimation { self.toast = nil } }
+                    ToastView(toast: toast, onClose: dismissToast)
+                        .padding(.horizontal, 16)
+                        .padding(.bottom, 12)
+                        .transition(.move(edge: .bottom).combined(with: .opacity))
+                        .gesture(
+                            DragGesture(minimumDistance: 8).onEnded { value in
+                                if value.translation.height > 20 { dismissToast() }
+                            }
+                        )
                 }
             }
             .onAppear { UIRefreshControl.appearance().tintColor = .clear }
@@ -211,17 +216,26 @@ struct CurrencyListView: View {
         return card.contains(point)
     }
 
-    /// Всплывающее сообщение: последние две валюты удалить нельзя. Скрывается через 2,5 с.
     /// Почему валюту нельзя удалить: без подписки USD и EUR закреплены, иначе — минимум две валюты.
     private func showBlockedToast(for code: String) {
+        let message = store.isPinned(code) ? L(.pinnedFree) : L(.minTwoCurrencies)
+        showToast(Toast(kind: store.isPinned(code) ? .info : .warning, message: message))
+    }
+
+    /// Показывает сообщение снизу; оно само скрывается через 3 с.
+    private func showToast(_ newToast: Toast) {
         toastTask?.cancel()
-        let text = store.isPinned(code) ? L(.pinnedFree) : L(.minTwoCurrencies)
-        withAnimation(.spring(response: 0.35, dampingFraction: 0.8)) { toast = text }
+        withAnimation(.spring(response: 0.4, dampingFraction: 0.8)) { toast = newToast }
         toastTask = Task {
-            try? await Task.sleep(for: .seconds(2.5))
+            try? await Task.sleep(for: .seconds(3))
             guard !Task.isCancelled else { return }
-            withAnimation(.easeInOut(duration: 0.25)) { toast = nil }
+            dismissToast()
         }
+    }
+
+    private func dismissToast() {
+        toastTask?.cancel()
+        withAnimation(.easeInOut(duration: 0.25)) { toast = nil }
     }
 
     private func shake(_ code: String) {
@@ -610,23 +624,98 @@ struct IslandRefreshIndicator: View {
     }
 }
 
-/// Всплывающее сообщение в стиле кнопок приложения.
+/// Всплывающее сообщение.
+struct Toast: Equatable {
+    enum Kind {
+        case info, warning, error, success
+
+        var tint: Color {
+            switch self {
+            case .info: .accentColor
+            case .warning: .dynamic(light: 0xD97706, dark: 0xFBBF24)
+            case .error: .dynamic(light: 0xDC2626, dark: 0xF87171)
+            case .success: .dynamic(light: 0x16A34A, dark: 0x4ADE80)
+            }
+        }
+
+        var symbol: String {
+            switch self {
+            case .info: "info.circle"
+            case .warning, .error: "exclamationmark.triangle"
+            case .success: "checkmark"
+            }
+        }
+    }
+
+    var kind: Kind
+    var title: String?
+    var message: String
+}
+
+/// Карточка сообщения: белая плашка с лёгким оттенком цвета слева, значок в мягкой
+/// цветной плитке, текст и крестик.
 struct ToastView: View {
-    let text: String
+    let toast: Toast
+    let onClose: () -> Void
+
+    private let shape = RoundedRectangle(cornerRadius: 18, style: .continuous)
 
     var body: some View {
-        Label {
-            Text(text)
-                .font(.subheadline.weight(.medium))
-                .multilineTextAlignment(.leading)
-        } icon: {
-            Image(systemName: "exclamationmark.circle.fill")
-                .foregroundStyle(Color(.systemGray))
+        let tint = toast.kind.tint
+        HStack(alignment: .top, spacing: 12) {
+            Image(systemName: toast.kind.symbol)
+                .font(.system(size: 16, weight: .medium))
+                .foregroundStyle(tint)
+                .frame(width: 36, height: 36)
+                .background {
+                    RoundedRectangle(cornerRadius: 10, style: .continuous)
+                        .fill(tint.opacity(0.1))
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 10, style: .continuous)
+                                .strokeBorder(tint.opacity(0.16), lineWidth: 1)
+                        )
+                }
+
+            VStack(alignment: .leading, spacing: 3) {
+                if let title = toast.title {
+                    Text(title)
+                        .font(.body.weight(.semibold))
+                        .foregroundStyle(Color.primary)
+                }
+                Text(toast.message)
+                    .font(.subheadline)
+                    .foregroundStyle(toast.title == nil ? Color.primary : Color.secondaryLabel)
+                    .fixedSize(horizontal: false, vertical: true)
+            }
+            .frame(maxWidth: .infinity, minHeight: 36, alignment: .leading)
+
+            Button(action: onClose) {
+                Image(systemName: "xmark")
+                    .font(.system(size: 13, weight: .semibold))
+                    .foregroundStyle(Color.secondaryLabel)
+                    .frame(width: 28, height: 28)
+                    .contentShape(Rectangle())
+            }
+            .buttonStyle(.plain)
+            .accessibilityLabel(L(.close))
         }
-        .padding(.horizontal, 16)
-        .padding(.vertical, 12)
-        .background { CardBubbleBackground() }
-        .padding(.horizontal, 24)
+        .padding(14)
+        .background {
+            shape
+                .fill(Color(.secondarySystemGroupedBackground))
+                .overlay(
+                    shape.fill(
+                        LinearGradient(
+                            colors: [tint.opacity(0.07), tint.opacity(0)],
+                            startPoint: .leading,
+                            endPoint: UnitPoint(x: 0.6, y: 0.5)
+                        )
+                    )
+                )
+                .overlay(shape.strokeBorder(Color.primary.opacity(0.06), lineWidth: 1))
+                .shadow(color: Color(red: 0.2, green: 0.25, blue: 0.4).opacity(0.12), radius: 16, y: 6)
+        }
+        .accessibilityElement(children: .combine)
         .accessibilityAddTraits(.isStaticText)
     }
 }
