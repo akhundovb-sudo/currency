@@ -41,13 +41,15 @@ struct CurrencyRow: View {
                 HStack(spacing: 12) {
                     CurrencyIcon(currency: Currency(code: code))
                     // Две строки: код и сумма, затем название и курс — каждая пара на одной линии.
+                    // Выравнивание по центру, а не по базовой линии: уменьшенная длинная сумма
+                    // иначе съезжает вниз на строку курса, и карточка «прыгает».
                     VStack(spacing: 2) {
-                        HStack(alignment: .firstTextBaseline, spacing: 8) {
+                        HStack(alignment: .center, spacing: 8) {
                             codeText
                             Spacer(minLength: 8)
                             amountText
                         }
-                        HStack(alignment: .firstTextBaseline, spacing: 8) {
+                        HStack(alignment: .center, spacing: 8) {
                             nameText
                             Spacer(minLength: 8)
                             captionView.layoutPriority(1)
@@ -92,9 +94,11 @@ struct CurrencyRow: View {
                 // (очень длинная сумма или узкая строка в режиме правки) — карточка не вылезает за край.
                 .minimumScaleFactor(0.55)
                 .layoutPriority(2)
-                // Цифры прокручиваются, как на счётчике, при каждом изменении суммы.
-                .contentTransition(.numericText(countsDown: false))
-                .animation(.snappy(duration: 0.35), value: value)
+                // Цифры прокручиваются, как на счётчике, — но не во время набора:
+                // при быстром вводе анимации накладываются и цифры размазываются.
+                .contentTransition(showsCursor ? .identity : .numericText(countsDown: false))
+                .animation(showsCursor ? nil : .snappy(duration: 0.35), value: value)
+                .transaction { if showsCursor { $0.animation = nil } }
             if showsCursor && isSource {
                 BlinkingCursor()
             }

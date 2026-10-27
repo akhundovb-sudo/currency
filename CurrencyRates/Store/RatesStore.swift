@@ -64,6 +64,7 @@ final class RatesStore {
         self.theme = defaults?.string(forKey: Keys.theme).flatMap(AppTheme.init(rawValue:)) ?? .system
         let language = defaults?.string(forKey: Keys.language).flatMap(AppLanguage.init(rawValue:)) ?? .systemDefault
         self.language = language
+        self.isPro = defaults?.bool(forKey: Keys.isPro) ?? false
         L10n.current = language
         self.snapshot = snapshot ?? Self.loadCache(from: cacheURL)
         // В списке всегда минимум две валюты, иначе сравнивать нечего.
@@ -161,8 +162,11 @@ final class RatesStore {
     /// Сколько валют можно держать в списке без подписки: USD и EUR плюс ещё три.
     static let freeLimit = 5
 
-    /// Подписка Pro снимает ограничения. Покупки пока не подключены.
-    var isPro = false
+    /// Подписка Pro снимает ограничения. Покупки пока не подключены —
+    /// для проверки флаг переключается в настройках.
+    var isPro: Bool {
+        didSet { defaults?.set(isPro, forKey: Keys.isPro) }
+    }
 
     /// Фиатные валюты, доступные для выбора: из загруженных курсов или стандартный список.
     var fiatCodes: [String] {
@@ -310,6 +314,7 @@ final class RatesStore {
         static let amountText = "amountText"
         static let theme = "theme"
         static let language = "language"
+        static let isPro = "isPro"
     }
 
     /// При первом запуске в списке только доллар и евро.
