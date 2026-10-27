@@ -32,6 +32,44 @@ struct SettingsView: View {
                 }
 
                 Section {
+                    Picker(L(.numberFormat), selection: $store.numberStyle) {
+                        ForEach(NumberStyle.allCases) { style in
+                            Text(verbatim: "\(style.title) · \(1234.56.formatted(.number.locale(style.locale)))")
+                                .tag(style)
+                        }
+                    }
+                    HStack {
+                        Text(L(.decimalPlaces))
+                        Spacer()
+                        Text(store.decimalPlaces.map(String.init) ?? L(.auto))
+                            .foregroundStyle(Color.secondaryLabel)
+                            .monospacedDigit()
+                        // −1 — «Авто», дальше 0…8 знаков.
+                        Stepper(
+                            L(.decimalPlaces),
+                            value: Binding(
+                                get: { store.decimalPlaces ?? -1 },
+                                set: { store.decimalPlaces = $0 >= 0 ? $0 : nil }
+                            ),
+                            in: -1...8
+                        )
+                        .labelsHidden()
+                    }
+                } header: {
+                    Text(L(.numbers))
+                } footer: {
+                    // Живой пример: так будут выглядеть суммы в конвертере.
+                    VStack(alignment: .leading, spacing: 4) {
+                        Text(L(.formatFooter))
+                        ForEach(["USD", "SEK", "JOD"], id: \.self) { code in
+                            Text(verbatim: "• \(Currency.name(for: code)): \(RateFormat.amount(32.16))")
+                        }
+                    }
+                    // Пример пересчитывается при смене настроек.
+                    .id("\(store.numberStyle.rawValue)-\(store.decimalPlaces ?? -1)")
+                }
+
+                Section {
                     LabeledContent(L(.source)) {
                         Link(RatesService.fiatSourceName, destination: RatesService.fiatSourceURL)
                     }

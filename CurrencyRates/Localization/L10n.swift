@@ -53,6 +53,8 @@ enum L10n {
         case cryptoCurrencies, cryptoFooter, refreshRates, offlineFooter, version, noData, demoShort
         case themeSystem, themeLight, themeDark
         case minTwoCurrencies, proOnly, proDiscover, seeDetails, proTest, pinnedFree
+        case numbers, numberFormat, decimalPlaces, auto, formatFooter
+        case formatAutomatic, formatInternational, formatEuropean, formatSpaced
         case errNoInternet, errTimeout, errServer, errRateLimited, errBadResponse
     }
 
@@ -115,6 +117,15 @@ enum L10n {
         .proDiscover: ["Откройте %@ — валюты без ограничений", "Discover %@ for unlimited currencies", "Sınırsız para birimi için %@’yu keşfedin", "Découvrez %@ pour des devises illimitées", "Descubre %@ para divisas ilimitadas", "Entdecke %@ für unbegrenzte Währungen"],
         .seeDetails: ["Подробнее", "See details", "Ayrıntıları gör", "Voir les détails", "Ver detalles", "Details ansehen"],
         .pinnedFree: ["В бесплатной версии USD и EUR всегда в списке", "In the free version USD and EUR always stay in the list", "Ücretsiz sürümde USD ve EUR her zaman listede", "Dans la version gratuite, USD et EUR restent toujours dans la liste", "En la versión gratuita, USD y EUR siempre están en la lista", "In der Gratisversion bleiben USD und EUR immer in der Liste"],
+        .numbers: ["Числа", "Numbers", "Sayılar", "Nombres", "Números", "Zahlen"],
+        .numberFormat: ["Формат", "Format", "Biçim", "Format", "Formato", "Format"],
+        .decimalPlaces: ["Знаков после запятой", "Decimal Places", "Ondalık Basamak", "Décimales", "Decimales", "Nachkommastellen"],
+        .auto: ["Авто", "Auto", "Otomatik", "Auto", "Auto", "Auto"],
+        .formatFooter: ["Как показывать суммы в конвертере. Например, 32,16:", "How amounts appear in the converter. For example, 32.16:", "Tutarların dönüştürücüde nasıl görüneceği. Örneğin 32,16:", "Affichage des montants dans le convertisseur. Par exemple, 32,16 :", "Cómo se muestran los importes en el conversor. Por ejemplo, 32,16:", "So werden Beträge im Umrechner angezeigt. Zum Beispiel 32,16:"],
+        .formatAutomatic: ["По языку", "By Language", "Dile Göre", "Selon la langue", "Según el idioma", "Nach Sprache"],
+        .formatInternational: ["Международный", "International", "Uluslararası", "International", "Internacional", "International"],
+        .formatEuropean: ["Европейский", "European", "Avrupa", "Européen", "Europeo", "Europäisch"],
+        .formatSpaced: ["С пробелами", "With Spaces", "Boşluklu", "Avec espaces", "Con espacios", "Mit Leerzeichen"],
         .proTest: ["Pro (для теста)", "Pro (testing)", "Pro (test için)", "Pro (test)", "Pro (prueba)", "Pro (Test)"],
         .errNoInternet: ["нет подключения к интернету.", "no internet connection.", "internet bağlantısı yok.", "pas de connexion Internet.", "no hay conexión a Internet.", "keine Internetverbindung."],
         .errTimeout: ["сервер не ответил вовремя.", "the server didn’t respond in time.", "sunucu zamanında yanıt vermedi.", "le serveur n’a pas répondu à temps.", "el servidor no respondió a tiempo.", "der Server hat nicht rechtzeitig geantwortet."],

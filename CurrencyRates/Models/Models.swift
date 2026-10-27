@@ -145,30 +145,72 @@ enum AppTheme: String, CaseIterable, Identifiable {
     }
 }
 
+/// Как показывать числа: разделители разрядов и дробной части.
+enum NumberStyle: String, CaseIterable, Identifiable, Sendable {
+    /// По языку интерфейса.
+    case automatic
+    /// 1,234.56
+    case international
+    /// 1.234,56
+    case european
+    /// 1 234,56
+    case spaced
+
+    var id: String { rawValue }
+
+    var title: String {
+        switch self {
+        case .automatic: L(.formatAutomatic)
+        case .international: L(.formatInternational)
+        case .european: L(.formatEuropean)
+        case .spaced: L(.formatSpaced)
+        }
+    }
+
+    var locale: Locale {
+        switch self {
+        case .automatic: Currency.locale
+        case .international: Locale(identifier: "en_US")
+        case .european: Locale(identifier: "de_DE")
+        case .spaced: Locale(identifier: "fr_FR")
+        }
+    }
+}
+
 enum RateFormat {
+    /// Выбранный в настройках формат чисел и число знаков после запятой (nil — автоматически).
+    /// Задаёт `RatesStore`.
+    nonisolated(unsafe) static var style: NumberStyle = .automatic
+    nonisolated(unsafe) static var decimalPlaces: Int?
+
+    static var locale: Locale { style.locale }
+
     /// Курс: больше знаков, чтобы были видны мелкие изменения.
     static func rate(_ value: Double) -> String {
         if value >= 1000 {
-            value.formatted(.number.locale(Currency.locale).precision(.fractionLength(0...2)))
+            value.formatted(.number.locale(locale).precision(.fractionLength(0...2)))
         } else if value >= 1 {
-            value.formatted(.number.locale(Currency.locale).precision(.fractionLength(2...4)))
+            value.formatted(.number.locale(locale).precision(.fractionLength(2...4)))
         } else {
-            value.formatted(.number.locale(Currency.locale).precision(.significantDigits(2...4)))
+            value.formatted(.number.locale(locale).precision(.significantDigits(2...4)))
         }
     }
 
     /// Сумма: до двух знаков после запятой, для малых значений — значащие цифры.
+    /// Если в настройках задано число знаков — ровно столько.
     static func amount(_ value: Double) -> String {
-        if value >= 1 || value == 0 {
-            value.formatted(.number.locale(Currency.locale).precision(.fractionLength(0...2)))
-        } else {
-            value.formatted(.number.locale(Currency.locale).precision(.significantDigits(2...4)))
+        if let places = decimalPlaces {
+            return value.formatted(.number.locale(locale).precision(.fractionLength(places)))
         }
+        if value >= 1 || value == 0 {
+            return value.formatted(.number.locale(locale).precision(.fractionLength(0...2)))
+        }
+        return value.formatted(.number.locale(locale).precision(.significantDigits(2...4)))
     }
 
     /// Сумма для поля ввода: без разделителей разрядов.
     static func editable(_ value: Double) -> String {
-        let style = FloatingPointFormatStyle<Double>.number.locale(Currency.locale).grouping(.never)
+        let style = FloatingPointFormatStyle<Double>.number.locale(locale).grouping(.never)
         if value >= 1 || value == 0 {
             return value.formatted(style.precision(.fractionLength(0...2)))
         }
@@ -178,7 +220,7 @@ enum RateFormat {
     /// Вводимое выражение с разделителями разрядов, как у остальных сумм:
     /// при выборе валюты число не меняет вид. Дробная часть и знаки действий — как набраны.
     static func groupedInput(_ expression: String) -> String {
-        let grouping = Currency.locale.groupingSeparator ?? ","
+        let grouping = locale.groupingSeparator ?? ","
         let decimal = Calculator.decimalSeparator
         var result = ""
         var number = ""
@@ -226,7 +268,7 @@ enum Calculator {
     }
 
     /// Разделитель дробной части выбранного языка: «,» или «.».
-    static var decimalSeparator: String { Currency.locale.decimalSeparator ?? "," }
+    static var decimalSeparator: String { RateFormat.locale.decimalSeparator ?? "," }
 
     static func number(_ text: String) -> Double? {
         Double(text.replacingOccurrences(of: ",", with: "."))

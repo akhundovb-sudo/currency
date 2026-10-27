@@ -32,6 +32,25 @@ final class RatesStore {
         }
     }
 
+    /// Формат чисел. Набранная сумма переводится на новый разделитель дробной части.
+    var numberStyle: NumberStyle {
+        didSet {
+            let old = oldValue.locale.decimalSeparator ?? "."
+            RateFormat.style = numberStyle
+            let new = Calculator.decimalSeparator
+            if old != new { amountText = amountText.replacingOccurrences(of: old, with: new) }
+            defaults?.set(numberStyle.rawValue, forKey: Keys.numberStyle)
+        }
+    }
+
+    /// Знаков после запятой в суммах; nil — автоматически.
+    var decimalPlaces: Int? {
+        didSet {
+            RateFormat.decimalPlaces = decimalPlaces
+            defaults?.set(decimalPlaces ?? -1, forKey: Keys.decimalPlaces)
+        }
+    }
+
     private(set) var snapshot: RatesSnapshot?
     private(set) var isLoading = false
     private(set) var errorMessage: String?
@@ -65,6 +84,12 @@ final class RatesStore {
         let language = defaults?.string(forKey: Keys.language).flatMap(AppLanguage.init(rawValue:)) ?? .systemDefault
         self.language = language
         self.isPro = defaults?.bool(forKey: Keys.isPro) ?? false
+        let style = defaults?.string(forKey: Keys.numberStyle).flatMap(NumberStyle.init(rawValue:)) ?? .automatic
+        self.numberStyle = style
+        RateFormat.style = style
+        let places = (defaults?.object(forKey: Keys.decimalPlaces) as? Int).flatMap { $0 >= 0 ? $0 : nil }
+        self.decimalPlaces = places
+        RateFormat.decimalPlaces = places
         L10n.current = language
         self.snapshot = snapshot ?? Self.loadCache(from: cacheURL)
         // В списке всегда минимум две валюты, иначе сравнивать нечего.
@@ -341,6 +366,8 @@ final class RatesStore {
         static let theme = "theme"
         static let language = "language"
         static let isPro = "isPro"
+        static let numberStyle = "numberStyle"
+        static let decimalPlaces = "decimalPlaces"
     }
 
     /// При первом запуске в списке только доллар и евро.
