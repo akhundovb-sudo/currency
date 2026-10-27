@@ -131,6 +131,8 @@ struct CurrencyListView: View {
                 if elapsed < 1.2 { try? await Task.sleep(for: .seconds(1.2 - elapsed)) }
                 withAnimation(.snappy) { isRefreshing = false }
             }
+            // В iOS 26 — системный мягкий край под панелью вместо резкой линии.
+            .modifier(SoftTopEdge())
             // Под тостом и монетами, чтобы не приглушать их.
             .overlay(alignment: .top) { TopFade() }
             .overlay(alignment: .top) {
@@ -548,6 +550,17 @@ struct ToastView: View {
         .background { CardBubbleBackground() }
         .padding(.horizontal, 24)
         .accessibilityAddTraits(.isStaticText)
+    }
+}
+
+/// Мягкий системный край прокрутки сверху (iOS 26); в более ранних версиях его нет.
+private struct SoftTopEdge: ViewModifier {
+    func body(content: Content) -> some View {
+        if #available(iOS 26, *) {
+            content.scrollEdgeEffectStyle(.soft, for: .top)
+        } else {
+            content
+        }
     }
 }
 
