@@ -68,6 +68,11 @@ struct SettingsView: View {
                     Text(L(.offlineFooter))
                 }
 
+                // Временно, пока не подключены покупки: включает и выключает Pro для проверки.
+                Section {
+                    Toggle(L(.proTest), isOn: $store.isPro)
+                }
+
                 Section {
                     LabeledContent(L(.version), value: appVersion)
                 } footer: {

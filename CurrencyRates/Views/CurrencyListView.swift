@@ -74,8 +74,12 @@ struct CurrencyListView: View {
                         .background {
                             GeometryReader { geo in
                                 Color.clear
-                                    .onAppear { rowSizes.sizes[code] = geo.size }
+                                    .onAppear {
+                                        rowSizes.sizes[code] = geo.size
+                                        rowSizes.frames[code] = geo.frame(in: .global)
+                                    }
                                     .onChange(of: geo.size) { _, size in rowSizes.sizes[code] = size }
+                                    .onChange(of: geo.frame(in: .global)) { _, frame in rowSizes.frames[code] = frame }
                             }
                         }
                         .contentShape(Rectangle())
@@ -168,7 +172,21 @@ struct CurrencyListView: View {
                         onClear: { withAnimation { store.amountText = "" } },
                         onDone: hideKeypad
                     )
+                    .background {
+                        GeometryReader { geo in
+                            Color.clear
+                                .onAppear { rowSizes.keypadTop = geo.frame(in: .global).minY }
+                                .onChange(of: geo.frame(in: .global).minY) { _, top in rowSizes.keypadTop = top }
+                        }
+                    }
                     .transition(.move(edge: .bottom).combined(with: .opacity))
+                }
+            }
+            .background {
+                GeometryReader { geo in
+                    Color.clear
+                        .onAppear { rowSizes.listBottom = geo.frame(in: .global).maxY }
+                        .onChange(of: geo.frame(in: .global).maxY) { _, bottom in rowSizes.listBottom = bottom }
                 }
             }
         }
@@ -244,9 +262,24 @@ struct CurrencyListView: View {
             UISelectionFeedbackGenerator().selectionChanged()
         }
         store.beginEditing(code)
+        let wasVisible = isKeypadVisible
         withAnimation(.snappy) { isKeypadVisible = true }
-        withAnimation { proxy.scrollTo(code) }
+        // Список прокручивается, только если карточка окажется под клавиатурой;
+        // видимая карточка остаётся на месте.
+        guard let frame = rowSizes.frames[code] else { return }
+        let keypadTop = wasVisible
+            ? rowSizes.keypadTop ?? rowSizes.listBottom - Self.estimatedKeypadHeight
+            : rowSizes.listBottom - (rowSizes.keypadHeight ?? Self.estimatedKeypadHeight)
+        guard frame.maxY - Self.rowPadding.height > keypadTop else { return }
+        Task {
+            // Ждём, пока клавиатура займёт место внизу, иначе прокрутка не учтёт её.
+            if !wasVisible { try? await Task.sleep(for: .milliseconds(120)) }
+            withAnimation(.snappy) { proxy.scrollTo(code, anchor: .bottom) }
+        }
     }
+
+    /// Высота клавиатуры до первого показа, пока её не измерили.
+    private static let estimatedKeypadHeight: CGFloat = 380
 
     private func hideKeypad() {
         withAnimation(.snappy) { isKeypadVisible = false }
@@ -412,6 +445,16 @@ struct SourceFooter: View {
 /// Хранилище размеров строк без наблюдения SwiftUI.
 final class RowSizeStore {
     var sizes: [String: CGSize] = [:]
+    /// Положение строк на экране — чтобы понять, закроет ли их клавиатура.
+    var frames: [String: CGRect] = [:]
+    /// Верх клавиатуры на экране, пока она показана.
+    var keypadTop: CGFloat? {
+        didSet { if let keypadTop { keypadHeight = listBottom - keypadTop } }
+    }
+    /// Высота клавиатуры, измеренная при прошлом показе.
+    var keypadHeight: CGFloat?
+    /// Низ списка на экране.
+    var listBottom: CGFloat = 0
 }
 
 /// Скруглённый прямоугольник карточки внутри строки с отступами.
