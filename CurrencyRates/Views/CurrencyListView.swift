@@ -131,7 +131,7 @@ struct CurrencyListView: View {
                 if elapsed < 1.2 { try? await Task.sleep(for: .seconds(1.2 - elapsed)) }
                 withAnimation(.snappy) { isRefreshing = false }
             }
-            // В iOS 26 — системный мягкий край под панелью вместо резкой линии.
+            // Системный край прокрутки выключен — размытие под панелью рисует TopFade.
             .modifier(SoftTopEdge())
             // Под тостом и монетами, чтобы не приглушать их.
             .overlay(alignment: .top) { TopFade() }
