@@ -158,19 +158,21 @@ final class RatesStore {
         selectedCodes.contains(code)
     }
 
-    /// Сколько валют можно держать в списке без подписки: USD и EUR плюс ещё четыре.
-    static let freeLimit = 6
+    /// Сколько валют можно держать в списке без подписки: USD и EUR плюс ещё две.
+    static let freeLimit = 4
 
-    /// Подписка Pro снимает ограничение на число валют. Покупки пока не подключены.
+    /// Подписка Pro снимает ограничения. Покупки пока не подключены.
     var isPro = false
 
-    /// Можно ли добавить ещё одну валюту.
-    var canAddMore: Bool {
-        isPro || selectedCodes.count < Self.freeLimit
+    /// Можно ли добавить валюту без подписки: только фиат и только в пределах лимита.
+    /// Криптовалюты доступны лишь с Pro.
+    func canAdd(_ code: String) -> Bool {
+        if isPro { return true }
+        return CryptoAsset.byCode[code] == nil && selectedCodes.count < Self.freeLimit
     }
 
     func add(_ code: String) {
-        guard !contains(code), canAddMore else { return }
+        guard !contains(code), canAdd(code) else { return }
         if selectedCodes.isEmpty {
             sourceCode = code
             amountText = ""
