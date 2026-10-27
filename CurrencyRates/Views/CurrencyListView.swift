@@ -101,20 +101,22 @@ struct CurrencyListView: View {
                     .onMove { store.move(fromOffsets: $0, toOffset: $1) }
                 }
 
-                // Пустое место под списком тоже закрывает клавиатуру.
-                if isKeypadVisible {
-                    Color.clear
-                        .frame(height: 360)
-                        .contentShape(Rectangle())
-                        .onTapGesture { hideKeypad() }
-                        .listRowBackground(Color.clear)
-                        .listRowSeparator(.hidden)
-                        .listRowInsets(EdgeInsets())
-                }
+                // Запас под списком, чтобы нижние валюты можно было поднять над клавиатурой.
+                // Строка есть всегда и плавно меняет высоту — без рывка при появлении.
+                // Нажатие в это пустое место закрывает клавиатуру.
+                Color.clear
+                    .frame(height: isKeypadVisible ? 360 : 0)
+                    .contentShape(Rectangle())
+                    .onTapGesture { hideKeypad() }
+                    .listRowBackground(Color.clear)
+                    .listRowSeparator(.hidden)
+                    .listRowInsets(EdgeInsets())
 
                 statusSection
             }
             .listStyle(.plain)
+            // Иначе пустая строка-запас под списком занимала бы минимальную высоту строки.
+            .environment(\.defaultMinListRowHeight, 0)
             .scrollContentBackground(.hidden)
             .background(Color(.systemGroupedBackground))
             .environment(\.editMode, $editMode)
@@ -151,12 +153,13 @@ struct CurrencyListView: View {
             .background {
                 EmptySpaceTapCatcher { if isKeypadVisible { hideKeypad() } }
             }
-            // Прокрутка списка прячет клавиатуру, как у системной клавиатуры.
+            // Смахивание списка вниз прячет клавиатуру. Прокрутка вверх её не трогает:
+            // иначе клавиатура исчезала посреди жеста и список прыгал под пальцем.
             // Жест включён только при открытой клавиатуре: иначе он перехватывает
             // потягивание вниз, и «потяните, чтобы обновить» срабатывает через раз.
             .simultaneousGesture(
                 DragGesture(minimumDistance: 12).onChanged { value in
-                    if isKeypadVisible, abs(value.translation.height) > 24 { hideKeypad() }
+                    if isKeypadVisible, value.translation.height > 40 { hideKeypad() }
                 },
                 including: isKeypadVisible ? .all : .subviews
             )
@@ -267,7 +270,7 @@ struct CurrencyListView: View {
         }
         store.beginEditing(code)
         let wasVisible = isKeypadVisible
-        withAnimation(.snappy) { isKeypadVisible = true }
+        withAnimation(Self.keypadAnimation) { isKeypadVisible = true }
         // Список прокручивается, только если карточка окажется под клавиатурой;
         // видимая карточка остаётся на месте.
         let keypadTop = wasVisible
@@ -281,11 +284,12 @@ struct CurrencyListView: View {
             guard cardBottom > keypadTop - 8 else { return }
         }
         Task {
-            // Ждём, пока клавиатура займёт место внизу и под списком появится запас для прокрутки.
-            if !wasVisible { try? await Task.sleep(for: .milliseconds(300)) }
+            // Кадр на то, чтобы под списком появился запас для прокрутки; дальше список
+            // поднимается одним плавным движением вместе с выезжающей клавиатурой.
+            if !wasVisible { try? await Task.sleep(for: .milliseconds(30)) }
             // Не к нижнему краю (он может оказаться под клавиатурой), а чуть выше середины экрана —
             // там карточка точно видна.
-            withAnimation(.snappy) { proxy.scrollTo(code, anchor: UnitPoint(x: 0.5, y: 0.35)) }
+            withAnimation(Self.keypadAnimation) { proxy.scrollTo(code, anchor: UnitPoint(x: 0.5, y: 0.35)) }
         }
     }
 
@@ -293,8 +297,11 @@ struct CurrencyListView: View {
     private static let estimatedKeypadHeight: CGFloat = 380
 
     private func hideKeypad() {
-        withAnimation(.snappy) { isKeypadVisible = false }
+        withAnimation(Self.keypadAnimation) { isKeypadVisible = false }
     }
+
+    /// Одна и та же плавная кривая для клавиатуры и подъёма списка — движутся как одно целое.
+    private static let keypadAnimation = Animation.smooth(duration: 0.4)
 
     // MARK: - Статус загрузки
 
