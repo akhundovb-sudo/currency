@@ -13,11 +13,7 @@ struct AddCurrencyView: View {
     private var currencies: [Currency] {
         switch kind {
         case .fiat:
-            let codes = store.snapshot?.fiat.map { Array($0.rates.keys) } ?? Locale.commonISOCurrencyCodes
-            return codes
-                .filter { CryptoAsset.byCode[$0] == nil }
-                .sorted()
-                .map(Currency.init(code:))
+            return store.fiatCodes.map(Currency.init(code:))
         case .crypto:
             // Порядок примерно по капитализации.
             return CryptoAsset.all.map { Currency(code: $0.code) }
