@@ -260,12 +260,17 @@ struct CurrencyListView: View {
         let wasVisible = isKeypadVisible
         withAnimation(Self.keypadAnimation) { isKeypadVisible = true }
         Task {
-            // Ждём, пока клавиатура займёт место и список станет ниже.
-            if !wasVisible { try? await Task.sleep(for: .milliseconds(120)) }
             // Прокрутка средствами UIKit по настоящему положению строки на экране:
             // ровно настолько, чтобы карточка была видна целиком; видимая остаётся на месте.
             // (ScrollViewProxy.scrollTo в List на iOS 27 этого не делал.)
+            // Первый раз — сразу, как клавиатура начала выезжать; второй — когда она встала
+            // на место и список окончательно стал ниже: иначе прокрутки могло не хватить.
+            if !wasVisible { try? await Task.sleep(for: .milliseconds(120)) }
             rowSizes.scrollToVisible(code)
+            if !wasVisible {
+                try? await Task.sleep(for: .milliseconds(380))
+                rowSizes.scrollToVisible(code)
+            }
         }
     }
 

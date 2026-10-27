@@ -63,7 +63,6 @@ extension Color {
 /// мягкий блик сверху и светлый ободок. Без теней. Выбранная — с рамкой цвета акцента.
 struct CardStyle: ViewModifier {
     var isSelected = false
-    @State private var isPopped = false
 
     func body(content: Content) -> some View {
         let shape = RoundedRectangle(cornerRadius: 20, style: .continuous)
@@ -115,13 +114,6 @@ struct CardStyle: ViewModifier {
                     }
                 }
                 .animation(.easeInOut(duration: 0.25), value: isSelected)
-            }
-            // Выбор: короткий «пружинящий» отклик карточки.
-            .scaleEffect(isPopped ? 1.035 : 1)
-            .onChange(of: isSelected) { _, selected in
-                guard selected else { return }
-                withAnimation(.snappy(duration: 0.14)) { isPopped = true }
-                withAnimation(.bouncy(duration: 0.4).delay(0.14)) { isPopped = false }
             }
     }
 }
