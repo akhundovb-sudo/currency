@@ -79,6 +79,7 @@ struct SettingsView: View {
                     Text(verbatim: "Icons: Iconoir (MIT) · Flags: flag-icons (MIT) · Crypto: web3icons (MIT)")
                 }
             }
+            .softTopBar()
             .navigationTitle(L(.settings))
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
