@@ -162,7 +162,7 @@ private struct KeypadButton: View {
         case .divide: .dynamic(light: 0x0284C7, dark: 0x38BDF8)   // небесно-синий
         case .multiply: .dynamic(light: 0xD97706, dark: 0xFBBF24) // янтарный
         case .subtract: .dynamic(light: 0xE11D48, dark: 0xFB7185) // розовый
-        case .add: .dynamic(light: 0x7C3AED, dark: 0xA78BFA)      // фиолетовый
+        case .add: .dynamic(light: 0x059669, dark: 0x34D399)      // изумрудный
         case .hide, .backspace: .primary
         default: .accentColor                                      // = основной цвет
         }
