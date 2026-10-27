@@ -500,8 +500,8 @@ struct ShakeEffect: GeometryEffect {
 /// Индикатор обновления: две стеклянные монеты с $ и ₿ кружат друг вокруг друга
 /// и, встречаясь, перетекают одна в другую, как капли жидкости.
 struct SpinningCoins: View {
-    private let orbit: CGFloat = 16
-    private let coinRadius: CGFloat = 15
+    private let orbit: CGFloat = 20
+    private let coinRadius: CGFloat = 19
     private let period: Double = 1.4
 
     var body: some View {
@@ -514,8 +514,8 @@ struct SpinningCoins: View {
                 ForEach(coins.indices, id: \.self) { index in
                     let item = coins[index]
                     Text(verbatim: item.glyph)
-                        .font(.system(size: 17, weight: .bold, design: .rounded))
-                        .foregroundStyle(Color.accentColor)
+                        .font(.system(size: 21, weight: .bold, design: .rounded))
+                        .foregroundStyle(Color.primary)
                         .scaleEffect(item.scale)
                         .opacity(0.45 + 0.55 * item.depth)
                         .offset(x: item.offset)
@@ -550,7 +550,7 @@ struct SpinningCoins: View {
 }
 
 /// Стеклянные капли, сливающиеся при сближении: круги размываются и обрезаются по порогу
-/// прозрачности (метаболы). Заливка — лёгкое матовое стекло с оттенком акцента, блик и белый ободок.
+/// прозрачности (метаболы). Заливка — прозрачное матовое стекло без оттенка, блик и белый ободок.
 private struct LiquidGlass: View {
     /// Смещение центра по горизонтали и радиус каждой капли.
     let blobs: [(CGFloat, CGFloat)]
@@ -561,7 +561,7 @@ private struct LiquidGlass: View {
             ZStack {
                 Rectangle().fill(.ultraThinMaterial)
                 LinearGradient(
-                    colors: [Color.accentColor.opacity(0.28), Color.accentColor.opacity(0.1)],
+                    colors: [Color.white.opacity(0.35), Color.glassNeutral.opacity(0.12)],
                     startPoint: .top,
                     endPoint: .bottom
                 )
@@ -576,7 +576,7 @@ private struct LiquidGlass: View {
 
             // Ободок: капля без чуть уменьшенной копии самой себя.
             LinearGradient(
-                colors: [.white.opacity(0.95), Color.accentColor.opacity(0.35)],
+                colors: [.white.opacity(0.95), Color.glassNeutral.opacity(0.35)],
                 startPoint: .top,
                 endPoint: .bottom
             )
@@ -595,7 +595,7 @@ private struct LiquidGlass: View {
     private func shape(threshold: Double) -> some View {
         Canvas { context, size in
             context.addFilter(.alphaThreshold(min: threshold, color: .white))
-            context.addFilter(.blur(radius: 5))
+            context.addFilter(.blur(radius: 6))
             context.drawLayer { layer in
                 for (offset, radius) in blobs {
                     let rect = CGRect(
