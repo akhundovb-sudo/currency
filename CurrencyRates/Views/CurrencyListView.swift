@@ -180,8 +180,10 @@ struct CurrencyListView: View {
                     .background {
                         GeometryReader { geo in
                             Color.clear
-                                .onAppear { rowSizes.keypadTop = geo.frame(in: .global).minY }
-                                .onChange(of: geo.frame(in: .global).minY) { _, top in rowSizes.keypadTop = top }
+                                // Берём высоту, а не положение: клавиатура выезжает снизу,
+                                // и в момент появления её верх ещё за краем экрана.
+                                .onAppear { rowSizes.keypadHeight = geo.size.height }
+                                .onChange(of: geo.size.height) { _, height in rowSizes.keypadHeight = height }
                         }
                     }
                     .transition(.move(edge: .bottom).combined(with: .opacity))
@@ -273,9 +275,8 @@ struct CurrencyListView: View {
         withAnimation(Self.keypadAnimation) { isKeypadVisible = true }
         // Список прокручивается, только если карточка окажется под клавиатурой;
         // видимая карточка остаётся на месте.
-        let keypadTop = wasVisible
-            ? rowSizes.keypadTop ?? rowSizes.listBottom - Self.estimatedKeypadHeight
-            : rowSizes.listBottom - (rowSizes.keypadHeight ?? Self.estimatedKeypadHeight)
+        let keypadHeight = max(rowSizes.keypadHeight ?? Self.estimatedKeypadHeight, Self.minimumKeypadHeight)
+        let keypadTop = rowSizes.listBottom - keypadHeight
         // Точка касания на экране — по ней видно, где сейчас карточка
         // (положение строк List при прокрутке не отслеживается надёжно).
         if let tap = TouchTracker.lastLocation, let rowHeight = rowSizes.sizes[code]?.height {
@@ -295,6 +296,8 @@ struct CurrencyListView: View {
 
     /// Высота клавиатуры до первого показа, пока её не измерили.
     private static let estimatedKeypadHeight: CGFloat = 380
+    /// Меньше клавиатура не бывает — защита от неверного замера.
+    private static let minimumKeypadHeight: CGFloat = 280
 
     private func hideKeypad() {
         withAnimation(Self.keypadAnimation) { isKeypadVisible = false }
@@ -463,10 +466,6 @@ struct SourceFooter: View {
 /// Хранилище размеров строк без наблюдения SwiftUI.
 final class RowSizeStore {
     var sizes: [String: CGSize] = [:]
-    /// Верх клавиатуры на экране, пока она показана.
-    var keypadTop: CGFloat? {
-        didSet { if let keypadTop { keypadHeight = listBottom - keypadTop } }
-    }
     /// Высота клавиатуры, измеренная при прошлом показе.
     var keypadHeight: CGFloat?
     /// Низ списка на экране.
