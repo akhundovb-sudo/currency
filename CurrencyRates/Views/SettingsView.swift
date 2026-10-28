@@ -99,15 +99,10 @@ struct SettingsView: View {
                     Button { requestReview() } label: {
                         linkRow(L(.rateApp), symbol: "star")
                     }
-                    // Условия и конфиденциальность — в одной строке, каждая ссылка отдельно.
-                    HStack(spacing: 6) {
-                        Link(L(.terms), destination: AppLinks.terms)
-                        Text(verbatim: "·").foregroundStyle(Color.secondaryLabel)
-                        Link(L(.privacy), destination: AppLinks.privacy)
-                        Spacer(minLength: 0)
+                    // Условия и конфиденциальность — одна строка, ведёт на страницу с документами.
+                    Link(destination: AppLinks.legal) {
+                        linkRow(L(.termsPrivacy), symbol: "arrow.up.right")
                     }
-                    .foregroundStyle(Color.primary)
-                    .buttonStyle(.borderless)
                 }
 
                 Section {

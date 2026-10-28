@@ -9,6 +9,8 @@ struct CurrencyListView: View {
     @State private var editMode: EditMode = .inactive
     @State private var isKeypadVisible = false
     @State private var isRefreshing = false
+    /// Увеличивается после успешного обновления — карточки коротко подсвечиваются волной.
+    @State private var refreshedCount = 0
     @State private var toast: Toast?
     @State private var toastTask: Task<Void, Never>?
     /// Счётчик «тряски» карточки ввода при переполнении суммы.
@@ -77,6 +79,19 @@ struct CurrencyListView: View {
                         .scaleEffect(isKeypadVisible && code == store.sourceCode ? 1.025 : 1)
                         .animation(.spring(response: 0.35, dampingFraction: 0.8), value: isKeypadVisible)
                         .animation(.spring(response: 0.35, dampingFraction: 0.8), value: store.sourceCode)
+                        // Курсы обновились: карточки по очереди сверху вниз коротко увеличиваются
+                        // и пружинят обратно — волна.
+                        .keyframeAnimator(initialValue: 1.0, trigger: refreshedCount) { content, scale in
+                            content.scaleEffect(scale)
+                        } keyframes: { _ in
+                            // Кадр нулевой длины даёт NaN-масштаб, и первая карточка пропадала.
+                            let delay = 0.001 + Double(store.selectedCodes.firstIndex(of: code) ?? 0) * 0.06
+                            KeyframeTrack {
+                                LinearKeyframe(1.0, duration: delay)
+                                CubicKeyframe(1.04, duration: 0.16)
+                                SpringKeyframe(1.0, duration: 0.45, spring: .bouncy)
+                            }
+                        }
                         }
                         .swipeToDelete(isEnabled: !editMode.isEditing, canDelete: store.canDelete(code), onBlocked: { showBlockedToast(for: code) }, label: L(.delete)) {
                             store.remove(code)
@@ -290,6 +305,11 @@ struct CurrencyListView: View {
             let elapsed = Date.now.timeIntervalSince(started)
             if elapsed < 1.2 { try? await Task.sleep(for: .seconds(1.2 - elapsed)) }
             withAnimation(.snappy) { isRefreshing = false }
+            // Подсветка карточек — когда капля закончила обновление.
+            if store.errorMessage == nil {
+                try? await Task.sleep(for: .seconds(0.3))
+                refreshedCount += 1
+            }
         }
     }
 
@@ -657,6 +677,10 @@ struct IslandRefreshIndicator: View {
 
     @State private var startedAt: Date?
     @State private var endedAt: Date?
+    @Environment(\.colorScheme) private var colorScheme
+
+    /// Капля: в светлой теме чёрная, как остров; в тёмной — чуть светлее, иначе её не видно.
+    private var dropColor: Color { colorScheme == .dark ? Color(white: 0.17) : .black }
 
     private let dropDistance: CGFloat = 80
     // Крупнее: тонкий серебряный знак на маленькой монете было не разглядеть.
@@ -680,7 +704,7 @@ struct IslandRefreshIndicator: View {
                 }
             } else if pull > 0 {
                 // Пока тянут — монета выходит и поворачивается вслед за пальцем.
-                coin(amount: pull, angle: Double(pull) * .pi, lift: 0, alert: 0, width: proxy.size.width)
+                coin(amount: pull, angle: Double(pull) * .pi, lift: 0, alert: 0, result: 0, width: proxy.size.width)
             }
         }
         .ignoresSafeArea()
@@ -728,7 +752,7 @@ struct IslandRefreshIndicator: View {
         let spin = Double(max(pull, 0.5)) * .pi + elapsed * spinRate * 2 * .pi
 
         guard let endedAt else {
-            return coin(amount: amount, angle: spin, lift: 0, alert: 0, width: width)
+            return coin(amount: amount, angle: spin, lift: 0, alert: 0, result: 0, width: width)
         }
         let sinceEnd = date.timeIntervalSince(endedAt)
         // Доворот до ближайшего «лица» (целое число оборотов) с замедлением.
@@ -745,12 +769,14 @@ struct IslandRefreshIndicator: View {
             amount *= 1 - back * back
         }
         let alert = failed ? sin(min(1, sinceEnd / (settleDuration + hopDuration)) * .pi) : 0
-        return coin(amount: amount, angle: angle, lift: lift, alert: alert, width: width)
+        // Знак коротко пружинит, когда обновление закончилось.
+        let result = min(1, sinceEnd / settleDuration)
+        return coin(amount: amount, angle: angle, lift: lift, alert: alert, result: result, width: width)
     }
 
     /// `angle` — поворот вокруг вертикальной оси; `lift` — подскок вниз (pt);
     /// `alert` — сила красной вспышки (0…1).
-    private func coin(amount: CGFloat, angle: Double, lift: CGFloat, alert: Double, width: CGFloat) -> some View {
+    private func coin(amount: CGFloat, angle: Double, lift: CGFloat, alert: Double, result: Double, width: CGFloat) -> some View {
         let island = Self.islandRect(screenWidth: width)
         let scale = 0.4 + 0.6 * amount
         let size = coinSize * scale
@@ -760,14 +786,14 @@ struct IslandRefreshIndicator: View {
         return ZStack(alignment: .topLeading) {
             // Жидкая перемычка между островом и монетой.
             Canvas { context, _ in
-                context.addFilter(.alphaThreshold(min: 0.5, color: .black))
+                context.addFilter(.alphaThreshold(min: 0.5, color: dropColor))
                 context.addFilter(.blur(radius: 7))
                 context.drawLayer { layer in
                     layer.fill(Path(roundedRect: island, cornerRadius: island.height / 2), with: .color(.black))
                     layer.fill(Path(ellipseIn: blob), with: .color(.black))
                 }
             }
-            coinFace(alert: alert, phase: angle)
+            coinFace(alert: alert, phase: angle, result: result)
                 .frame(width: coinSize, height: coinSize)
                 .scaleEffect(scale)
                 .opacity(Double(min(1, max(0, amount * 2 - 0.2))))
@@ -783,12 +809,12 @@ struct IslandRefreshIndicator: View {
 
     /// Капля с знаком выбранной иконки: знак покачивается, по нему пробегает блик.
     /// `phase` растёт со временем (раз в оборот — один блик и одно покачивание).
-    private func coinFace(alert: Double, phase: Double) -> some View {
+    private func coinFace(alert: Double, phase: Double, result: Double) -> some View {
         let mark = Self.markImage
         let sway = sin(phase) * 9
         let sweep = (phase / (2 * .pi)).truncatingRemainder(dividingBy: 1) * 1.6 - 0.3
         return ZStack {
-            Circle().fill(Color.black)
+            Circle().fill(dropColor)
             Image(mark)
                 .resizable()
                 // Знак с запасом воздуха по краям капли.
@@ -807,6 +833,8 @@ struct IslandRefreshIndicator: View {
                     .blendMode(.screen)
                 }
                 .rotationEffect(.degrees(sway))
+                // Завершение: знак коротко «пружинит» — без галочки.
+                .scaleEffect(1 + 0.12 * sin(result * .pi))
         }
         .clipShape(Circle())
         // При ошибке вокруг капли вспыхивает красное свечение.

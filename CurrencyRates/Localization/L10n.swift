@@ -66,7 +66,7 @@ enum L10n {
         case proBecome, proSubscription, upgrade
         case proHeadline, planMonthly, planYearly, planLifetime, perMonth, perYear, oneTime
         case bestValue, included, featUnlimited, featFiat, featCrypto, featSupport
-        case rateApp, manageSubscription, proActive, support
+        case rateApp, manageSubscription, proActive, support, termsPrivacy
         case appIcon, iconSilver, iconAmethyst, iconSticker, iconPuffy, iconSponge, iconPlush, iconGummy, iconBubbles, iconHolo
         case getFullAccess, startTrial, trialNote, terms, privacy, restore
         case formatAutomatic, formatInternational, formatEuropean, formatSpaced
@@ -160,6 +160,7 @@ enum L10n {
         .iconGummy: ["Мармелад", "Gummy", "Jelibon", "Bonbon", "Gominola", "Gummi", "软糖", "حلوى"],
         .iconBubbles: ["Пузыри", "Bubbles", "Kabarcık", "Bulles", "Burbujas", "Blasen", "气泡", "فقاعات"],
         .iconHolo: ["Голограмма", "Holo", "Hologram", "Holo", "Holo", "Holo", "镭射", "هولوغرام"],
+        .termsPrivacy: ["Условия и конфиденциальность", "Terms & Privacy", "Şartlar ve Gizlilik", "Conditions et confidentialité", "Términos y privacidad", "Bedingungen & Datenschutz", "条款与隐私", "الشروط والخصوصية"],
         .rateApp: ["Оценить приложение", "Rate the App", "Uygulamayı Değerlendir", "Noter l’app", "Valorar la app", "App bewerten", "给应用评分", "قيّم التطبيق"],
         .manageSubscription: ["Управлять", "Manage", "Yönet", "Gérer", "Gestionar", "Verwalten", "管理", "إدارة"],
         .proActive: ["Pro активен", "Pro is active", "Pro etkin", "Pro est actif", "Pro está activo", "Pro ist aktiv", "Pro 已启用", "Pro مُفعّل"],

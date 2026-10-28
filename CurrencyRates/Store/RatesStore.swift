@@ -495,6 +495,9 @@ enum AppLinks {
     static let terms = URL(string: "https://www.apple.com/legal/internet-services/itunes/dev/stdeula/")!
     /// TODO: заменить на страницу своей политики конфиденциальности.
     static let privacy = URL(string: "https://www.apple.com/legal/privacy/")!
+    /// Одна страница с условиями и политикой конфиденциальности (строка в настройках).
+    /// TODO: заменить на свою страницу, где есть оба документа.
+    static let legal = URL(string: "https://www.apple.com/legal/privacy/")!
     /// Управление подписками в App Store.
     static let manageSubscriptions = URL(string: "https://apps.apple.com/account/subscriptions")!
 }
