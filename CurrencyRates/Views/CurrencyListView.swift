@@ -104,6 +104,16 @@ struct CurrencyListView: View {
                                 SpringKeyframe(1.0, duration: 0.45, spring: .bouncy)
                             }
                         }
+                        // Ручка перетаскивания — видно, что карточку можно передвинуть.
+                        if editMode.isEditing {
+                            Image(systemName: "line.3.horizontal")
+                                .font(.system(size: 18, weight: .semibold))
+                                .foregroundStyle(Color.secondaryLabel)
+                                .frame(width: 28, height: 44)
+                                .contentShape(Rectangle())
+                                .transition(.scale(scale: 0.4).combined(with: .opacity))
+                                .accessibilityHidden(true)
+                        }
                         }
                         .swipeToDelete(isEnabled: !editMode.isEditing, canDelete: store.canDelete(code), onBlocked: { showBlockedToast(for: code) }, label: L(.delete)) {
                             store.remove(code)
@@ -128,9 +138,21 @@ struct CurrencyListView: View {
                         .shadow(color: .black.opacity(drag?.code == code ? 0.18 : 0), radius: 18, y: 10)
                         .offset(y: rowOffset(for: code))
                         .zIndex(drag?.code == code ? 1 : 0)
-                        // Перетаскивание — только в режиме правки (Edit). В обычном режиме на карточке
-                        // нет лишних жестов, и нажатия срабатывают сразу.
-                        .simultaneousGesture(reorderGesture(for: code), including: editMode.isEditing ? .all : .none)
+                        // Перестановка — в режиме правки: потянуть карточку (за неё или за ручку справа).
+                        .simultaneousGesture(editReorderGesture(for: code), including: editMode.isEditing ? .all : .none)
+                        // В списке вся строка ловит нажатие, поэтому смотрим, куда оно пришлось:
+                        // в карточку — выбор валюты, в отступ вокруг — закрыть клавиатуру.
+                        // Долгое нажатие на карточку включает режим правки (как на экране «Домой»),
+                        // и карточку сразу можно тащить. Обычное нажатие не задерживается.
+                        .simultaneousGesture(
+                            LongPressGesture(minimumDuration: 0.45).onEnded { _ in
+                                guard !editMode.isEditing else { return }
+                                UIImpactFeedbackGenerator(style: .medium).impactOccurred()
+                                hideKeypad()
+                                withAnimation(.smooth(duration: 0.32)) { editMode = .active }
+                            },
+                            including: editMode.isEditing ? .none : .all
+                        )
                         // В списке вся строка ловит нажатие, поэтому смотрим, куда оно пришлось:
                         // в карточку — выбор валюты, в отступ вокруг — закрыть клавиатуру.
                         .onTapGesture(coordinateSpace: .local) { location in
@@ -312,49 +334,54 @@ struct CurrencyListView: View {
         return 0
     }
 
-    private func reorderGesture(for code: String) -> some Gesture {
+    /// В режиме правки карточку тянут сразу.
+    private func editReorderGesture(for code: String) -> some Gesture {
         DragGesture(minimumDistance: 6, coordinateSpace: .global)
-            .onChanged { dragValue in
-                guard let from = store.selectedCodes.firstIndex(of: code) else { return }
-                if drag == nil {
-                    if isKeypadVisible { hideKeypad() }
-                    UIImpactFeedbackGenerator(style: .medium).impactOccurred()
-                    let height = rowSizes.sizes[code]?.height ?? 88
-                    withAnimation(.snappy(duration: 0.2)) {
-                        drag = RowDrag(code: code, from: from, to: from, offset: 0, rowHeight: height)
-                    }
-                }
-                guard var current = drag else { return }
-                current.offset = dragValue.translation.height
-                let steps = Int((current.offset / current.rowHeight).rounded())
-                let target = min(max(current.from + steps, 0), store.selectedCodes.count - 1)
-                if target != current.to {
-                    UISelectionFeedbackGenerator().selectionChanged()
-                    current.to = target
-                    withAnimation(.snappy(duration: 0.25)) { drag = current }
-                } else {
-                    drag = current
-                }
+            .onChanged { value in dragChanged(code, translation: value.translation.height) }
+            .onEnded { _ in dragEnded() }
+    }
+
+    private func dragChanged(_ code: String, translation: CGFloat) {
+        guard let from = store.selectedCodes.firstIndex(of: code) else { return }
+        if drag == nil {
+            if isKeypadVisible { hideKeypad() }
+            UIImpactFeedbackGenerator(style: .medium).impactOccurred()
+            let height = rowSizes.sizes[code]?.height ?? 88
+            withAnimation(.snappy(duration: 0.2)) {
+                drag = RowDrag(code: code, from: from, to: from, offset: 0, rowHeight: height)
             }
-            .onEnded { _ in
-                guard let finished = drag else { return }
-                // Ставим строку на новое место без анимации, а затем плавно убираем сдвиги:
-                // карточка «доезжает» в свою ячейку, остальные остаются, где расступились.
-                var settle = Transaction()
-                settle.disablesAnimations = true
-                withTransaction(settle) {
-                    if finished.to != finished.from {
-                        store.move(
-                            fromOffsets: IndexSet(integer: finished.from),
-                            toOffset: finished.to > finished.from ? finished.to + 1 : finished.to
-                        )
-                    }
-                    let landed = CGFloat(finished.to - finished.from) * finished.rowHeight
-                    drag = RowDrag(code: finished.code, from: finished.to, to: finished.to,
-                                   offset: finished.offset - landed, rowHeight: finished.rowHeight)
-                }
-                withAnimation(.snappy(duration: 0.3)) { drag = nil }
+        }
+        guard var current = drag, current.code == code else { return }
+        current.offset = translation
+        let steps = Int((current.offset / current.rowHeight).rounded())
+        let target = min(max(current.from + steps, 0), store.selectedCodes.count - 1)
+        if target != current.to {
+            UISelectionFeedbackGenerator().selectionChanged()
+            current.to = target
+            withAnimation(.snappy(duration: 0.25)) { drag = current }
+        } else {
+            drag = current
+        }
+    }
+
+    private func dragEnded() {
+        guard let finished = drag else { return }
+        // Ставим строку на новое место без анимации, а затем плавно убираем сдвиги:
+        // карточка «доезжает» в свою ячейку, остальные остаются, где расступились.
+        var settle = Transaction()
+        settle.disablesAnimations = true
+        withTransaction(settle) {
+            if finished.to != finished.from {
+                store.move(
+                    fromOffsets: IndexSet(integer: finished.from),
+                    toOffset: finished.to > finished.from ? finished.to + 1 : finished.to
+                )
             }
+            let landed = CGFloat(finished.to - finished.from) * finished.rowHeight
+            drag = RowDrag(code: finished.code, from: finished.to, to: finished.to,
+                           offset: finished.offset - landed, rowHeight: finished.rowHeight)
+        }
+        withAnimation(.snappy(duration: 0.3)) { drag = nil }
     }
 
     private func startEditing(_ code: String) {
