@@ -67,6 +67,7 @@ enum L10n {
         case proHeadline, planMonthly, planYearly, planLifetime, perMonth, perYear, oneTime
         case bestValue, included, featUnlimited, featFiat, featCrypto, featSupport
         case rateApp, manageSubscription, proActive, support
+        case appIcon, iconSilver, iconAmethyst, iconSticker, iconPuffy, iconSponge, iconPlush, iconGummy, iconBubbles, iconHolo
         case getFullAccess, startTrial, trialNote, terms, privacy, restore
         case formatAutomatic, formatInternational, formatEuropean, formatSpaced
         case errNoInternet, errTimeout, errServer, errRateLimited, errBadResponse
@@ -149,6 +150,16 @@ enum L10n {
         .featSupport: ["Поддержка развития приложения", "Support the app’s development", "Uygulamanın gelişimine destek", "Soutenir le développement", "Apoya el desarrollo de la app", "Unterstütze die Entwicklung", "支持应用的开发", "ادعم تطوير التطبيق"],
         .trialNote: ["7 дней бесплатно, отмена в любой момент", "7-day free trial, cancel anytime", "7 gün ücretsiz, istediğin zaman iptal", "7 jours gratuits, sans engagement", "7 días gratis, cancela cuando quieras", "7 Tage gratis, jederzeit kündbar", "免费试用 7 天，可随时取消", "7 أيام مجانًا، ألغِ في أي وقت"],
         .startTrial: ["Попробовать бесплатно", "Start Free Trial", "Ücretsiz Denemeyi Başlat", "Commencer l’essai gratuit", "Empezar prueba gratis", "Gratis testen", "开始免费试用", "ابدأ التجربة المجانية"],
+        .appIcon: ["Иконка приложения", "App Icon", "Uygulama Simgesi", "Icône de l’app", "Icono de la app", "App-Symbol", "应用图标", "أيقونة التطبيق"],
+        .iconSilver: ["Серебро", "Silver", "Gümüş", "Argent", "Plata", "Silber", "银色", "فضي"],
+        .iconAmethyst: ["Аметист", "Amethyst", "Ametist", "Améthyste", "Amatista", "Amethyst", "紫晶", "جمشت"],
+        .iconSticker: ["Стикер", "Sticker", "Çıkartma", "Autocollant", "Pegatina", "Sticker", "贴纸", "ملصق"],
+        .iconPuffy: ["Пышный", "Puffy", "Kabarık", "Gonflé", "Inflado", "Aufgeblasen", "蓬松", "منفوخ"],
+        .iconSponge: ["Губка", "Sponge", "Sünger", "Éponge", "Esponja", "Schwamm", "海绵", "إسفنج"],
+        .iconPlush: ["Плюш", "Plush", "Pelüş", "Peluche", "Peluche", "Plüsch", "毛绒", "قطيفة"],
+        .iconGummy: ["Мармелад", "Gummy", "Jelibon", "Bonbon", "Gominola", "Gummi", "软糖", "حلوى"],
+        .iconBubbles: ["Пузыри", "Bubbles", "Kabarcık", "Bulles", "Burbujas", "Blasen", "气泡", "فقاعات"],
+        .iconHolo: ["Голограмма", "Holo", "Hologram", "Holo", "Holo", "Holo", "镭射", "هولوغرام"],
         .rateApp: ["Оценить приложение", "Rate the App", "Uygulamayı Değerlendir", "Noter l’app", "Valorar la app", "App bewerten", "给应用评分", "قيّم التطبيق"],
         .manageSubscription: ["Управлять", "Manage", "Yönet", "Gérer", "Gestionar", "Verwalten", "管理", "إدارة"],
         .proActive: ["Pro активен", "Pro is active", "Pro etkin", "Pro est actif", "Pro está activo", "Pro ist aktiv", "Pro 已启用", "Pro مُفعّل"],

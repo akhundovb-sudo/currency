@@ -2,8 +2,9 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-	<!-- Системный экран запуска: фон и логотип те же, что в первом кадре сплэша (SplashView),
-	     поэтому переход от него к анимации незаметен. Остальные ключи Info.plist генерирует Xcode. -->
+	<!-- Системный экран запуска — только фон (цвет фона списка): иконку можно сменить в настройках,
+	     а картинка экрана запуска одна на все иконки. Выбранную иконку показывает SplashView.
+	     Остальные ключи Info.plist генерирует Xcode. -->
 	<!-- Статус-бар скрыт на экране запуска и во время сплэша, появляется вместе со списком. -->
 	<key>UIStatusBarHidden</key>
 	<true/>
@@ -11,10 +12,6 @@
 	<dict>
 		<key>UIColorName</key>
 		<string>SplashBackground</string>
-		<key>UIImageName</key>
-		<string>SplashLogo</string>
-		<key>UIImageRespectsSafeAreaInsets</key>
-		<false/>
 	</dict>
 </dict>
 </plist>

@@ -269,7 +269,7 @@ private struct SelectionBubble: View {
 }
 
 /// Тег «PRO» у валют, доступных только с подпиской.
-private struct ProBadge: View {
+struct ProBadge: View {
     @Environment(\.colorScheme) private var colorScheme
 
     var body: some View {

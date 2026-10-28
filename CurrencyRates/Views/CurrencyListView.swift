@@ -642,7 +642,7 @@ struct CardInsetShape: Shape {
 }
 
 
-/// Индикатор обновления: из Dynamic Island выпадает монета со знаком ¢ из иконки —
+/// Индикатор обновления: из Dynamic Island выпадает капля со знаком выбранной иконки —
 /// тянется за ним жидкой каплей (фигуры размываются и обрезаются по порогу прозрачности)
 /// и крутится вокруг своей оси, как подброшенная. Чем сильнее тянут, тем ниже она опускается.
 /// Когда курсы обновились, монета разворачивается лицом, подпрыгивает и улетает обратно
@@ -658,8 +658,9 @@ struct IslandRefreshIndicator: View {
     @State private var startedAt: Date?
     @State private var endedAt: Date?
 
-    private let dropDistance: CGFloat = 72
-    private let coinSize: CGFloat = 46
+    private let dropDistance: CGFloat = 80
+    // Крупнее: тонкий серебряный знак на маленькой монете было не разглядеть.
+    private let coinSize: CGFloat = 64
     private let inDuration: Double = 0.45
     /// Оборотов в секунду, пока идёт обновление.
     private let spinRate: Double = 1.1
@@ -668,7 +669,7 @@ struct IslandRefreshIndicator: View {
     private let hopDuration: Double = 0.3
     private let outDuration: Double = 0.35
 
-    private static let face = Color(hex: 0x2C2456)
+    private static let face = Color(hex: 0x131313)
     private static let failure = Color(hex: 0xF87171)
 
     var body: some View {
@@ -754,8 +755,6 @@ struct IslandRefreshIndicator: View {
         let scale = 0.4 + 0.6 * amount
         let size = coinSize * scale
         let center = CGPoint(x: width / 2, y: island.midY + dropDistance * amount + lift)
-        // Видимая ширина монеты при повороте (ребро не исчезает до нуля).
-        let squash = max(0.12, abs(cos(angle)))
         let blob = CGRect(x: center.x - size / 2, y: center.y - size / 2, width: size, height: size)
 
         return ZStack(alignment: .topLeading) {
@@ -765,33 +764,52 @@ struct IslandRefreshIndicator: View {
                 context.addFilter(.blur(radius: 7))
                 context.drawLayer { layer in
                     layer.fill(Path(roundedRect: island, cornerRadius: island.height / 2), with: .color(.black))
-                    layer.fill(Path(ellipseIn: blob.insetBy(dx: blob.width * (1 - squash) / 2, dy: 0)), with: .color(.black))
+                    layer.fill(Path(ellipseIn: blob), with: .color(.black))
                 }
             }
-            coinFace(alert: alert)
+            coinFace(alert: alert, phase: angle)
                 .frame(width: coinSize, height: coinSize)
-                .scaleEffect(x: squash, y: 1)
-                // Обратная сторона — темнее: видно, что монета крутится.
-                .brightness(cos(angle) < 0 ? -0.12 : 0)
                 .scaleEffect(scale)
                 .opacity(Double(min(1, max(0, amount * 2 - 0.2))))
                 .position(center)
         }
     }
 
-    private func coinFace(alert: Double) -> some View {
-        ZStack {
-            Circle().fill(Self.face)
-            // Блик сверху слева — монета объёмная.
-            Circle().fill(
-                RadialGradient(colors: [.white.opacity(0.18), .clear], center: .init(x: 0.3, y: 0.25), startRadius: 0, endRadius: 30)
-            )
-            Image("SplashLogo")
+    /// Знак выбранной иконки — тот же, что на сплэше.
+    private static var markImage: String {
+        let name = UIApplication.shared.alternateIconName?.replacingOccurrences(of: "AppIcon-", with: "") ?? "Silver"
+        return "SplashIcon-\(name)"
+    }
+
+    /// Капля с знаком выбранной иконки: знак покачивается, по нему пробегает блик.
+    /// `phase` растёт со временем (раз в оборот — один блик и одно покачивание).
+    private func coinFace(alert: Double, phase: Double) -> some View {
+        let mark = Self.markImage
+        let sway = sin(phase) * 9
+        let sweep = (phase / (2 * .pi)).truncatingRemainder(dividingBy: 1) * 1.6 - 0.3
+        return ZStack {
+            Circle().fill(Color.black)
+            Image(mark)
                 .resizable()
-                .scaledToFit()
-                .padding(10)
+                // Знак с запасом воздуха по краям капли.
+                .frame(width: coinSize * 0.86, height: coinSize * 0.86)
+                .overlay {
+                    LinearGradient(
+                        stops: [
+                            .init(color: .clear, location: max(0, sweep - 0.15)),
+                            .init(color: .white.opacity(0.7), location: min(1, max(0, sweep))),
+                            .init(color: .clear, location: min(1, sweep + 0.15)),
+                        ],
+                        startPoint: .topTrailing,
+                        endPoint: .bottomLeading
+                    )
+                    .mask(Image(mark).resizable())
+                    .blendMode(.screen)
+                }
+                .rotationEffect(.degrees(sway))
         }
-        // Без обводки; при ошибке вокруг монеты вспыхивает красное свечение.
+        .clipShape(Circle())
+        // При ошибке вокруг капли вспыхивает красное свечение.
         .background {
             Circle()
                 .fill(Self.failure)
@@ -815,6 +833,38 @@ struct IslandRefreshIndicator: View {
             width: size.width,
             height: size.height
         )
+    }
+}
+
+/// Знак ¢ — прямо, как в шрифте: буква C с прямыми срезами концов и вертикальная черта,
+/// которая проходит сквозь неё и выступает сверху и снизу. Белый с лёгким объёмом.
+struct CentSign: View {
+    var body: some View {
+        Canvas { context, size in
+            let s = min(size.width, size.height)
+            let c = CGPoint(x: size.width / 2, y: size.height / 2)
+            let line = s * 0.15
+            let r = s * 0.28
+            // C, открытая справа: срезы под углом, как у гротеска.
+            var letter = Path()
+            letter.addArc(center: c, radius: r, startAngle: .degrees(-48), endAngle: .degrees(48), clockwise: true)
+            // Черта чуть правее центра, сквозь кольцо.
+            let x = c.x + s * 0.03
+            var bar = Path()
+            bar.move(to: CGPoint(x: x, y: c.y - s * 0.46))
+            bar.addLine(to: CGPoint(x: x, y: c.y + s * 0.46))
+            let style = StrokeStyle(lineWidth: line, lineCap: .butt)
+            let shape = letter.strokedPath(style).union(bar.strokedPath(StrokeStyle(lineWidth: line * 0.62, lineCap: .butt)))
+            context.fill(
+                shape,
+                with: .linearGradient(
+                    Gradient(colors: [.white, Color(white: 0.82)]),
+                    startPoint: CGPoint(x: c.x, y: c.y - s * 0.5),
+                    endPoint: CGPoint(x: c.x, y: c.y + s * 0.5)
+                )
+            )
+        }
+        .accessibilityHidden(true)
     }
 }
 

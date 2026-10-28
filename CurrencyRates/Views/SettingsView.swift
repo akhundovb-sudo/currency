@@ -90,24 +90,29 @@ struct SettingsView: View {
                     Text(L(.dataFooter))
                 }
 
+                Section(L(.appIcon)) {
+                    AppIconPicker(isPro: store.isPro, onLocked: { isPaywallPresented = true })
+                        .listRowInsets(EdgeInsets(top: 12, leading: 0, bottom: 14, trailing: 0))
+                }
+
                 Section(L(.support)) {
                     Button { requestReview() } label: {
                         linkRow(L(.rateApp), symbol: "star")
                     }
-                    Link(destination: AppLinks.privacy) {
-                        linkRow(L(.privacy), symbol: "arrow.up.right")
+                    // Условия и конфиденциальность — в одной строке, каждая ссылка отдельно.
+                    HStack(spacing: 6) {
+                        Link(L(.terms), destination: AppLinks.terms)
+                        Text(verbatim: "·").foregroundStyle(Color.secondaryLabel)
+                        Link(L(.privacy), destination: AppLinks.privacy)
+                        Spacer(minLength: 0)
                     }
-                    Link(destination: AppLinks.terms) {
-                        linkRow(L(.terms), symbol: "arrow.up.right")
-                    }
+                    .foregroundStyle(Color.primary)
+                    .buttonStyle(.borderless)
                 }
 
                 Section {
                     // Временно, пока не подключены покупки: включает и выключает Pro для проверки.
                     Toggle(L(.proTest), isOn: $store.isPro)
-                    LabeledContent(L(.version), value: appVersion)
-                } header: {
-                    Text(L(.about))
                 }
             }
             // Подписи в меню выбора (тема, формат) кэшируются системой — при смене языка
@@ -171,12 +176,138 @@ struct SettingsView: View {
         )
     }
 
-    private var appVersion: String {
-        Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "—"
-    }
 }
 
 #Preview {
     SettingsView()
         .environment(RatesStore.preview())
+}
+
+/// Выбор иконки приложения: одна строка, листается вбок. Первые три — бесплатные, остальные — с тегом PRO:
+/// без подписки нажатие открывает экран подписки.
+struct AppIconPicker: View {
+    let isPro: Bool
+    var onLocked: () -> Void = {}
+
+    /// nil — основная иконка.
+    @State private var current: String? = UIApplication.shared.alternateIconName
+
+    struct Option: Identifiable {
+        let name: String?
+        let preview: String
+        let title: String
+        let isPro: Bool
+        var id: String { preview }
+    }
+
+    static var options: [Option] {
+        [
+            Option(name: nil, preview: "IconPreview-Silver", title: L(.iconSilver), isPro: false),
+            Option(name: "AppIcon-Amethyst", preview: "IconPreview-Amethyst", title: L(.iconAmethyst), isPro: false),
+            Option(name: "AppIcon-Sticker", preview: "IconPreview-Sticker", title: L(.iconSticker), isPro: false),
+            Option(name: "AppIcon-Puffy", preview: "IconPreview-Puffy", title: L(.iconPuffy), isPro: true),
+            Option(name: "AppIcon-Sponge", preview: "IconPreview-Sponge", title: L(.iconSponge), isPro: true),
+            Option(name: "AppIcon-Plush", preview: "IconPreview-Plush", title: L(.iconPlush), isPro: true),
+            Option(name: "AppIcon-Gummy", preview: "IconPreview-Gummy", title: L(.iconGummy), isPro: true),
+            Option(name: "AppIcon-Bubbles", preview: "IconPreview-Bubbles", title: L(.iconBubbles), isPro: true),
+            Option(name: "AppIcon-Holo", preview: "IconPreview-Holo", title: L(.iconHolo), isPro: true),
+        ]
+    }
+
+    /// Иконки, доступные только с Pro (для сброса, когда подписка закончилась).
+    static var proIconNames: Set<String> {
+        Set(options.filter(\.isPro).compactMap(\.name))
+    }
+
+    var body: some View {
+        // Одна строка, листается вбок; выбранная иконка при открытии — в зоне видимости.
+        ScrollViewReader { proxy in
+            ScrollView(.horizontal) {
+                // Последняя видимая иконка обрезана краем — видно, что дальше листается.
+                HStack(alignment: .top, spacing: 8) {
+                    ForEach(Self.options) { option in
+                        cell(option).id(option.id)
+                    }
+                }
+                .padding(.horizontal, 12)
+                .padding(.top, 8)
+                .padding(.bottom, 4)
+            }
+            .scrollIndicators(.hidden)
+            .onAppear {
+                if let selected = Self.options.first(where: { $0.name == current }) {
+                    proxy.scrollTo(selected.id, anchor: .center)
+                }
+            }
+        }
+        .animation(.spring(response: 0.3, dampingFraction: 0.7), value: current)
+    }
+
+    private func cell(_ option: Option) -> some View {
+        let isSelected = option.name == current
+        let isLocked = option.isPro && !isPro
+        return Button {
+            select(option, locked: isLocked)
+        } label: {
+            VStack(spacing: 8) {
+                Image(option.preview)
+                    .resizable()
+                    .frame(width: 58, height: 58)
+                    .overlay {
+                        RoundedRectangle(cornerRadius: 13, style: .continuous)
+                            .strokeBorder(Color.primary.opacity(0.08), lineWidth: 1)
+                    }
+                    // Рамка выбранной — с заметным зазором от иконки.
+                    .padding(5)
+                    .overlay {
+                        RoundedRectangle(cornerRadius: 18, style: .continuous)
+                            .strokeBorder(Color.accentColor, lineWidth: 2.5)
+                            .opacity(isSelected ? 1 : 0)
+                    }
+                    .overlay(alignment: .bottomTrailing) {
+                        Image(systemName: "checkmark.circle.fill")
+                            .font(.system(size: 20))
+                            .symbolRenderingMode(.palette)
+                            .foregroundStyle(Color.onAccent, Color.accentButton)
+                            .background(Circle().fill(Color(.secondarySystemGroupedBackground)).padding(1))
+                            .offset(x: 4, y: 4)
+                            .scaleEffect(isSelected ? 1 : 0.3)
+                            .opacity(isSelected ? 1 : 0)
+                    }
+                    .overlay(alignment: .topTrailing) {
+                        if option.isPro && !isSelected {
+                            ProBadge().scaleEffect(0.85).offset(x: 6, y: -6)
+                        }
+                    }
+                Text(option.title)
+                    .font(.caption)
+                    .foregroundStyle(isSelected ? Color.primary : Color.secondaryLabel)
+                    .lineLimit(1)
+                    .minimumScaleFactor(0.8)
+            }
+            .frame(width: 70)
+            .contentShape(.rect)
+        }
+        .buttonStyle(.plain)
+        .accessibilityLabel(option.title)
+        .accessibilityHint(isLocked ? L(.proOnly) : "")
+        .accessibilityAddTraits(isSelected ? .isSelected : [])
+    }
+
+    private func select(_ option: Option, locked: Bool) {
+        if locked {
+            UIImpactFeedbackGenerator(style: .light).impactOccurred()
+            onLocked()
+            return
+        }
+        guard option.name != current, UIApplication.shared.supportsAlternateIcons else { return }
+        UISelectionFeedbackGenerator().selectionChanged()
+        let previous = current
+        current = option.name
+        UIApplication.shared.setAlternateIconName(option.name) { error in
+            if error != nil {
+                Task { @MainActor in current = previous }
+            }
+        }
+    }
 }

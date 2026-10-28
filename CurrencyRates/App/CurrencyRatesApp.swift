@@ -35,6 +35,8 @@ struct CurrencyRatesApp: App {
                 .environment(\.layoutDirection, store.language.isRightToLeft ? .rightToLeft : .leftToRight)
                 .onAppear { applyTheme(store.theme) }
                 .onChange(of: store.theme) { _, theme in applyTheme(theme) }
+                // Pro закончился — иконка из Pro возвращается к основной.
+                .onChange(of: store.isPro, initial: true) { _, isPro in resetProIconIfNeeded(isPro: isPro) }
                 .task { await store.refresh() }
                 .onChange(of: scenePhase) { _, phase in
                     if phase == .active {
@@ -52,6 +54,12 @@ struct CurrencyRatesApp: App {
                 }
                 .statusBarHidden(showsSplash)
         }
+    }
+
+    private func resetProIconIfNeeded(isPro: Bool) {
+        guard !isPro, let name = UIApplication.shared.alternateIconName,
+              AppIconPicker.proIconNames.contains(name) else { return }
+        UIApplication.shared.setAlternateIconName(nil)
     }
 
     /// Тема задаётся на уровне окна: так она сразу применяется и к открытым sheet,
