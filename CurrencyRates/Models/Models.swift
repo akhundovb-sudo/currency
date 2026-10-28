@@ -47,16 +47,6 @@ struct Currency: Identifiable, Hashable, Sendable {
         return Locale.Region.isoRegions.contains(Locale.Region(region)) ? region : nil
     }
 
-    /// Эмодзи флага — запасной вариант, если в макете нет флага этой страны.
-    var flagEmoji: String? {
-        flagRegion.map { region in
-            region.unicodeScalars
-                .compactMap { UnicodeScalar(0x1F1A5 + $0.value) }
-                .map(String.init)
-                .joined()
-        }
-    }
-
     func matches(_ query: String) -> Bool {
         let query = query.trimmingCharacters(in: .whitespacesAndNewlines)
         guard !query.isEmpty else { return true }
@@ -89,6 +79,57 @@ struct CryptoAsset: Sendable {
         .init(code: "BCH", id: "bitcoin-cash", name: "Bitcoin Cash"),
         .init(code: "DOT", id: "polkadot", name: "Polkadot"),
         .init(code: "SHIB", id: "shiba-inu", name: "Shiba Inu"),
+        .init(code: "HYPE", id: "hyperliquid", name: "Hyperliquid"),
+        .init(code: "SUI", id: "sui", name: "Sui"),
+        .init(code: "XMR", id: "monero", name: "Monero"),
+        .init(code: "HBAR", id: "hedera-hashgraph", name: "Hedera"),
+        .init(code: "LEO", id: "leo-token", name: "LEO Token"),
+        .init(code: "DAI", id: "dai", name: "Dai"),
+        .init(code: "PEPE", id: "pepe", name: "Pepe"),
+        .init(code: "UNI", id: "uniswap", name: "Uniswap"),
+        .init(code: "TAO", id: "bittensor", name: "Bittensor"),
+        .init(code: "NEAR", id: "near", name: "NEAR Protocol"),
+        .init(code: "APT", id: "aptos", name: "Aptos"),
+        .init(code: "ICP", id: "internet-computer", name: "Internet Computer"),
+        .init(code: "ETC", id: "ethereum-classic", name: "Ethereum Classic"),
+        .init(code: "ONDO", id: "ondo-finance", name: "Ondo"),
+        .init(code: "AAVE", id: "aave", name: "Aave"),
+        .init(code: "CRO", id: "crypto-com-chain", name: "Cronos"),
+        .init(code: "POL", id: "polygon-ecosystem-token", name: "Polygon"),
+        .init(code: "KAS", id: "kaspa", name: "Kaspa"),
+        .init(code: "TRUMP", id: "official-trump", name: "Official Trump"),
+        .init(code: "ENA", id: "ethena", name: "Ethena"),
+        .init(code: "RENDER", id: "render-token", name: "Render"),
+        .init(code: "VET", id: "vechain", name: "VeChain"),
+        .init(code: "ATOM", id: "cosmos", name: "Cosmos"),
+        .init(code: "ALGO", id: "algorand", name: "Algorand"),
+        .init(code: "FIL", id: "filecoin", name: "Filecoin"),
+        .init(code: "ARB", id: "arbitrum", name: "Arbitrum"),
+        .init(code: "OKB", id: "okb", name: "OKB"),
+        .init(code: "FET", id: "fetch-ai", name: "Artificial Superintelligence Alliance"),
+        .init(code: "WLD", id: "worldcoin-wld", name: "Worldcoin"),
+        .init(code: "JUP", id: "jupiter-exchange-solana", name: "Jupiter"),
+        .init(code: "OP", id: "optimism", name: "Optimism"),
+        .init(code: "INJ", id: "injective-protocol", name: "Injective"),
+        .init(code: "TIA", id: "celestia", name: "Celestia"),
+        .init(code: "STX", id: "blockstack", name: "Stacks"),
+        .init(code: "BONK", id: "bonk", name: "Bonk"),
+        .init(code: "SEI", id: "sei-network", name: "Sei"),
+        .init(code: "IMX", id: "immutable-x", name: "Immutable"),
+        .init(code: "GRT", id: "the-graph", name: "The Graph"),
+        .init(code: "QNT", id: "quant-network", name: "Quant"),
+        .init(code: "FLOKI", id: "floki", name: "FLOKI"),
+        .init(code: "WIF", id: "dogwifcoin", name: "dogwifhat"),
+        .init(code: "LDO", id: "lido-dao", name: "Lido DAO"),
+        .init(code: "XTZ", id: "tezos", name: "Tezos"),
+        .init(code: "PYTH", id: "pyth-network", name: "Pyth Network"),
+        .init(code: "ZEC", id: "zcash", name: "Zcash"),
+        .init(code: "DASH", id: "dash", name: "Dash"),
+        .init(code: "SAND", id: "the-sandbox", name: "The Sandbox"),
+        .init(code: "MANA", id: "decentraland", name: "Decentraland"),
+        .init(code: "AXS", id: "axie-infinity", name: "Axie Infinity"),
+        .init(code: "EOS", id: "eos", name: "EOS"),
+        .init(code: "NOT", id: "notcoin", name: "Notcoin"),
     ]
 
     static let byCode = Dictionary(uniqueKeysWithValues: all.map { ($0.code, $0) })

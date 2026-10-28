@@ -4,6 +4,7 @@ import UIKit
 @main
 struct CurrencyRatesApp: App {
     @State private var store = RatesStore.live()
+    @State private var location = LocationService()
     /// Сплэш поверх списка при запуске; сам убирается после анимации.
     @State private var showsSplash = true
     /// Список под сплэшем: чуть увеличен и встаёт на место, когда сплэш раскрывается.
@@ -38,6 +39,8 @@ struct CurrencyRatesApp: App {
                 // Pro закончился — иконка из Pro возвращается к основной.
                 .onChange(of: store.isPro, initial: true) { _, isPro in resetProIconIfNeeded(isPro: isPro) }
                 .task { await store.refresh() }
+                // Первая валюта — местная, по геолокации; без неё — доллар и евро.
+                .task { location.requestLocalCurrency { store.applyLocalCurrency($0) } }
                 .onChange(of: scenePhase) { _, phase in
                     if phase == .active {
                         applyTheme(store.theme)

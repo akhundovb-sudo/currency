@@ -238,7 +238,8 @@
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = Config/Info.plist;
-				INFOPLIST_KEY_CFBundleDisplayName = "Валюты";
+				INFOPLIST_KEY_CFBundleDisplayName = Cento;
+				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "Cento определяет страну, чтобы сразу добавить вашу местную валюту.";
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.finance";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
@@ -270,7 +271,8 @@
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = Config/Info.plist;
-				INFOPLIST_KEY_CFBundleDisplayName = "Валюты";
+				INFOPLIST_KEY_CFBundleDisplayName = Cento;
+				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "Cento определяет страну, чтобы сразу добавить вашу местную валюту.";
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.finance";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
