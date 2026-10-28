@@ -75,7 +75,7 @@ enum L10n {
 
     // ru, en, tr, fr, es, de, zh, ar
     private static let table: [Key: [String]] = [
-        .title: ["Валюты", "Currencies", "Para Birimleri", "Devises", "Divisas", "Währungen", "货币", "العملات"],
+        .title: ["Cento", "Cento", "Cento", "Cento", "Cento", "Cento", "Cento", "Cento"],
         .settings: ["Настройки", "Settings", "Ayarlar", "Réglages", "Ajustes", "Einstellungen", "设置", "الإعدادات"],
         .edit: ["Править", "Edit", "Düzenle", "Modifier", "Editar", "Bearbeiten", "编辑", "تعديل"],
         .done: ["Готово", "Done", "Bitti", "OK", "OK", "Fertig", "完成", "تم"],

@@ -222,27 +222,44 @@ struct CurrencyIcon: View {
             Image("flag-\(region)")
                 .resizable()
                 .scaledToFit()
-        } else if let emoji = currency.flagEmoji {
-            Text(emoji)
-                .font(.system(size: size))
-                .scaleEffect(1.75)
+        } else if currency.kind == .crypto {
+            TickerCoin(code: currency.code, size: size)
         } else {
-            Image(systemName: symbolName)
-                .resizable()
-                .scaledToFit()
-                .foregroundStyle(.white, symbolBackground)
+            // Нет флага (наднациональные валюты, редкие страны) — глобус.
+            ZStack {
+                Circle().fill(
+                    LinearGradient(
+                        colors: [Color.dynamic(light: 0x60A5FA, dark: 0x3B82F6), Color.dynamic(light: 0x2563EB, dark: 0x1D4ED8)],
+                        startPoint: .top,
+                        endPoint: .bottom
+                    )
+                )
+                Image(systemName: "globe")
+                    .font(.system(size: size * 0.52, weight: .medium))
+                    .foregroundStyle(.white)
+            }
         }
     }
+}
 
-    private var symbolName: String {
-        switch currency.kind {
-        case .crypto: currency.code == "BTC" ? "bitcoinsign.circle.fill" : "circle.hexagongrid.circle.fill"
-        case .fiat: "banknote.fill"
+/// Монета без своей иконки: кружок своего цвета (постоянного для тикера) с первыми буквами.
+private struct TickerCoin: View {
+    let code: String
+    let size: CGFloat
+
+    private static let palette: [UInt32] = [0xF59E0B, 0x10B981, 0x6366F1, 0xEC4899, 0x0EA5E9, 0x8B5CF6, 0xEF4444, 0x14B8A6]
+
+    var body: some View {
+        // Цвет по сумме кодов букв — одинаковый при каждом запуске.
+        let index = code.unicodeScalars.reduce(0) { $0 + Int($1.value) } % Self.palette.count
+        ZStack {
+            Circle().fill(Color.dynamic(light: Self.palette[index], dark: Self.palette[index]).gradient)
+            Text(verbatim: String(code.prefix(code.count > 4 ? 3 : code.count)))
+                .font(.system(size: size * (code.count > 3 ? 0.26 : 0.32), weight: .heavy, design: .rounded))
+                .foregroundStyle(.white)
+                .minimumScaleFactor(0.5)
+                .padding(4)
         }
-    }
-
-    private var symbolBackground: Color {
-        currency.kind == .crypto ? .orange : .gray
     }
 }
 

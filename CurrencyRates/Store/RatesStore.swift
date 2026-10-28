@@ -95,10 +95,13 @@ final class RatesStore {
         self.defaults = defaults
         self.cacheURL = cacheURL
 
-        self.sourceCode = sourceCode ?? defaults?.string(forKey: Keys.sourceCode) ?? "USD"
+        let local = defaults?.string(forKey: Keys.localCurrency)
+        self.localCurrency = local
+        let starting = Self.startingCodes(local: local)
+        self.sourceCode = sourceCode ?? defaults?.string(forKey: Keys.sourceCode) ?? starting[0]
         self.selectedCodes = selectedCodes
             ?? defaults?.stringArray(forKey: Keys.selectedCodes)
-            ?? Self.defaultSelection
+            ?? starting
         self.amountText = amountText ?? defaults?.string(forKey: Keys.amountText) ?? ""
         self.suspendedCodes = defaults?.stringArray(forKey: Keys.suspendedCodes) ?? []
         self.theme = defaults?.string(forKey: Keys.theme).flatMap(AppTheme.init(rawValue:)) ?? .system
@@ -119,7 +122,7 @@ final class RatesStore {
         L10n.current = language
         self.snapshot = snapshot ?? Self.loadCache(from: cacheURL)
         // В списке всегда минимум две валюты, иначе сравнивать нечего.
-        for code in Self.defaultSelection where self.selectedCodes.count < Self.minimumCount {
+        for code in starting where self.selectedCodes.count < Self.minimumCount {
             if !self.selectedCodes.contains(code) { self.selectedCodes.append(code) }
         }
         applyPlanLimits()
@@ -251,8 +254,9 @@ final class RatesStore {
 
     /// Бесплатные валюты: USD, EUR и первые три остальных по алфавиту.
     var freeCodes: Set<String> {
-        let first = fiatCodes.filter { !Self.defaultSelection.contains($0) }.prefix(Self.freeChoiceCount)
-        return Set(Self.defaultSelection).union(first)
+        let starting = Self.startingCodes(local: localCurrency)
+        let first = fiatCodes.filter { !starting.contains($0) }.prefix(Self.freeChoiceCount)
+        return Set(starting).union(first)
     }
 
     /// Можно ли добавить валюту без подписки: только из бесплатных и в пределах лимита.
@@ -304,8 +308,8 @@ final class RatesStore {
             }
         }
         guard !dropped.isEmpty else { return }
-        // Минимум две валюты: если бесплатных не хватило — добавляем USD и EUR.
-        for code in Self.defaultSelection where kept.count < Self.minimumCount && !kept.contains(code) {
+        // Минимум две валюты: если бесплатных не хватило — добавляем стартовые.
+        for code in Self.startingCodes(local: localCurrency) where kept.count < Self.minimumCount && !kept.contains(code) {
             kept.append(code)
         }
         // Если отключается валюта ввода — ввод переходит на первую оставшуюся с тем же эквивалентом.
@@ -433,10 +437,33 @@ final class RatesStore {
         static let proPlan = "proPlan"
         static let numberStyle = "numberStyle"
         static let decimalPlaces = "decimalPlaces"
+        static let localCurrency = "localCurrency"
     }
 
-    /// При первом запуске в списке только доллар и евро.
-    private static let defaultSelection = ["USD", "EUR"]
+    /// Стартовые валюты: местная (по геолокации) и доллар; если местную не определили
+    /// или это сам доллар — доллар и евро.
+    static func startingCodes(local: String?) -> [String] {
+        if let local, local != "USD" { return [local, "USD"] }
+        return ["USD", "EUR"]
+    }
+
+    /// Местная валюта, определённая по геолокации; входит в бесплатные.
+    private(set) var localCurrency: String? {
+        didSet { defaults?.set(localCurrency, forKey: Keys.localCurrency) }
+    }
+
+    /// Местная валюта определена (один раз). Если список ещё стартовый (USD и EUR) —
+    /// первой становится местная валюта, второй — доллар.
+    func applyLocalCurrency(_ code: String) {
+        guard localCurrency == nil, CryptoAsset.byCode[code] == nil,
+              Locale.commonISOCurrencyCodes.contains(code) else { return }
+        localCurrency = code
+        let fallback = Self.startingCodes(local: nil)
+        guard code != "USD", selectedCodes == fallback else { return }
+        selectedCodes = Self.startingCodes(local: code)
+        sourceCode = code
+        amountText = ""
+    }
 
     private static func isCancellation(_ error: Error) -> Bool {
         error is CancellationError || (error as? URLError)?.code == .cancelled
