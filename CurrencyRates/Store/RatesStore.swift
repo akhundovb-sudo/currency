@@ -26,6 +26,11 @@ final class RatesStore {
         didSet { defaults?.set(amountText, forKey: Keys.amountText) }
     }
 
+    /// В поле лежит пересчитанная сумма (после выбора валюты), а не набранная вручную:
+    /// первая цифра заменяет её целиком, как в калькуляторе. Иначе у длинной суммы
+    /// (например, 402 миллиарда) цифры упирались в лимит и «не нажимались».
+    private(set) var replacesOnNextInput = false
+
     var theme: AppTheme {
         didSet { defaults?.set(theme.rawValue, forKey: Keys.theme) }
     }
@@ -35,6 +40,13 @@ final class RatesStore {
         didSet {
             L10n.current = language
             defaults?.set(language.rawValue, forKey: Keys.language)
+            // Формат «по языку»: набранная сумма переходит на разделитель нового языка.
+            // Иначе «12.5» после смены en → ru выглядело как «1 2.5», а запятая ломала сумму.
+            if numberStyle == .automatic {
+                let old = oldValue.locale.decimalSeparator ?? "."
+                let new = Calculator.decimalSeparator
+                if old != new { amountText = amountText.replacingOccurrences(of: old, with: new) }
+            }
         }
     }
 
@@ -92,8 +104,10 @@ final class RatesStore {
         self.theme = defaults?.string(forKey: Keys.theme).flatMap(AppTheme.init(rawValue:)) ?? .system
         let language = defaults?.string(forKey: Keys.language).flatMap(AppLanguage.init(rawValue:)) ?? .systemDefault
         self.language = language
-        self.isPro = defaults?.bool(forKey: Keys.isPro) ?? false
-        self.proPlan = defaults?.string(forKey: Keys.proPlan).flatMap(ProPlan.init(rawValue:))
+        let pro = defaults?.bool(forKey: Keys.isPro) ?? false
+        self.isPro = pro
+        // Pro, включённый переключателем для проверки, без тарифа — показываем как годовой.
+        self.proPlan = defaults?.string(forKey: Keys.proPlan).flatMap(ProPlan.init(rawValue:)) ?? (pro ? .yearly : nil)
         let style = defaults?.string(forKey: Keys.numberStyle).flatMap(NumberStyle.init(rawValue:)) ?? .automatic
         self.numberStyle = style
         RateFormat.style = style
@@ -154,6 +168,7 @@ final class RatesStore {
         let value = convertedAmount(to: code)
         sourceCode = code
         amountText = value.map(RateFormat.editable) ?? ""
+        replacesOnNextInput = !amountText.isEmpty
     }
 
     /// Нажатие клавиши: цифры, запятая, стирание, действия калькулятора и «=».
@@ -164,6 +179,14 @@ final class RatesStore {
     @discardableResult
     func press(_ key: KeypadKey) -> Bool {
         var text = amountText
+        // Цифра или запятая сразу после выбора валюты начинают ввод заново.
+        if replacesOnNextInput {
+            replacesOnNextInput = false
+            switch key {
+            case .digit, .decimal: text = ""
+            default: break
+            }
+        }
         let lastNumber = Calculator.lastNumber(in: text)
         let endsWithOperator = text.last.map(Calculator.operators.contains) ?? false
 
@@ -187,7 +210,8 @@ final class RatesStore {
         case .hide:
             return true
         }
-        guard text.count <= Self.maxAmountLength else { return false }
+        // Лимит длины — только для ввода: стирать длинную сумму можно всегда.
+        guard text.count <= Self.maxAmountLength || text.count < amountText.count else { return false }
         amountText = text
         return true
     }
@@ -209,7 +233,7 @@ final class RatesStore {
     var isPro: Bool {
         didSet {
             defaults?.set(isPro, forKey: Keys.isPro)
-            if !isPro { proPlan = nil }
+            if !isPro { proPlan = nil } else if proPlan == nil { proPlan = .yearly }
             applyPlanLimits()
         }
     }

@@ -128,10 +128,10 @@ struct PaywallView: View {
             }
         }
         .background {
-            RoundedRectangle(cornerRadius: 20, style: .continuous)
+            RoundedRectangle(cornerRadius: 24, style: .continuous)
                 .fill(.white.opacity(0.06))
                 .overlay(
-                    RoundedRectangle(cornerRadius: 20, style: .continuous)
+                    RoundedRectangle(cornerRadius: 24, style: .continuous)
                         .strokeBorder(.white.opacity(0.1), lineWidth: 1)
                 )
         }

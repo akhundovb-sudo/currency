@@ -70,10 +70,22 @@ struct AmountKeypad: View {
 
 /// Стеклянная подложка клавиатуры: Liquid Glass в iOS 26, полупрозрачный материал — раньше.
 private struct PanelGlass: View {
-    private let shape = UnevenRoundedRectangle(topLeadingRadius: 32, topTrailingRadius: 32, style: .continuous)
+    private let shape = UnevenRoundedRectangle(topLeadingRadius: 36, topTrailingRadius: 36, style: .continuous)
+    @Environment(\.colorScheme) private var colorScheme
 
     var body: some View {
-        if #available(iOS 26, *) {
+        if colorScheme == .dark {
+            // Тёмная тема: плотная панель — сквозь стекло просвечивали карточки, и клавиши
+            // смотрелись грязно. Сверху — тонкая светлая кромка.
+            shape
+                .fill(Color(white: 0.11))
+                .overlay(
+                    shape.strokeBorder(
+                        LinearGradient(colors: [.white.opacity(0.12), .clear], startPoint: .top, endPoint: .init(x: 0.5, y: 0.15)),
+                        lineWidth: 1
+                    )
+                )
+        } else if #available(iOS 26, *) {
             Color.clear
                 .glassEffect(.regular.tint(Color.glassNeutral.opacity(0.22)), in: shape)
         } else {
@@ -192,15 +204,4 @@ extension Color {
     static let operatorMultiply = Color.dynamic(light: 0xCA8A04, dark: 0xFACC15) // золотисто-жёлтый, чтобы не путать с красным «−»
     static let operatorSubtract = Color.dynamic(light: 0xE11D48, dark: 0xFB7185) // розовый
     static let operatorAdd = Color.dynamic(light: 0x059669, dark: 0x34D399)      // изумрудный
-
-    /// Цвет знака действия в строке ввода — тот же, что у его клавиши.
-    static func forOperator(_ symbol: Character) -> Color? {
-        switch symbol {
-        case "÷": .operatorDivide
-        case "×": .operatorMultiply
-        case "−": .operatorSubtract
-        case "+": .operatorAdd
-        default: nil
-        }
-    }
 }

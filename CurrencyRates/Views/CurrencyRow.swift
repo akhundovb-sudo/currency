@@ -14,6 +14,8 @@ struct CurrencyRow: View {
     var showsCursor = false
     /// Подпись строки ввода, пока клавиатура скрыта (курс к другой валюте списка).
     var idleSourceCaption: String?
+    /// Каждое изменение запускает тряску суммы — сумма не помещается.
+    var shakeTrigger = 0
 
     @Environment(\.dynamicTypeSize) private var dynamicTypeSize
 
@@ -85,14 +87,14 @@ struct CurrencyRow: View {
 
     private var amountText: some View {
         HStack(spacing: 2) {
-            Text(styledValue)
+            Text(value)
                 .font(.amount)
                 .monospacedDigit()
                 .foregroundStyle(valueColor)
                 .lineLimit(1)
                 // Обычно размер суммы не меняется; уменьшается, только если не помещается
                 // (очень длинная сумма или узкая строка в режиме правки) — карточка не вылезает за край.
-                .minimumScaleFactor(0.55)
+                .minimumScaleFactor(0.3)
                 .layoutPriority(2)
                 // Цифры прокручиваются, как на счётчике, — но не во время набора:
                 // при быстром вводе анимации накладываются и цифры размазываются.
@@ -103,6 +105,19 @@ struct CurrencyRow: View {
                 BlinkingCursor()
             }
         }
+        // Тряска «не помещается»: короткие затухающие колебания влево-вправо.
+        .keyframeAnimator(initialValue: CGFloat(0), trigger: shakeTrigger) { content, x in
+            content.offset(x: x)
+        } keyframes: { _ in
+            KeyframeTrack {
+                LinearKeyframe(-9, duration: 0.05)
+                LinearKeyframe(8, duration: 0.08)
+                LinearKeyframe(-6, duration: 0.07)
+                LinearKeyframe(4, duration: 0.06)
+                LinearKeyframe(-2, duration: 0.05)
+                LinearKeyframe(0, duration: 0.05)
+            }
+        }
     }
 
     private var captionView: some View {
@@ -111,19 +126,6 @@ struct CurrencyRow: View {
             .foregroundStyle(Color.secondaryLabel)
             .lineLimit(dynamicTypeSize.isAccessibilitySize ? nil : 1)
             .minimumScaleFactor(0.8)
-    }
-
-    /// Сумма, где знаки действий окрашены в цвета своих клавиш.
-    private var styledValue: AttributedString {
-        var result = AttributedString()
-        for character in value {
-            var piece = AttributedString(String(character))
-            if isSource, let color = Color.forOperator(character) {
-                piece.foregroundColor = color
-            }
-            result += piece
-        }
-        return result
     }
 
     private var valueColor: Color {

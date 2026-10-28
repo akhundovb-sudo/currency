@@ -199,6 +199,10 @@ enum RateFormat {
     /// Сумма: до двух знаков после запятой, для малых значений — значащие цифры.
     /// Если в настройках задано число знаков — ровно столько.
     static func amount(_ value: Double) -> String {
+        // Огромные суммы — в научной записи (6,94E16): иначе строка не помещается в карточку.
+        if abs(value) >= 1e15 {
+            return value.formatted(.number.locale(locale).notation(.scientific).precision(.fractionLength(0...3)))
+        }
         if let places = decimalPlaces {
             return value.formatted(.number.locale(locale).precision(.fractionLength(places)))
         }
@@ -210,6 +214,7 @@ enum RateFormat {
 
     /// Сумма для поля ввода: без разделителей разрядов.
     static func editable(_ value: Double) -> String {
+        // Огромные значения длиннее лимита ввода: стирать их можно, добавлять цифры — нет.
         let style = FloatingPointFormatStyle<Double>.number.locale(locale).grouping(.never)
         if value >= 1 || value == 0 {
             return value.formatted(style.precision(.fractionLength(0...2)))

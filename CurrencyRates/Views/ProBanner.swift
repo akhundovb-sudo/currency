@@ -5,7 +5,7 @@ import SwiftUI
 struct ProBanner: View {
     var onDetails: () -> Void = {}
 
-    private let shape = RoundedRectangle(cornerRadius: 24, style: .continuous)
+    private let shape = RoundedRectangle(cornerRadius: 28, style: .continuous)
 
     var body: some View {
         HStack(spacing: 12) {
@@ -127,7 +127,7 @@ struct ProStatusCard: View {
     let plan: ProPlan?
     var onManage: () -> Void = {}
 
-    private let shape = RoundedRectangle(cornerRadius: 24, style: .continuous)
+    private let shape = RoundedRectangle(cornerRadius: 28, style: .continuous)
 
     var body: some View {
         HStack(spacing: 12) {
@@ -146,7 +146,8 @@ struct ProStatusCard: View {
                     .minimumScaleFactor(0.85)
             }
             Spacer(minLength: 4)
-            if plan?.isSubscription ?? false {
+            // Без тарифа (Pro включён вручную) кнопка тоже нужна — иначе плашка выглядит пустой.
+            if plan?.isSubscription ?? true {
                 Button(action: onManage) {
                     Text(L(.manageSubscription))
                         .font(.headline)

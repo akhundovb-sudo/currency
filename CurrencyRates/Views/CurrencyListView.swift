@@ -14,8 +14,8 @@ struct CurrencyListView: View {
     /// Счётчик «тряски» карточки ввода при переполнении суммы.
     /// Какая карточка трясётся и фаза тряски (0…1). Вне тряски фаза всегда 0 — поэтому
     /// смена выбранной валюты не «проигрывает» тряску.
-    @State private var shakingCode: String?
-    @State private var shakePhase: CGFloat = 0
+    /// Сколько раз тряслась сумма каждой валюты: смена числа запускает тряску.
+    @State private var shakeCounts: [String: Int] = [:]
     /// Размеры строк для определения, куда пришлось нажатие. Обычный класс, а не состояние:
     /// запись при прокрутке не должна перерисовывать весь список.
     @State private var rowSizes = RowSizeStore()
@@ -39,7 +39,7 @@ struct CurrencyListView: View {
                 AddCurrencyView()
             }
             // Вместо системного индикатора — капли из Dynamic Island.
-            .overlay { IslandRefreshIndicator(isActive: isRefreshing, pull: pullTracker.progress) }
+            .overlay { IslandRefreshIndicator(isActive: isRefreshing, pull: pullTracker.progress, failed: store.errorMessage != nil) }
             .sheet(isPresented: $isSettingsPresented) {
                 SettingsView()
             }
@@ -69,14 +69,14 @@ struct CurrencyListView: View {
                             isPlaceholder: code == store.sourceCode && store.amountText.isEmpty,
                             unitRate: store.unitRate(to: code),
                             showsCursor: isKeypadVisible,
-                            idleSourceCaption: idleSourceCaption
+                            idleSourceCaption: idleSourceCaption,
+                            shakeTrigger: shakeCounts[code, default: 0]
                         )
                         .card(selected: code == store.sourceCode && isKeypadVisible)
                         // Фокус: выбранная карточка приподнимается — чуть крупнее, с мягкой тенью.
                         .scaleEffect(isKeypadVisible && code == store.sourceCode ? 1.025 : 1)
                         .animation(.spring(response: 0.35, dampingFraction: 0.8), value: isKeypadVisible)
                         .animation(.spring(response: 0.35, dampingFraction: 0.8), value: store.sourceCode)
-                        .modifier(ShakeEffect(shakes: shakingCode == code ? shakePhase : 0))
                         }
                         .swipeToDelete(isEnabled: !editMode.isEditing, canDelete: store.canDelete(code), onBlocked: { showBlockedToast(for: code) }, label: L(.delete)) {
                             store.remove(code)
@@ -97,7 +97,7 @@ struct CurrencyListView: View {
                         // При перетаскивании поднимается только карточка, без отступов вокруг.
                         .contentShape(
                             .dragPreview,
-                            CardInsetShape(inset: Self.rowPadding, cornerRadius: 20)
+                            CardInsetShape(inset: Self.rowPadding, cornerRadius: 24)
                         )
                         // В списке вся строка ловит нажатие, поэтому смотрим, куда оно пришлось:
                         // в карточку — выбор валюты, в отступ вокруг — закрыть клавиатуру.
@@ -257,15 +257,11 @@ struct CurrencyListView: View {
         withAnimation(.easeInOut(duration: 0.25)) { toast = nil }
     }
 
+    /// Трясёт сумму в строке ввода. Раньше тряска шла через две смены состояния в одном кадре
+    /// (сброс без анимации и запуск с анимацией): SwiftUI сливал их, анимация отключалась,
+    /// и сумма не двигалась — была только вибрация.
     private func shake(_ code: String) {
-        var reset = Transaction()
-        reset.disablesAnimations = true
-        withTransaction(reset) { shakingCode = code; shakePhase = 0 }
-        withAnimation(.linear(duration: 0.3)) { shakePhase = 1 }
-        Task {
-            try? await Task.sleep(for: .seconds(0.32))
-            withTransaction(reset) { shakePhase = 0; shakingCode = nil }
-        }
+        shakeCounts[code, default: 0] += 1
     }
 
     private func startEditing(_ code: String) {
@@ -645,18 +641,6 @@ struct CardInsetShape: Shape {
     }
 }
 
-/// Лёгкая горизонтальная тряска: каждое увеличение `shakes` на 1 — два небольших колебания.
-struct ShakeEffect: GeometryEffect {
-    var shakes: CGFloat
-    var animatableData: CGFloat {
-        get { shakes }
-        set { shakes = newValue }
-    }
-
-    func effectValue(size: CGSize) -> ProjectionTransform {
-        ProjectionTransform(CGAffineTransform(translationX: 3 * sin(shakes * .pi * 4), y: 0))
-    }
-}
 
 /// Индикатор обновления: из Dynamic Island вытекает чёрная капля-пилюля и сливается
 /// с ним, как жидкость (круги размываются и обрезаются по порогу прозрачности).
@@ -667,6 +651,8 @@ struct IslandRefreshIndicator: View {
     let isActive: Bool
     /// Насколько список потянут вниз: 0 — нет, 1 — до конца (сейчас начнётся обновление).
     var pull: CGFloat = 0
+    /// Обновить не удалось — барабан останавливается на ✕, а не на ✓.
+    var failed = false
 
     @State private var startedAt: Date?
     @State private var endedAt: Date?
@@ -708,7 +694,13 @@ struct IslandRefreshIndicator: View {
                 endedAt = .now
                 Task {
                     try? await Task.sleep(for: .seconds(checkDuration))
-                    if endedAt != nil { UIImpactFeedbackGenerator(style: .light).impactOccurred() }
+                    if endedAt != nil {
+                        if failed {
+                            UINotificationFeedbackGenerator().notificationOccurred(.error)
+                        } else {
+                            UIImpactFeedbackGenerator(style: .light).impactOccurred()
+                        }
+                    }
                     try? await Task.sleep(for: .seconds(holdUntil + outDuration - checkDuration))
                     // Если за это время началось новое обновление, endedAt уже сброшен.
                     if endedAt != nil {
@@ -758,7 +750,7 @@ struct IslandRefreshIndicator: View {
             let back = min(1, (sinceEnd - holdUntil) / outDuration)
             amount *= 1 - back * back
         }
-        return pill(amount: amount, current: frozen, next: "✓", roll: CGFloat(checkRoll), width: width)
+        return pill(amount: amount, current: frozen, next: failed ? "✕" : "✓", roll: CGFloat(checkRoll), width: width)
     }
 
     private func pill(amount: CGFloat, current: String, next: String?, roll: CGFloat, width: CGFloat) -> some View {
@@ -811,8 +803,8 @@ struct IslandRefreshIndicator: View {
 
     @ViewBuilder
     private func glyph(_ symbol: String) -> some View {
-        if symbol == "✓" {
-            Image(systemName: "checkmark")
+        if symbol == "✓" || symbol == "✕" {
+            Image(systemName: symbol == "✓" ? "checkmark" : "xmark")
                 .font(.system(size: 20, weight: .heavy, design: .rounded))
                 .foregroundStyle(.white)
         } else {
@@ -874,7 +866,7 @@ struct ToastView: View {
     let toast: Toast
     let onClose: () -> Void
 
-    private let shape = RoundedRectangle(cornerRadius: 20, style: .continuous)
+    private let shape = RoundedRectangle(cornerRadius: 24, style: .continuous)
 
     var body: some View {
         HStack(spacing: 12) {

@@ -3,8 +3,8 @@ import UIKit
 import CoreText
 
 extension Font {
-    /// Шрифт сумм — SF Pro Rounded Bold, масштабируется с Dynamic Type.
-    static let amount = Font.system(.title2, design: .rounded).weight(.bold)
+    /// Шрифт сумм — SF Pro (не округлый), полужирный; масштабируется с Dynamic Type.
+    static let amount = Font.system(.title2).weight(.semibold)
 }
 
 /// Иконка из Assets/Icons (Iconoir, MIT; толщина линий 2) нужного размера.
@@ -66,13 +66,13 @@ extension Color {
     }
 }
 
-/// Карточка из макета (скругление 20) с лёгким стеклом: полупрозрачная светлая плашка,
+/// Карточка из макета (скругление 24) с лёгким стеклом: полупрозрачная светлая плашка,
 /// мягкий блик сверху и светлый ободок. Без теней. Выбранная — с рамкой цвета акцента.
 struct CardStyle: ViewModifier {
     var isSelected = false
 
     func body(content: Content) -> some View {
-        let shape = RoundedRectangle(cornerRadius: 20, style: .continuous)
+        let shape = RoundedRectangle(cornerRadius: 24, style: .continuous)
         content
             .background {
                 // Чистая белая плашка и мягкая холодная тень — без серого материала и тёмного низа.
@@ -168,43 +168,40 @@ struct GlassBubbleBackground: View {
     /// и цветной обводкой у знаков, только вместо белого ободка — тонкая светлая кромка сверху.
     private var dark: some View {
         let isNeutral = tint == .glassNeutral
-        return GeometryReader { proxy in
-            let radius = max(proxy.size.width, proxy.size.height) * 0.6
-            ZStack {
-                Capsule().fill(Color.glassBase)
-                Capsule().fill(
-                    RadialGradient(
-                        colors: prominent
-                            ? [tint, tint.opacity(0.55)]
-                            : strongTint
-                                ? [tint.opacity(0.42), tint.opacity(0.16)]
-                                : [tint.opacity(isNeutral ? 0.22 : 0.32), tint.opacity(0.04)],
-                        center: .center,
-                        startRadius: 0,
-                        endRadius: radius
-                    )
+        return ZStack {
+            // Клавиша как у системной клавиатуры в тёмной теме: плотная, светлее панели,
+            // сверху чуть светлее — объём без колец и мутных подсветок.
+            // У знаков основа темнее: цвет на ней чистый, а не мутно-серый.
+            Capsule().fill(
+                LinearGradient(
+                    colors: isNeutral
+                        ? [Color(white: 0.29), Color(white: 0.23)]
+                        : [Color(white: 0.16), Color(white: 0.12)],
+                    startPoint: .top,
+                    endPoint: .bottom
                 )
-                // Кромка: светлая сверху, сходит на нет к низу — как блик на стекле.
-                Capsule().strokeBorder(
-                    LinearGradient(
-                        colors: [.white.opacity(0.2), .white.opacity(0)],
-                        startPoint: .top,
-                        endPoint: .center
-                    ),
-                    lineWidth: 1.5
-                )
-                // Цветная обводка — как в светлой теме, но только у знаков.
-                if !isNeutral {
-                    Capsule().strokeBorder(tint.opacity(prominent ? 0.8 : (strongTint ? 0.65 : 0.4)), lineWidth: 1)
-                }
-                // Нажатие: клавиша вспыхивает своим цветом (стекло в тёмной теме выключено,
-                // поэтому подсветку рисуем сами).
-                Capsule()
-                    .fill(isNeutral ? Color.white.opacity(0.16) : tint.opacity(0.35))
-                    .opacity(isPressed ? 1 : 0)
-                    .animation(isPressed ? .easeOut(duration: 0.06) : .easeOut(duration: 0.35), value: isPressed)
+            )
+            // Знаки — ровный оттенок своего цвета; выбранные кружки и метки — насыщеннее.
+            if !isNeutral {
+                Capsule().fill(tint.opacity(prominent ? 0.85 : (strongTint ? 0.34 : 0.3)))
             }
+            // Тонкий блик по верхней кромке.
+            Capsule().strokeBorder(
+                LinearGradient(colors: [.white.opacity(0.18), .white.opacity(0)], startPoint: .top, endPoint: .center),
+                lineWidth: 1
+            )
+            // У выбранных кружков и меток PRO — цветной ободок, чтобы их было видно в списке.
+            if strongTint {
+                Capsule().strokeBorder(tint.opacity(0.6), lineWidth: 1)
+            }
+            // Нажатие: клавиша вспыхивает — светлее или своим цветом.
+            Capsule()
+                .fill(isNeutral ? Color.white.opacity(0.18) : tint.opacity(0.35))
+                .opacity(isPressed ? 1 : 0)
+                .animation(isPressed ? .easeOut(duration: 0.06) : .easeOut(duration: 0.35), value: isPressed)
         }
+        // Мягкая тень снизу — клавиша приподнята над панелью.
+        .shadow(color: .black.opacity(0.45), radius: 0.5, y: 1)
     }
 
     private var light: some View {
@@ -334,7 +331,7 @@ struct SwipeToDelete: ViewModifier {
                         AppIcon("icon-trash", size: 24)
                             .foregroundStyle(.white)
                             .frame(maxWidth: .infinity, maxHeight: .infinity)
-                            .background { DeleteBlock(cornerRadius: 20, isDisabled: !canDelete) }
+                            .background { DeleteBlock(cornerRadius: 24, isDisabled: !canDelete) }
                     }
                     .buttonStyle(.plain)
                     .frame(width: max(0, -offset - gap))
@@ -449,7 +446,7 @@ private struct HorizontalPanGesture: UIGestureRecognizerRepresentable {
 
 /// Красный блок удаления: ровная заливка, тонкий светлый ободок, лёгкая тень.
 struct DeleteBlock: View {
-    var cornerRadius: CGFloat = 20
+    var cornerRadius: CGFloat = 24
     /// Удаление недоступно — серый блок.
     var isDisabled = false
 
