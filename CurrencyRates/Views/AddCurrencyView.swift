@@ -155,10 +155,17 @@ private struct KindSwitch: View {
                         .frame(height: 36)
                         .background {
                             if kind == option {
-                                // Выбранный тип — белая капсула с тенью на сером фоне.
+                                // Выбранный тип — светлая капсула на сером фоне; в тёмной теме —
+                                // заметно светлее подложки, с бликом по верхнему краю.
                                 Capsule()
-                                    .fill(Color.glassBase)
-                                    .shadow(color: .black.opacity(0.12), radius: 4, y: 2)
+                                    .fill(Color.segmentSelected)
+                                    .overlay(
+                                        Capsule().strokeBorder(
+                                            LinearGradient(colors: [Color.segmentRim, .clear], startPoint: .top, endPoint: .center),
+                                            lineWidth: 1
+                                        )
+                                    )
+                                    .shadow(color: .black.opacity(0.15), radius: 4, y: 2)
                                     .matchedGeometryEffect(id: "segment", in: selection)
                             }
                         }
@@ -170,7 +177,7 @@ private struct KindSwitch: View {
         }
         .padding(4)
         // Серая подложка — на ней белый выбранный сегмент хорошо виден.
-        .background(Capsule().fill(Color.primary.opacity(0.08)))
+        .background(Capsule().fill(Color.segmentTrack))
         .accessibilityLabel(L(.currencyType))
     }
 }
@@ -178,4 +185,14 @@ private struct KindSwitch: View {
 #Preview {
     AddCurrencyView()
         .environment(RatesStore.preview())
+}
+
+extension Color {
+    static let segmentTrack = Color(UIColor { traits in
+        traits.userInterfaceStyle == .dark ? UIColor(white: 1, alpha: 0.07) : UIColor(white: 0, alpha: 0.08)
+    })
+    static let segmentSelected = Color.dynamic(light: 0xFFFFFF, dark: 0x48484C)
+    static let segmentRim = Color(UIColor { traits in
+        traits.userInterfaceStyle == .dark ? UIColor(white: 1, alpha: 0.18) : .clear
+    })
 }

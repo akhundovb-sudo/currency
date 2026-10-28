@@ -31,16 +31,15 @@ struct ProBanner: View {
         .padding(.horizontal, 20)
         .padding(.vertical, 20)
         .frame(maxWidth: .infinity)
-        .background { background }
+        .background { ProBannerBackground() }
         .clipShape(shape)
-        .overlay(shape.strokeBorder(.white.opacity(0.15), lineWidth: 1))
-        .shadow(color: Color(hex: 0x3A2E85).opacity(0.35), radius: 14, y: 6)
+        .shadow(color: Color(hex: 0x2B33A8).opacity(0.3), radius: 12, y: 6)
     }
 
     /// «Перейдите на Pro»: слово Pro — стеклянное; порядок слов из перевода.
     private var title: some View {
         let parts = L(.proBecome).components(separatedBy: "%@")
-        return HStack(alignment: .firstTextBaseline, spacing: 6) {
+        return HStack(alignment: .firstTextBaseline, spacing: 5) {
             if let before = parts.first, !before.trimmingCharacters(in: .whitespaces).isEmpty {
                 Text(before.trimmingCharacters(in: .whitespaces))
             }
@@ -55,30 +54,23 @@ struct ProBanner: View {
         .minimumScaleFactor(0.8)
     }
 
-    /// Цвета экрана подписки: синий слева, фиолетовый справа, к низу темнее.
-    private var background: some View {
+}
+
+/// Фон плашки, как в референсе: сверху светлее, книзу глубже — в синих тонах приложения,
+/// с лёгким фиолетовым у правого нижнего угла и мерцающими звёздочками.
+struct ProBannerBackground: View {
+    var body: some View {
         ZStack {
-            // Синего больше: фиолетовый появляется только у правого края.
             LinearGradient(
-                stops: [
-                    .init(color: Color(hex: 0x2E3A9A), location: 0),
-                    .init(color: Color(hex: 0x2B3488), location: 0.55),
-                    .init(color: Color(hex: 0x45308A), location: 1),
-                ],
-                startPoint: .leading,
-                endPoint: .trailing
-            )
-            LinearGradient(
-                colors: [.clear, Color.paywallInk.opacity(0.35)],
+                colors: [Color(hex: 0x4458E0), Color(hex: 0x2B33A8)],
                 startPoint: .top,
                 endPoint: .bottom
             )
-            // Мягкий блик в верхнем левом углу.
             RadialGradient(
-                colors: [.white.opacity(0.12), .white.opacity(0)],
-                center: UnitPoint(x: 0.15, y: 0),
+                colors: [Color(hex: 0x5A3BC4).opacity(0.55), .clear],
+                center: .bottomTrailing,
                 startRadius: 0,
-                endRadius: 200
+                endRadius: 220
             )
             TwinklingSparkles()
         }
@@ -90,9 +82,9 @@ private struct TwinklingSparkles: View {
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
     private static let sparkles: [(x: CGFloat, y: CGFloat, size: CGFloat, period: Double, phase: Double)] = [
-        (0.25, 0.18, 9, 2.6, 0.0), (0.58, 0.28, 7, 3.4, 1.3), (0.42, 0.85, 8, 2.9, 2.1),
-        (0.78, 0.82, 6, 3.8, 0.6), (0.93, 0.15, 7, 3.1, 2.7), (0.48, 0.1, 6, 4.2, 1.8),
-        (0.68, 0.55, 5, 2.4, 3.3),
+        (0.58, 0.22, 9, 2.6, 0.0), (0.52, 0.78, 7, 3.4, 1.3), (0.36, 0.9, 6, 2.9, 2.1),
+        (0.79, 0.85, 6, 3.8, 0.6), (0.95, 0.14, 7, 3.1, 2.7), (0.7, 0.08, 6, 4.2, 1.8),
+        (0.66, 0.6, 5, 2.4, 3.3), (0.18, 0.95, 5, 3.6, 0.9), (0.44, 0.12, 5, 3.0, 2.4),
     ]
 
     var body: some View {
@@ -104,8 +96,9 @@ private struct TwinklingSparkles: View {
                     // 0…1: большую часть периода искорка почти не видна, потом вспыхивает.
                     let wave = 0.5 + 0.5 * sin(time * 2 * .pi / sparkle.period + sparkle.phase)
                     let glow = reduceMotion ? 0.6 : pow(wave, 2)
-                    Image(systemName: "sparkle")
-                        .font(.system(size: sparkle.size))
+                    // Тонкая четырёхлучевая звёздочка, как в референсе.
+                    Image(systemName: "plus")
+                        .font(.system(size: sparkle.size, weight: .light))
                         .foregroundStyle(.white.opacity(0.05 + 0.6 * glow))
                         .scaleEffect(0.6 + 0.5 * glow)
                         .position(x: w * sparkle.x, y: h * sparkle.y)
@@ -116,13 +109,66 @@ private struct TwinklingSparkles: View {
     }
 }
 
+/// Плашка в настройках, когда Pro уже есть: стеклянное «Pro», какой тариф и цена,
+/// у подписки — кнопка «Управлять» (подписки в App Store).
+struct ProStatusCard: View {
+    let plan: ProPlan?
+    var onManage: () -> Void = {}
+
+    private let shape = RoundedRectangle(cornerRadius: 24, style: .continuous)
+
+    var body: some View {
+        HStack(spacing: 12) {
+            VStack(alignment: .leading, spacing: 6) {
+                // Значок — по центру высоты букв «Pro».
+                HStack(alignment: .center, spacing: 8) {
+                    GlassProBadge()
+                    Image(systemName: "checkmark.seal.fill")
+                        .font(.title3)
+                        .foregroundStyle(.white.opacity(0.9))
+                }
+                Text(subtitle)
+                    .font(.subheadline)
+                    .foregroundStyle(.white.opacity(0.88))
+                    .lineLimit(2)
+                    .minimumScaleFactor(0.85)
+            }
+            Spacer(minLength: 4)
+            if plan?.isSubscription ?? false {
+                Button(action: onManage) {
+                    Text(L(.manageSubscription))
+                        .font(.headline)
+                        .lineLimit(1)
+                        .fixedSize()
+                        .padding(.horizontal, 18)
+                        .frame(height: 44)
+                }
+                .buttonStyle(GlassPillButtonStyle())
+            }
+        }
+        .padding(.horizontal, 20)
+        .padding(.vertical, 20)
+        .frame(maxWidth: .infinity)
+        .background { ProBannerBackground() }
+        .clipShape(shape)
+        .shadow(color: Color(hex: 0x2B33A8).opacity(0.3), radius: 12, y: 6)
+        .accessibilityElement(children: .combine)
+    }
+
+    /// «Pro активен · Год · $9.99 / год»; без тарифа (тестовый Pro) — просто «Pro активен».
+    private var subtitle: String {
+        guard let plan else { return L(.proActive) }
+        return "\(L(.proActive)) · \(plan.title) · \(plan.price)"
+    }
+}
+
 /// Слово «Pro» без подложки — стеклянное само по себе: буквы залиты полупрозрачным
 /// белым с ярким бликом сверху и резкой границей посередине, мягкое свечение вокруг.
 private struct GlassProBadge: View {
     var body: some View {
         Text(verbatim: "Pro")
-            // Крупнее, чем «Become a».
-            .font(.system(size: 36, weight: .heavy, design: .rounded))
+            // Чуть крупнее «Become a», как в референсе.
+            .font(.system(size: 27, weight: .heavy, design: .rounded))
             .foregroundStyle(
                 LinearGradient(
                     stops: [
@@ -137,10 +183,8 @@ private struct GlassProBadge: View {
             )
             .shadow(color: .white.opacity(0.5), radius: 8)
             .shadow(color: .black.opacity(0.25), radius: 1, y: 1)
-            // Лишняя высота крупного слова не раздвигает плашку:
-            // отступы считаются от строки «Become a».
-            .padding(.top, -12)
-            .padding(.bottom, -3)
+            // Свечение не раздвигает строку.
+            .padding(.vertical, -4)
     }
 }
 
@@ -178,9 +222,41 @@ private struct GlassPillButtonStyle: ButtonStyle {
                     }
             }
         }
+        // Блик бежит по ободку кнопки — как в референсе.
+        .overlay { RunningRimHighlight() }
         .contentShape(Capsule())
         .scaleEffect(configuration.isPressed ? 0.94 : 1)
         .animation(.spring(response: 0.25, dampingFraction: 0.55), value: configuration.isPressed)
+    }
+}
+
+/// Светлая дуга, которая плавно обходит ободок капсулы по кругу (оборот ~3 с).
+private struct RunningRimHighlight: View {
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
+
+    var body: some View {
+        TimelineView(.animation(paused: reduceMotion)) { timeline in
+            let time = timeline.date.timeIntervalSinceReferenceDate
+            let angle = reduceMotion ? -90 : (time / 3).truncatingRemainder(dividingBy: 1) * 360
+            Capsule()
+                .strokeBorder(
+                    AngularGradient(
+                        stops: [
+                            .init(color: .white.opacity(0), location: 0),
+                            .init(color: .white.opacity(0.95), location: 0.08),
+                            .init(color: .white.opacity(0), location: 0.2),
+                            .init(color: .white.opacity(0), location: 0.5),
+                            .init(color: .white.opacity(0.5), location: 0.58),
+                            .init(color: .white.opacity(0), location: 0.7),
+                            .init(color: .white.opacity(0), location: 1),
+                        ],
+                        center: .center,
+                        angle: .degrees(angle)
+                    ),
+                    lineWidth: 1.5
+                )
+        }
+        .allowsHitTesting(false)
     }
 }
 

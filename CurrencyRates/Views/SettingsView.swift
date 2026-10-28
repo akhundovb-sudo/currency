@@ -1,21 +1,29 @@
+import StoreKit
 import SwiftUI
 
 struct SettingsView: View {
     @Environment(RatesStore.self) private var store
     @Environment(\.dismiss) private var dismiss
     @State private var isPaywallPresented = false
+    @Environment(\.requestReview) private var requestReview
+    @Environment(\.openURL) private var openURL
 
     var body: some View {
         @Bindable var store = store
 
         NavigationStack {
             Form {
-                if !store.isPro {
-                    Section {
-                        ProBanner(onDetails: { isPaywallPresented = true })
-                            .listRowInsets(EdgeInsets())
-                            .listRowBackground(Color.clear)
+                // Без Pro — предложение подписки; с Pro — какой тариф куплен.
+                Section {
+                    Group {
+                        if store.isPro {
+                            ProStatusCard(plan: store.proPlan) { openURL(AppLinks.manageSubscriptions) }
+                        } else {
+                            ProBanner(onDetails: { isPaywallPresented = true })
+                        }
                     }
+                    .listRowInsets(EdgeInsets())
+                    .listRowBackground(Color.clear)
                 }
 
                 Section(L(.appearance)) {
@@ -82,14 +90,24 @@ struct SettingsView: View {
                     Text(L(.dataFooter))
                 }
 
+                Section(L(.support)) {
+                    Button { requestReview() } label: {
+                        linkRow(L(.rateApp), symbol: "star")
+                    }
+                    Link(destination: AppLinks.privacy) {
+                        linkRow(L(.privacy), symbol: "arrow.up.right")
+                    }
+                    Link(destination: AppLinks.terms) {
+                        linkRow(L(.terms), symbol: "arrow.up.right")
+                    }
+                }
+
                 Section {
                     // Временно, пока не подключены покупки: включает и выключает Pro для проверки.
                     Toggle(L(.proTest), isOn: $store.isPro)
                     LabeledContent(L(.version), value: appVersion)
                 } header: {
                     Text(L(.about))
-                } footer: {
-                    Text(verbatim: "Iconoir · flag-icons · web3icons (MIT)")
                 }
             }
             // Подписи в меню выбора (тема, формат) кэшируются системой — при смене языка
@@ -116,6 +134,17 @@ struct SettingsView: View {
                 }
                 .hidingSharedGlass()
             }
+        }
+    }
+
+    /// Строка-ссылка: подпись слева, значок справа.
+    private func linkRow(_ title: String, symbol: String) -> some View {
+        HStack {
+            Text(title).foregroundStyle(Color.primary)
+            Spacer()
+            Image(systemName: symbol)
+                .font(.footnote.weight(.semibold))
+                .foregroundStyle(Color.secondaryLabel)
         }
     }
 

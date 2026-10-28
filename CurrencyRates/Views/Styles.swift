@@ -132,35 +132,7 @@ struct GlassBubbleStyle: ButtonStyle {
     func makeBody(configuration: Configuration) -> some View {
         configuration.label
             .foregroundStyle(Color.primary)
-            .background {
-                GeometryReader { proxy in
-                    let radius = max(proxy.size.width, proxy.size.height) * 0.6
-                    ZStack {
-                        Capsule().fill(Color.glassBase)
-                        Capsule().fill(
-                            RadialGradient(
-                                colors: prominent
-                                    ? [tint, tint.opacity(0.55)]
-                                    : [tint.opacity(0.22), tint.opacity(0.04)],
-                                center: .center,
-                                startRadius: 0,
-                                endRadius: radius
-                            )
-                        )
-                        // Белый ободок со светлым бликом сверху.
-                        Capsule().strokeBorder(
-                            LinearGradient(
-                                colors: [Color.glassRim, Color.glassRim.opacity(0.7)],
-                                startPoint: .top,
-                                endPoint: .bottom
-                            ),
-                            lineWidth: 2.5
-                        )
-                        // Тонкая цветная обводка снаружи ободка.
-                        Capsule().strokeBorder(tint.opacity(prominent ? 0.8 : 0.45), lineWidth: 1)
-                    }
-                }
-            }
+            .background { GlassBubbleBackground(tint: tint, prominent: prominent, isPressed: configuration.isPressed) }
             .modifier(ClearGlassOverlay())
             .contentShape(Capsule())
             .scaleEffect(configuration.isPressed ? 0.9 : 1)
@@ -169,9 +141,97 @@ struct GlassBubbleStyle: ButtonStyle {
     }
 }
 
+/// Подложка стеклянной клавиши.
+/// Светлая тема — стекло с белым ободком и цветной обводкой.
+/// Тёмная — без обводок: ровная плашка чуть светлее панели, у знаков — мягкий цвет внутри.
+struct GlassBubbleBackground: View {
+    let tint: Color
+    let prominent: Bool
+    var isPressed = false
+    @Environment(\.colorScheme) private var colorScheme
+
+    var body: some View {
+        if colorScheme == .dark { dark } else { light }
+    }
+
+    /// Тёмная тема повторяет светлую: та же стеклянная клавиша со свечением цвета изнутри
+    /// и цветной обводкой у знаков, только вместо белого ободка — тонкая светлая кромка сверху.
+    private var dark: some View {
+        let isNeutral = tint == .glassNeutral
+        return GeometryReader { proxy in
+            let radius = max(proxy.size.width, proxy.size.height) * 0.6
+            ZStack {
+                Capsule().fill(Color.glassBase)
+                Capsule().fill(
+                    RadialGradient(
+                        colors: prominent
+                            ? [tint, tint.opacity(0.55)]
+                            : [tint.opacity(isNeutral ? 0.22 : 0.32), tint.opacity(0.04)],
+                        center: .center,
+                        startRadius: 0,
+                        endRadius: radius
+                    )
+                )
+                // Кромка: светлая сверху, сходит на нет к низу — как блик на стекле.
+                Capsule().strokeBorder(
+                    LinearGradient(
+                        colors: [.white.opacity(0.2), .white.opacity(0)],
+                        startPoint: .top,
+                        endPoint: .center
+                    ),
+                    lineWidth: 1.5
+                )
+                // Цветная обводка — как в светлой теме, но только у знаков.
+                if !isNeutral {
+                    Capsule().strokeBorder(tint.opacity(prominent ? 0.8 : 0.4), lineWidth: 1)
+                }
+                // Нажатие: клавиша вспыхивает своим цветом (стекло в тёмной теме выключено,
+                // поэтому подсветку рисуем сами).
+                Capsule()
+                    .fill(isNeutral ? Color.white.opacity(0.16) : tint.opacity(0.35))
+                    .opacity(isPressed ? 1 : 0)
+                    .animation(isPressed ? .easeOut(duration: 0.06) : .easeOut(duration: 0.35), value: isPressed)
+            }
+        }
+    }
+
+    private var light: some View {
+        GeometryReader { proxy in
+            let radius = max(proxy.size.width, proxy.size.height) * 0.6
+            ZStack {
+                Capsule().fill(Color.glassBase)
+                Capsule().fill(
+                    RadialGradient(
+                        colors: prominent
+                            ? [tint, tint.opacity(0.55)]
+                            : [tint.opacity(0.22), tint.opacity(0.04)],
+                        center: .center,
+                        startRadius: 0,
+                        endRadius: radius
+                    )
+                )
+                // Белый ободок со светлым бликом сверху.
+                Capsule().strokeBorder(
+                    LinearGradient(
+                        colors: [Color.glassRim, Color.glassRim.opacity(0.7)],
+                        startPoint: .top,
+                        endPoint: .bottom
+                    ),
+                    lineWidth: 2.5
+                )
+                // Тонкая цветная обводка снаружи ободка.
+                Capsule().strokeBorder(tint.opacity(prominent ? 0.8 : 0.45), lineWidth: 1)
+            }
+        }
+    }
+}
+
 struct ClearGlassOverlay: ViewModifier {
+    @Environment(\.colorScheme) private var colorScheme
+
     func body(content: Content) -> some View {
-        if #available(iOS 26, *) {
+        // В тёмной теме стекло рисует светлый контур — там клавиши без него.
+        if #available(iOS 26, *), colorScheme != .dark {
             content.glassEffect(.clear.interactive(), in: Capsule())
         } else {
             content
@@ -188,6 +248,24 @@ extension Color {
 
     /// Светлый ободок стекла: белый в светлой теме; в тёмной — едва заметный,
     /// иначе на чёрном фоне получаются резкие белые кольца.
+    /// Кнопки-пузыри: светлая — белая, тёмная — чуть светлее фона, как карточки.
+    static let bubbleFill = Color(UIColor { traits in
+        traits.userInterfaceStyle == .dark
+            ? UIColor(red: 0x2C / 255, green: 0x2C / 255, blue: 0x2E / 255, alpha: 0.92)
+            : UIColor.secondarySystemGroupedBackground.withAlphaComponent(0.8)
+    })
+    static let bubbleRimTop = Color(UIColor { traits in
+        traits.userInterfaceStyle == .dark ? UIColor(white: 1, alpha: 0.14) : .white
+    })
+    static let bubbleRimBottom = Color(UIColor { traits in
+        traits.userInterfaceStyle == .dark ? UIColor(white: 1, alpha: 0.03) : UIColor(white: 0, alpha: 0.05)
+    })
+    static let bubbleShadow = Color(UIColor { traits in
+        traits.userInterfaceStyle == .dark
+            ? UIColor(white: 0, alpha: 0.4)
+            : UIColor(red: 0.35, green: 0.37, blue: 0.5, alpha: 0.12)
+    })
+
     static let glassRim = Color(UIColor { traits in
         traits.userInterfaceStyle == .dark ? UIColor(white: 1, alpha: 0.16) : .white
     })
@@ -363,13 +441,25 @@ struct DeleteBlock: View {
     /// Удаление недоступно — серый блок.
     var isDisabled = false
 
-    static let red = Color.dynamic(light: 0xEF4444, dark: 0xF87171)
+    /// В тёмной теме — насыщенный, а не бледно-розовый красный.
+    static let red = Color.dynamic(light: 0xEF4444, dark: 0xE5484D)
+
+    @Environment(\.colorScheme) private var colorScheme
 
     var body: some View {
         let shape = RoundedRectangle(cornerRadius: cornerRadius, style: .continuous)
+        let isDark = colorScheme == .dark
         shape
             .fill(isDisabled ? Color(.systemGray3).gradient : Self.red.gradient)
-            .overlay(shape.strokeBorder(.white.opacity(0.35), lineWidth: 1))
+            // Светлая тема — белый ободок; тёмная — только мягкий блик сверху, как у клавиш.
+            .overlay(
+                shape.strokeBorder(
+                    isDark
+                        ? LinearGradient(colors: [.white.opacity(0.25), .white.opacity(0)], startPoint: .top, endPoint: .center)
+                        : LinearGradient(colors: [.white.opacity(0.35), .white.opacity(0.35)], startPoint: .top, endPoint: .bottom),
+                    lineWidth: 1
+                )
+            )
     }
 }
 
@@ -404,11 +494,14 @@ struct CardBubbleBackground: View {
     var body: some View {
         ZStack {
             Capsule().fill(.thinMaterial)
-            Capsule().fill(Color(.secondarySystemGroupedBackground).opacity(0.8))
-            Capsule().strokeBorder(Color.glassRim.opacity(0.9), lineWidth: 1)
-            Capsule().strokeBorder(Color.primary.opacity(0.06), lineWidth: 0.5)
+            Capsule().fill(Color.bubbleFill)
+            // В тёмной теме — мягкий блик сверху вместо яркого серого кольца.
+            Capsule().strokeBorder(
+                LinearGradient(colors: [Color.bubbleRimTop, Color.bubbleRimBottom], startPoint: .top, endPoint: .bottom),
+                lineWidth: 1
+            )
         }
-        .shadow(color: Color(red: 0.35, green: 0.37, blue: 0.5).opacity(0.12), radius: 8, y: 0)
+        .shadow(color: Color.bubbleShadow, radius: 8, y: 0)
     }
 }
 

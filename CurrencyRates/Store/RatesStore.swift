@@ -50,6 +50,8 @@ final class RatesStore {
     }
 
     /// Знаков после запятой в суммах; nil — автоматически.
+    static let defaultDecimalPlaces = 2
+
     var decimalPlaces: Int? {
         didSet {
             RateFormat.decimalPlaces = decimalPlaces
@@ -91,10 +93,13 @@ final class RatesStore {
         let language = defaults?.string(forKey: Keys.language).flatMap(AppLanguage.init(rawValue:)) ?? .systemDefault
         self.language = language
         self.isPro = defaults?.bool(forKey: Keys.isPro) ?? false
+        self.proPlan = defaults?.string(forKey: Keys.proPlan).flatMap(ProPlan.init(rawValue:))
         let style = defaults?.string(forKey: Keys.numberStyle).flatMap(NumberStyle.init(rawValue:)) ?? .automatic
         self.numberStyle = style
         RateFormat.style = style
-        let places = (defaults?.object(forKey: Keys.decimalPlaces) as? Int).flatMap { $0 >= 0 ? $0 : nil }
+        // По умолчанию — 2 знака после запятой; −1 в настройках означает «Авто».
+        let savedPlaces = defaults?.object(forKey: Keys.decimalPlaces) as? Int ?? Self.defaultDecimalPlaces
+        let places: Int? = savedPlaces >= 0 ? savedPlaces : nil
         self.decimalPlaces = places
         RateFormat.decimalPlaces = places
         L10n.current = language
@@ -204,8 +209,14 @@ final class RatesStore {
     var isPro: Bool {
         didSet {
             defaults?.set(isPro, forKey: Keys.isPro)
+            if !isPro { proPlan = nil }
             applyPlanLimits()
         }
+    }
+
+    /// Какой тариф Pro куплен — показывается в настройках. `nil` — Pro включён переключателем для проверки.
+    var proPlan: ProPlan? {
+        didSet { defaults?.set(proPlan?.rawValue, forKey: Keys.proPlan) }
     }
 
     /// Фиатные валюты, доступные для выбора: из загруженных курсов или стандартный список.
@@ -395,6 +406,7 @@ final class RatesStore {
         static let theme = "theme"
         static let language = "language"
         static let isPro = "isPro"
+        static let proPlan = "proPlan"
         static let numberStyle = "numberStyle"
         static let decimalPlaces = "decimalPlaces"
     }
@@ -422,4 +434,43 @@ final class RatesStore {
         }
         return L(.errBadResponse)
     }
+}
+
+/// Тарифы Pro.
+enum ProPlan: String, CaseIterable, Identifiable {
+    case monthly, yearly, lifetime
+    var id: Self { self }
+
+    var title: String {
+        switch self {
+        case .monthly: L(.planMonthly)
+        case .yearly: L(.planYearly)
+        case .lifetime: L(.planLifetime)
+        }
+    }
+
+    /// У подписок 7 дней бесплатно, у покупки навсегда пробного периода нет.
+    var hasTrial: Bool { self != .lifetime }
+
+    var isSubscription: Bool { self != .lifetime }
+
+    /// Цены-заглушки, пока не подключён StoreKit: реальные придут из App Store.
+    /// Год — почти в 2,5 раза дешевле помесячной оплаты, навсегда — как два года.
+    var price: String {
+        switch self {
+        case .monthly: L(.perMonth, "$1.99")
+        case .yearly: L(.perYear, "$9.99")
+        case .lifetime: L(.oneTime, "$19.99")
+        }
+    }
+}
+
+/// Внешние ссылки приложения.
+enum AppLinks {
+    /// Стандартное лицензионное соглашение Apple — подходит, пока нет своих условий.
+    static let terms = URL(string: "https://www.apple.com/legal/internet-services/itunes/dev/stdeula/")!
+    /// TODO: заменить на страницу своей политики конфиденциальности.
+    static let privacy = URL(string: "https://www.apple.com/legal/privacy/")!
+    /// Управление подписками в App Store.
+    static let manageSubscriptions = URL(string: "https://apps.apple.com/account/subscriptions")!
 }

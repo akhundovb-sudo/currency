@@ -8,31 +8,7 @@ struct PaywallView: View {
     @Environment(\.dismiss) private var dismiss
     @State private var plan: Plan = .yearly
 
-    enum Plan: CaseIterable, Identifiable {
-        case monthly, yearly, lifetime
-        var id: Self { self }
-
-        var title: String {
-            switch self {
-            case .monthly: L(.planMonthly)
-            case .yearly: L(.planYearly)
-            case .lifetime: L(.planLifetime)
-            }
-        }
-
-        /// У подписок 7 дней бесплатно, у покупки навсегда пробного периода нет.
-        var hasTrial: Bool { self != .lifetime }
-
-        /// Цены-заглушки, пока не подключён StoreKit: реальные придут из App Store.
-        /// Год — почти в 2,5 раза дешевле помесячной оплаты, навсегда — как два года.
-        var price: String {
-            switch self {
-            case .monthly: L(.perMonth, "$1.99")
-            case .yearly: L(.perYear, "$9.99")
-            case .lifetime: L(.oneTime, "$19.99")
-            }
-        }
-    }
+    typealias Plan = ProPlan
 
     var body: some View {
         ZStack {
@@ -89,19 +65,28 @@ struct PaywallView: View {
     }
 
     private var header: some View {
-        // Без заголовка — только кнопка закрытия справа.
-        ZStack {
-            HStack {
-                Spacer()
-                Button { dismiss() } label: {
-                    Image(systemName: "xmark")
-                        .font(.footnote.weight(.bold))
-                        .foregroundStyle(.white.opacity(0.85))
-                        .frame(width: 32, height: 32)
-                        .background(Circle().fill(.white.opacity(0.15)))
-                }
-                .accessibilityLabel(L(.close))
+        // Без заголовка — только крестик слева, как в настройках, но на прозрачном стекле.
+        HStack {
+            Button { dismiss() } label: {
+                Image(systemName: "xmark")
+                    .font(.system(size: 17, weight: .semibold))
+                    .foregroundStyle(.white)
+                    .frame(width: 44, height: 44)
+                    .background {
+                        Circle()
+                            .fill(.white.opacity(0.08))
+                            .overlay(
+                                Circle().strokeBorder(
+                                    LinearGradient(colors: [.white.opacity(0.3), .white.opacity(0.06)], startPoint: .top, endPoint: .bottom),
+                                    lineWidth: 1
+                                )
+                            )
+                    }
+                    .contentShape(Circle())
             }
+            .buttonStyle(PressScaleStyle())
+            .accessibilityLabel(L(.close))
+            Spacer()
         }
         .padding(.horizontal, 20)
         .padding(.vertical, 12)
@@ -178,6 +163,7 @@ struct PaywallView: View {
                 // Пока нет StoreKit — включает тестовый Pro, как переключатель в настройках.
                 UINotificationFeedbackGenerator().notificationOccurred(.success)
                 store.isPro = true
+                store.proPlan = plan
                 dismiss()
             } label: {
                 Text(plan.hasTrial ? L(.startTrial) : L(.getFullAccess))
@@ -192,9 +178,9 @@ struct PaywallView: View {
             .buttonStyle(PressScaleStyle())
 
             HStack(spacing: 10) {
-                Text(L(.terms))
+                Link(L(.terms), destination: AppLinks.terms)
                 Text(verbatim: "·")
-                Text(L(.privacy))
+                Link(L(.privacy), destination: AppLinks.privacy)
                 Text(verbatim: "·")
                 Button(L(.restore)) {}
             }

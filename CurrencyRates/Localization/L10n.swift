@@ -66,6 +66,7 @@ enum L10n {
         case proBecome, proSubscription, upgrade
         case proHeadline, planMonthly, planYearly, planLifetime, perMonth, perYear, oneTime
         case bestValue, included, featUnlimited, featFiat, featCrypto, featSupport
+        case rateApp, manageSubscription, proActive, support
         case getFullAccess, startTrial, trialNote, terms, privacy, restore
         case formatAutomatic, formatInternational, formatEuropean, formatSpaced
         case errNoInternet, errTimeout, errServer, errRateLimited, errBadResponse
@@ -148,6 +149,10 @@ enum L10n {
         .featSupport: ["Поддержка развития приложения", "Support the app’s development", "Uygulamanın gelişimine destek", "Soutenir le développement", "Apoya el desarrollo de la app", "Unterstütze die Entwicklung", "支持应用的开发", "ادعم تطوير التطبيق"],
         .trialNote: ["7 дней бесплатно, отмена в любой момент", "7-day free trial, cancel anytime", "7 gün ücretsiz, istediğin zaman iptal", "7 jours gratuits, sans engagement", "7 días gratis, cancela cuando quieras", "7 Tage gratis, jederzeit kündbar", "免费试用 7 天，可随时取消", "7 أيام مجانًا، ألغِ في أي وقت"],
         .startTrial: ["Попробовать бесплатно", "Start Free Trial", "Ücretsiz Denemeyi Başlat", "Commencer l’essai gratuit", "Empezar prueba gratis", "Gratis testen", "开始免费试用", "ابدأ التجربة المجانية"],
+        .rateApp: ["Оценить приложение", "Rate the App", "Uygulamayı Değerlendir", "Noter l’app", "Valorar la app", "App bewerten", "给应用评分", "قيّم التطبيق"],
+        .manageSubscription: ["Управлять", "Manage", "Yönet", "Gérer", "Gestionar", "Verwalten", "管理", "إدارة"],
+        .proActive: ["Pro активен", "Pro is active", "Pro etkin", "Pro est actif", "Pro está activo", "Pro ist aktiv", "Pro 已启用", "Pro مُفعّل"],
+        .support: ["Поддержка", "Support", "Destek", "Assistance", "Soporte", "Support", "支持", "الدعم"],
         .getFullAccess: ["Получить полный доступ", "Get Full Access", "Tam Erişim Al", "Obtenir l’accès complet", "Obtener acceso completo", "Vollzugriff erhalten", "获取完整权限", "احصل على الوصول الكامل"],
         .terms: ["Условия", "Terms of Use", "Kullanım Şartları", "Conditions", "Términos", "Nutzungsbedingungen", "使用条款", "شروط الاستخدام"],
         .privacy: ["Конфиденциальность", "Privacy Policy", "Gizlilik", "Confidentialité", "Privacidad", "Datenschutz", "隐私政策", "الخصوصية"],

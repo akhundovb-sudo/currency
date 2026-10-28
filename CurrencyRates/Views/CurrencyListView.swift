@@ -60,7 +60,7 @@ struct CurrencyListView: View {
                         HStack(spacing: 12) {
                         if editMode.isEditing {
                             deleteButton(for: code)
-                                .transition(.move(edge: .leading).combined(with: .opacity))
+                                .transition(.scale(scale: 0.4).combined(with: .opacity))
                         }
                         CurrencyRow(
                             code: code,
@@ -392,12 +392,21 @@ struct CurrencyListView: View {
             HStack(spacing: 10) {
                 Button {
                     hideKeypad()
-                    withAnimation { editMode = editMode.isEditing ? .inactive : .active }
+                    // Одна плавная анимация без отскока: кнопки «−», ручки перетаскивания и карточки.
+                    withAnimation(.smooth(duration: 0.32)) {
+                        editMode = editMode.isEditing ? .inactive : .active
+                    }
                 } label: {
-                    Text(editMode.isEditing ? L(.done) : L(.edit))
-                        .fontWeight(.semibold)
-                        .padding(.horizontal, 16)
-                        .frame(height: 44)
+                    // Ширина — по длинному из двух слов: кнопка не прыгает при смене «Править» / «Готово».
+                    ZStack {
+                        Text(L(.edit)).opacity(editMode.isEditing ? 0 : 1)
+                        Text(L(.done)).opacity(editMode.isEditing ? 1 : 0)
+                    }
+                    .fontWeight(.semibold)
+                    .lineLimit(1)
+                    .fixedSize()
+                    .padding(.horizontal, 16)
+                    .frame(height: 44)
                 }
                 .buttonStyle(CardBubbleStyle())
 
@@ -804,7 +813,7 @@ struct Toast: Equatable {
             switch self {
             case .info: "info.circle"
             case .warning, .error: "exclamationmark.triangle"
-            case .success: "checkmark"
+            case .success: "checkmark.circle"
             }
         }
     }
@@ -814,34 +823,25 @@ struct Toast: Equatable {
     var message: String
 }
 
-/// Карточка сообщения: белая плашка с лёгким оттенком цвета слева, значок в мягкой
-/// цветной плитке, текст и крестик.
+/// Карточка сообщения: белая плашка, цветной значок без подложки, текст и крестик —
+/// всё по центру строки.
 struct ToastView: View {
     let toast: Toast
     let onClose: () -> Void
 
-    private let shape = RoundedRectangle(cornerRadius: 18, style: .continuous)
+    private let shape = RoundedRectangle(cornerRadius: 20, style: .continuous)
 
     var body: some View {
-        let tint = toast.kind.tint
-        HStack(alignment: .top, spacing: 12) {
+        HStack(spacing: 12) {
             Image(systemName: toast.kind.symbol)
-                .font(.system(size: 16, weight: .medium))
-                .foregroundStyle(tint)
-                .frame(width: 36, height: 36)
-                .background {
-                    RoundedRectangle(cornerRadius: 10, style: .continuous)
-                        .fill(tint.opacity(0.1))
-                        .overlay(
-                            RoundedRectangle(cornerRadius: 10, style: .continuous)
-                                .strokeBorder(tint.opacity(0.16), lineWidth: 1)
-                        )
-                }
+                .font(.system(size: 20, weight: .medium))
+                .foregroundStyle(toast.kind.tint)
+                .frame(width: 24)
 
-            VStack(alignment: .leading, spacing: 3) {
+            VStack(alignment: .leading, spacing: 2) {
                 if let title = toast.title {
                     Text(title)
-                        .font(.body.weight(.semibold))
+                        .font(.subheadline.weight(.semibold))
                         .foregroundStyle(Color.primary)
                 }
                 Text(toast.message)
@@ -849,11 +849,11 @@ struct ToastView: View {
                     .foregroundStyle(toast.title == nil ? Color.primary : Color.secondaryLabel)
                     .fixedSize(horizontal: false, vertical: true)
             }
-            .frame(maxWidth: .infinity, minHeight: 36, alignment: .leading)
+            .frame(maxWidth: .infinity, alignment: .leading)
 
             Button(action: onClose) {
                 Image(systemName: "xmark")
-                    .font(.system(size: 13, weight: .semibold))
+                    .font(.system(size: 12, weight: .bold))
                     .foregroundStyle(Color.secondaryLabel)
                     .frame(width: 28, height: 28)
                     .contentShape(Rectangle())
@@ -861,19 +861,12 @@ struct ToastView: View {
             .buttonStyle(.plain)
             .accessibilityLabel(L(.close))
         }
-        .padding(14)
+        .padding(.leading, 16)
+        .padding(.trailing, 10)
+        .padding(.vertical, 14)
         .background {
             shape
                 .fill(Color(.secondarySystemGroupedBackground))
-                .overlay(
-                    shape.fill(
-                        LinearGradient(
-                            colors: [tint.opacity(0.07), tint.opacity(0)],
-                            startPoint: .leading,
-                            endPoint: UnitPoint(x: 0.6, y: 0.5)
-                        )
-                    )
-                )
                 .overlay(shape.strokeBorder(Color.primary.opacity(0.06), lineWidth: 1))
                 .shadow(color: Color(red: 0.2, green: 0.25, blue: 0.4).opacity(0.12), radius: 16, y: 6)
         }

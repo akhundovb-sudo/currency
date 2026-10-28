@@ -268,6 +268,8 @@ private struct SelectionBubble: View {
 
 /// Тег «PRO» у валют, доступных только с подпиской.
 private struct ProBadge: View {
+    @Environment(\.colorScheme) private var colorScheme
+
     var body: some View {
         Text("PRO")
             .font(.system(size: 11, weight: .heavy, design: .rounded))
@@ -276,27 +278,31 @@ private struct ProBadge: View {
             .padding(.horizontal, 8)
             .frame(height: 22)
             // Стекло, как у кружков выбора: лёгкое свечение акцента внутри, белый ободок
-            // и тонкая цветная обводка. Без тени.
+            // и тонкая цветная обводка. В тёмной теме — как клавиши: светлая кромка сверху.
             .background {
-                ZStack {
-                    Capsule().fill(Color.glassBase)
-                    Capsule().fill(
-                        RadialGradient(
-                            colors: [Color.accentColor.opacity(0.14), Color.accentColor.opacity(0.03)],
-                            center: .center,
-                            startRadius: 0,
-                            endRadius: 30
+                if colorScheme == .dark {
+                    GlassBubbleBackground(tint: .accentColor, prominent: false)
+                } else {
+                    ZStack {
+                        Capsule().fill(Color.glassBase)
+                        Capsule().fill(
+                            RadialGradient(
+                                colors: [Color.accentColor.opacity(0.14), Color.accentColor.opacity(0.03)],
+                                center: .center,
+                                startRadius: 0,
+                                endRadius: 30
+                            )
                         )
-                    )
-                    Capsule().strokeBorder(
-                        LinearGradient(
-                            colors: [Color.glassRim, Color.glassRim.opacity(0.7)],
-                            startPoint: .top,
-                            endPoint: .bottom
-                        ),
-                        lineWidth: 1.5
-                    )
-                    Capsule().strokeBorder(Color.accentColor.opacity(0.35), lineWidth: 0.75)
+                        Capsule().strokeBorder(
+                            LinearGradient(
+                                colors: [Color.glassRim, Color.glassRim.opacity(0.7)],
+                                startPoint: .top,
+                                endPoint: .bottom
+                            ),
+                            lineWidth: 1.5
+                        )
+                        Capsule().strokeBorder(Color.accentColor.opacity(0.35), lineWidth: 0.75)
+                    }
                 }
             }
             .modifier(ClearGlassOverlay())
