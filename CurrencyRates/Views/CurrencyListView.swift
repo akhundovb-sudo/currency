@@ -47,12 +47,8 @@ struct CurrencyListView: View {
             // Вместо панели с резкой нижней границей — плавное затухание сверху.
             .modifier(HiddenBarBackground())
             .onGeometryChange(for: CGFloat.self) { $0.size.width } action: { screenWidth = $0 }
-            // Внешняя клавиатура (iPad): суммы можно набирать с неё.
-            .focusable()
-            .focusEffectDisabled()
-            .focused($isKeyboardFocused)
-            .onKeyPress(phases: .down, action: handleHardwareKey)
-            .onAppear { isKeyboardFocused = true }
+            // Внешняя клавиатура (только iPad): суммы можно набирать с неё.
+            .modifier(HardwareKeyboardInput(isFocused: $isKeyboardFocused, onKey: handleHardwareKey))
             .sheet(isPresented: $isAddPresented) {
                 AddCurrencyView()
             }
@@ -132,7 +128,9 @@ struct CurrencyListView: View {
                         .shadow(color: .black.opacity(drag?.code == code ? 0.18 : 0), radius: 18, y: 10)
                         .offset(y: rowOffset(for: code))
                         .zIndex(drag?.code == code ? 1 : 0)
-                        .gesture(reorderGesture(for: code))
+                        // Одновременно с нажатием: иначе жест перетаскивания перехватывал
+                        // обычное нажатие, и клавиатура не открывалась.
+                        .simultaneousGesture(reorderGesture(for: code))
                         // В списке вся строка ловит нажатие, поэтому смотрим, куда оно пришлось:
                         // в карточку — выбор валюты, в отступ вокруг — закрыть клавиатуру.
                         .onTapGesture(coordinateSpace: .local) { location in
@@ -1091,5 +1089,24 @@ struct ToastView: View {
         }
         .accessibilityElement(children: .combine)
         .accessibilityAddTraits(.isStaticText)
+    }
+}
+
+/// Ввод с внешней клавиатуры — только на iPad, чтобы фокус не мешал нажатиям на iPhone.
+private struct HardwareKeyboardInput: ViewModifier {
+    var isFocused: FocusState<Bool>.Binding
+    let onKey: (KeyPress) -> KeyPress.Result
+
+    func body(content: Content) -> some View {
+        if UIDevice.current.userInterfaceIdiom == .pad {
+            content
+                .focusable()
+                .focusEffectDisabled()
+                .focused(isFocused)
+                .onKeyPress(phases: .down, action: onKey)
+                .onAppear { isFocused.wrappedValue = true }
+        } else {
+            content
+        }
     }
 }
