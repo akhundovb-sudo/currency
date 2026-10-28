@@ -155,9 +155,10 @@ private struct KindSwitch: View {
                         .frame(height: 36)
                         .background {
                             if kind == option {
+                                // Выбранный тип — белая капсула с тенью на сером фоне.
                                 Capsule()
                                     .fill(Color.glassBase)
-                                    .overlay(Capsule().strokeBorder(Color.primary.opacity(0.06), lineWidth: 1))
+                                    .shadow(color: .black.opacity(0.12), radius: 4, y: 2)
                                     .matchedGeometryEffect(id: "segment", in: selection)
                             }
                         }
@@ -168,7 +169,8 @@ private struct KindSwitch: View {
             }
         }
         .padding(4)
-        .background { CardBubbleBackground() }
+        // Серая подложка — на ней белый выбранный сегмент хорошо виден.
+        .background(Capsule().fill(Color.primary.opacity(0.08)))
         .accessibilityLabel(L(.currencyType))
     }
 }

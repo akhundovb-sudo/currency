@@ -111,7 +111,6 @@ struct CurrencyListView: View {
                         .listRowBackground(Color.clear)
                         .listRowSeparator(.hidden)
                         .listRowInsets(EdgeInsets())
-                        .moveDisabled(store.isPinned(code))
                     }
                     .onMove { store.move(fromOffsets: $0, toOffset: $1) }
                 }
@@ -237,10 +236,9 @@ struct CurrencyListView: View {
         return card.contains(point)
     }
 
-    /// Почему валюту нельзя удалить: без подписки USD и EUR закреплены, иначе — минимум две валюты.
+    /// Почему валюту нельзя удалить: в списке должно остаться минимум две валюты.
     private func showBlockedToast(for code: String) {
-        let message = store.isPinned(code) ? L(.pinnedFree) : L(.minTwoCurrencies)
-        showToast(Toast(kind: store.isPinned(code) ? .info : .warning, message: message))
+        showToast(Toast(kind: .warning, message: L(.minTwoCurrencies)))
     }
 
     /// Показывает сообщение снизу; оно само скрывается через 3 с.

@@ -122,20 +122,17 @@ struct PaywallView: View {
                     HStack(spacing: 14) {
                         checkbox(isOn: plan == item)
                         VStack(alignment: .leading, spacing: 2) {
-                            // Метка рядом с названием — так подпись с ценой помещается в строку.
-                            HStack(spacing: 8) {
-                                Text(item.title)
-                                    .font(.body.weight(.medium))
-                                    .foregroundStyle(.white)
-                                if item == .yearly {
-                                    BestValueBadge()
-                                }
-                            }
+                            Text(item.title)
+                                .font(.body.weight(.medium))
+                                .foregroundStyle(.white)
                             Text(item.price)
                                 .font(.subheadline)
                                 .foregroundStyle(.white.opacity(0.6))
                         }
-                        Spacer(minLength: 0)
+                        Spacer(minLength: 8)
+                        if item == .yearly {
+                            BestValueBadge()
+                        }
                     }
                     .padding(.horizontal, 16)
                     .padding(.vertical, 14)

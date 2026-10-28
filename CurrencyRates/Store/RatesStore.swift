@@ -243,13 +243,9 @@ final class RatesStore {
         selectedCodes.count > Self.minimumCount
     }
 
-    /// Без подписки USD и EUR всегда в списке и всегда первые: их нельзя удалить или сдвинуть.
-    func isPinned(_ code: String) -> Bool {
-        !isPro && Self.defaultSelection.contains(code)
-    }
-
+    /// Удалить можно любую валюту, пока в списке остаётся минимум две.
     func canDelete(_ code: String) -> Bool {
-        canRemove && !isPinned(code)
+        canRemove
     }
 
     /// Приводит список к текущему плану.
@@ -262,7 +258,6 @@ final class RatesStore {
             suspendedCodes = []
             return
         }
-        pinFreeCurrencies()
         let free = freeCodes
         var kept: [String] = []
         var dropped: [String] = []
@@ -274,20 +269,16 @@ final class RatesStore {
             }
         }
         guard !dropped.isEmpty else { return }
-        // Если отключается валюта ввода — ввод переходит на USD с тем же эквивалентом.
+        // Минимум две валюты: если бесплатных не хватило — добавляем USD и EUR.
+        for code in Self.defaultSelection where kept.count < Self.minimumCount && !kept.contains(code) {
+            kept.append(code)
+        }
+        // Если отключается валюта ввода — ввод переходит на первую оставшуюся с тем же эквивалентом.
         if dropped.contains(sourceCode), let next = kept.first {
             beginEditing(next)
         }
         suspendedCodes += dropped.filter { !suspendedCodes.contains($0) }
         selectedCodes = kept
-    }
-
-    /// Ставит USD и EUR в начало списка (без подписки), добавляя их, если их нет.
-    private func pinFreeCurrencies() {
-        guard !isPro else { return }
-        let pinned = Self.defaultSelection
-        let ordered = pinned + selectedCodes.filter { !pinned.contains($0) }
-        if ordered != selectedCodes { selectedCodes = ordered }
     }
 
     func remove(_ code: String) {
@@ -300,12 +291,11 @@ final class RatesStore {
 
     func move(fromOffsets source: IndexSet, toOffset destination: Int) {
         selectedCodes.move(fromOffsets: source, toOffset: destination)
-        pinFreeCurrencies()
     }
 
     /// Если удаляется валюта ввода, ввод переходит к первой оставшейся с тем же эквивалентом.
     private func remove(codes: [String]) {
-        let removed = Set(codes.filter { !isPinned($0) })
+        let removed = Set(codes)
         guard !removed.isEmpty else { return }
         let remaining = selectedCodes.filter { !removed.contains($0) }
         guard remaining.count >= Self.minimumCount else { return }

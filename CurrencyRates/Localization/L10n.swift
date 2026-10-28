@@ -60,7 +60,7 @@ enum L10n {
         case appearance, theme, language, source, updated, fiatCurrencies, fiatFooter
         case cryptoCurrencies, cryptoFooter, refreshRates, offlineFooter, version, noData, demoShort
         case themeSystem, themeLight, themeDark
-        case minTwoCurrencies, proOnly, proDiscover, seeDetails, proTest, pinnedFree, proSuspended
+        case minTwoCurrencies, proOnly, proDiscover, seeDetails, proTest, proSuspended
         case numbers, numberFormat, decimalPlaces, auto, formatFooter
         case example, rates, about, dataFooter
         case proBecome, proSubscription, upgrade
@@ -130,7 +130,6 @@ enum L10n {
         .proOnly: ["Доступно с подпиской Pro", "Available with Pro subscription", "Pro abonelikle kullanılabilir", "Disponible avec l’abonnement Pro", "Disponible con la suscripción Pro", "Mit Pro-Abo verfügbar", "Pro 订阅可用", "متاح مع اشتراك Pro"],
         .proDiscover: ["Откройте %@ — валюты без ограничений", "Discover %@ for unlimited currencies", "Sınırsız para birimi için %@’yu keşfedin", "Découvrez %@ pour des devises illimitées", "Descubre %@ para divisas ilimitadas", "Entdecke %@ für unbegrenzte Währungen", "探索 %@，解锁无限货币", "اكتشف %@ لعملات غير محدودة"],
         .seeDetails: ["Подробнее", "See details", "Ayrıntıları gör", "Voir les détails", "Ver detalles", "Details ansehen", "查看详情", "عرض التفاصيل"],
-        .pinnedFree: ["В бесплатной версии USD и EUR всегда в списке", "In the free version USD and EUR always stay in the list", "Ücretsiz sürümde USD ve EUR her zaman listede", "Dans la version gratuite, USD et EUR restent toujours dans la liste", "En la versión gratuita, USD y EUR siempre están en la lista", "In der Gratisversion bleiben USD und EUR immer in der Liste", "免费版中 USD 和 EUR 始终保留在列表中", "في النسخة المجانية يبقى USD وEUR دائمًا في القائمة"],
         .proBecome: ["Перейдите на %@", "Become a %@", "%@ olun", "Passez à %@", "Hazte %@", "Werde %@", "升级到 %@", "اشترك في %@"],
         .proSubscription: ["Безлимит валют и вся крипта", "Unlimited currencies and all crypto", "Sınırsız para birimi ve tüm kripto", "Devises illimitées et toutes les cryptos", "Divisas ilimitadas y todas las cripto", "Unbegrenzte Währungen und alle Kryptos", "无限货币和全部加密货币", "عملات بلا حدود وكل العملات المشفرة"],
         .upgrade: ["Перейти", "Upgrade", "Yükselt", "Passer", "Mejorar", "Upgrade", "升级", "ترقية"],
