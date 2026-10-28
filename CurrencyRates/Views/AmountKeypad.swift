@@ -134,11 +134,24 @@ private struct KeypadButton: View {
         onTap()
     }
 
+    private static let arabicDigits = ["٠", "١", "٢", "٣", "٤", "٥", "٦", "٧", "٨", "٩"]
+
     @ViewBuilder
     private var label: some View {
         switch key {
         case .digit(let digit):
-            Text("\(digit)").font(.title)
+            if L10n.current == .ar {
+                // Арабские цифры, как на арабской клавиатуре, а под ними — обычные:
+                // суммы в списке пишутся обычными цифрами, так понятно, что набрано.
+                VStack(spacing: -2) {
+                    Text(verbatim: Self.arabicDigits[digit]).font(.title)
+                    Text(verbatim: "\(digit)")
+                        .font(.caption2.weight(.medium))
+                        .foregroundStyle(Color.secondaryLabel)
+                }
+            } else {
+                Text("\(digit)").font(.title)
+            }
         case .decimal:
             Text(Calculator.decimalSeparator).font(.title)
         case .backspace:
