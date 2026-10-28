@@ -3,6 +3,7 @@ import SwiftUI
 struct SettingsView: View {
     @Environment(RatesStore.self) private var store
     @Environment(\.dismiss) private var dismiss
+    @State private var isPaywallPresented = false
 
     var body: some View {
         @Bindable var store = store
@@ -11,8 +12,7 @@ struct SettingsView: View {
             Form {
                 if !store.isPro {
                     Section {
-                        // Покупки пока не подключены — экран подписки появится позже.
-                        ProBanner()
+                        ProBanner(onDetails: { isPaywallPresented = true })
                             .listRowInsets(EdgeInsets())
                             .listRowBackground(Color.clear)
                     }
@@ -20,7 +20,8 @@ struct SettingsView: View {
 
                 Section(L(.appearance)) {
                     Picker(L(.language), selection: $store.language) {
-                        ForEach(AppLanguage.allCases) { language in
+                        // Английский первым, дальше в обычном порядке.
+                        ForEach([AppLanguage.en] + AppLanguage.allCases.filter { $0 != .en }) { language in
                             Text(verbatim: language.nativeName).tag(language)
                         }
                     }
@@ -34,64 +35,37 @@ struct SettingsView: View {
                 Section {
                     Picker(L(.numberFormat), selection: $store.numberStyle) {
                         ForEach(NumberStyle.allCases) { style in
-                            Text(verbatim: "\(style.title) · \(1234.56.formatted(.number.locale(style.locale)))")
-                                .tag(style)
+                            Text(style.title).tag(style)
                         }
                     }
-                    HStack {
-                        Text(L(.decimalPlaces))
-                        Spacer()
-                        Text(store.decimalPlaces.map(String.init) ?? L(.auto))
-                            .foregroundStyle(Color.secondaryLabel)
+                    // −1 — «Авто», дальше 0…8 знаков.
+                    Stepper(
+                        value: Binding(
+                            get: { store.decimalPlaces ?? -1 },
+                            set: { store.decimalPlaces = $0 >= 0 ? $0 : nil }
+                        ),
+                        in: -1...8
+                    ) {
+                        LabeledContent(L(.decimalPlaces), value: store.decimalPlaces.map(String.init) ?? L(.auto))
                             .monospacedDigit()
-                        // −1 — «Авто», дальше 0…8 знаков.
-                        Stepper(
-                            L(.decimalPlaces),
-                            value: Binding(
-                                get: { store.decimalPlaces ?? -1 },
-                                set: { store.decimalPlaces = $0 >= 0 ? $0 : nil }
-                            ),
-                            in: -1...8
-                        )
-                        .labelsHidden()
                     }
+                    // Живой пример — так суммы выглядят в конвертере.
+                    LabeledContent(L(.example)) {
+                        Text(verbatim: "\(RateFormat.amount(1234.56)) $")
+                            .font(.amount)
+                            .monospacedDigit()
+                            .foregroundStyle(Color.primary)
+                            .contentTransition(.numericText())
+                    }
+                    .animation(.snappy, value: store.numberStyle)
+                    .animation(.snappy, value: store.decimalPlaces)
                 } header: {
                     Text(L(.numbers))
-                } footer: {
-                    // Живой пример: так будут выглядеть суммы в конвертере.
-                    VStack(alignment: .leading, spacing: 4) {
-                        Text(L(.formatFooter))
-                        ForEach(["USD", "SEK", "JOD"], id: \.self) { code in
-                            Text(verbatim: "• \(Currency.name(for: code)): \(RateFormat.amount(32.16))")
-                        }
-                    }
-                    // Пример пересчитывается при смене настроек.
-                    .id("\(store.numberStyle.rawValue)-\(store.decimalPlaces ?? -1)")
                 }
 
                 Section {
-                    LabeledContent(L(.source)) {
-                        Link(RatesService.fiatSourceName, destination: RatesService.fiatSourceURL)
-                    }
-                    LabeledContent(L(.updated), value: updatedText(.fiat))
-                } header: {
-                    Text(L(.fiatCurrencies))
-                } footer: {
-                    Text(L(.fiatFooter))
-                }
-
-                Section {
-                    LabeledContent(L(.source)) {
-                        Link(RatesService.cryptoSourceName, destination: RatesService.cryptoSourceURL)
-                    }
-                    LabeledContent(L(.updated), value: updatedText(.crypto))
-                } header: {
-                    Text(L(.cryptoCurrencies))
-                } footer: {
-                    Text(L(.cryptoFooter))
-                }
-
-                Section {
+                    sourceRow(name: RatesService.fiatSourceName, url: RatesService.fiatSourceURL, kind: .fiat)
+                    sourceRow(name: RatesService.cryptoSourceName, url: RatesService.cryptoSourceURL, kind: .crypto)
                     Button {
                         Task { await store.refresh() }
                     } label: {
@@ -102,45 +76,70 @@ struct SettingsView: View {
                         }
                     }
                     .disabled(store.isLoading)
+                } header: {
+                    Text(L(.rates))
                 } footer: {
-                    Text(L(.offlineFooter))
+                    Text(L(.dataFooter))
                 }
 
-                // Временно, пока не подключены покупки: включает и выключает Pro для проверки.
                 Section {
+                    // Временно, пока не подключены покупки: включает и выключает Pro для проверки.
                     Toggle(L(.proTest), isOn: $store.isPro)
-                }
-
-                Section {
                     LabeledContent(L(.version), value: appVersion)
+                } header: {
+                    Text(L(.about))
                 } footer: {
-                    Text(verbatim: "Icons: Iconoir (MIT) · Flags: flag-icons (MIT) · Crypto: web3icons (MIT)")
+                    Text(verbatim: "Iconoir · flag-icons · web3icons (MIT)")
                 }
             }
+            // Подписи в меню выбора (тема, формат) кэшируются системой — при смене языка
+            // форму пересобираем целиком, иначе они остаются на прежнем языке.
+            .id(store.language)
+            // Отступ сверху — как в окне добавления валют.
+            .contentMargins(.top, 8, for: .scrollContent)
+            // Модальные окна не наследуют направление письма — для арабского задаём сами.
+            .environment(\.layoutDirection, store.language.isRightToLeft ? .rightToLeft : .leftToRight)
             .softTopBar()
+            .fullScreenCover(isPresented: $isPaywallPresented) { PaywallView() }
             .navigationTitle(L(.settings))
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
-                ToolbarItem(placement: .confirmationAction) {
+                // Закрыть — круглая кнопка слева, как «Настройки» на главном экране.
+                ToolbarItem(placement: .topBarLeading) {
                     Button { dismiss() } label: {
-                        Text(L(.done))
-                            .fontWeight(.semibold)
-                            .lineLimit(1)
-                            .fixedSize()
-                            .padding(.horizontal, 16)
-                            .frame(height: 44)
+                        Image(systemName: "xmark")
+                            .font(.system(size: 17, weight: .semibold))
+                            .frame(width: 44, height: 44)
                     }
-                    .buttonStyle(AccentBubbleStyle())
+                    .buttonStyle(CardBubbleStyle())
+                    .accessibilityLabel(L(.close))
                 }
                 .hidingSharedGlass()
             }
         }
     }
 
+    /// Источник курсов: слева тип, справа ссылка на источник и под ней мелко время обновления.
+    private func sourceRow(name: String, url: URL, kind: CurrencyKind) -> some View {
+        LabeledContent {
+            VStack(alignment: .trailing, spacing: 2) {
+                Link(name, destination: url)
+                Text(updatedText(kind))
+                    .font(.footnote)
+                    .foregroundStyle(Color.secondaryLabel)
+            }
+        } label: {
+            Text(kind == .fiat ? L(.fiatCurrencies) : L(.cryptoCurrencies))
+        }
+    }
+
     private func updatedText(_ kind: CurrencyKind) -> String {
         guard let snapshot = store.snapshot, let set = snapshot.rateSet(for: kind) else { return L(.noData) }
         if snapshot.isDemo { return L(.demoShort) }
-        return RateFormat.date(set.updatedAt)
+        // Коротко, без года: «27 окт., 04:02».
+        return set.updatedAt.formatted(
+            Date.FormatStyle(locale: store.language.locale).month(.abbreviated).day().hour().minute()
+        )
     }
 
     private var appVersion: String {

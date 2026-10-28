@@ -159,10 +159,10 @@ private struct KeypadButton: View {
     /// Своя палитра знаков; «=» — цвет акцента.
     private var operatorColor: Color {
         switch key {
-        case .divide: .dynamic(light: 0x0284C7, dark: 0x38BDF8)   // небесно-синий
-        case .multiply: .dynamic(light: 0xD97706, dark: 0xFBBF24) // янтарный
-        case .subtract: .dynamic(light: 0xE11D48, dark: 0xFB7185) // розовый
-        case .add: .dynamic(light: 0x059669, dark: 0x34D399)      // изумрудный
+        case .divide: .operatorDivide
+        case .multiply: .operatorMultiply
+        case .subtract: .operatorSubtract
+        case .add: .operatorAdd
         case .hide, .backspace: .primary
         default: .accentColor                                      // = основной цвет
         }
@@ -184,5 +184,23 @@ private struct KeypadButton: View {
     VStack {
         Spacer()
         AmountKeypad(onKey: { _ in }, onClear: {}, onDone: {})
+    }
+}
+
+extension Color {
+    static let operatorDivide = Color.dynamic(light: 0x0284C7, dark: 0x38BDF8)   // небесно-синий
+    static let operatorMultiply = Color.dynamic(light: 0xCA8A04, dark: 0xFACC15) // золотисто-жёлтый, чтобы не путать с красным «−»
+    static let operatorSubtract = Color.dynamic(light: 0xE11D48, dark: 0xFB7185) // розовый
+    static let operatorAdd = Color.dynamic(light: 0x059669, dark: 0x34D399)      // изумрудный
+
+    /// Цвет знака действия в строке ввода — тот же, что у его клавиши.
+    static func forOperator(_ symbol: Character) -> Color? {
+        switch symbol {
+        case "÷": .operatorDivide
+        case "×": .operatorMultiply
+        case "−": .operatorSubtract
+        case "+": .operatorAdd
+        default: nil
+        }
     }
 }

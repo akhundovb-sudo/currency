@@ -27,6 +27,7 @@ struct CurrencyRatesApp: App {
             CurrencyListView()
                 .environment(store)
                 .environment(\.locale, store.language.locale)
+                .environment(\.layoutDirection, store.language.isRightToLeft ? .rightToLeft : .leftToRight)
                 .onAppear { applyTheme(store.theme) }
                 .onChange(of: store.theme) { _, theme in applyTheme(theme) }
                 .task { await store.refresh() }

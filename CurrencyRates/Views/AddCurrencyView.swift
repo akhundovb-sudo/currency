@@ -26,8 +26,10 @@ struct AddCurrencyView: View {
         return top + all.filter { !pinned.contains($0.code) }
     }
 
-    /// Нажатие на валюту с тегом «PRO». Экран покупки подписки появится здесь позже.
-    private func showPro() {}
+    @State private var isPaywallPresented = false
+
+    /// Нажатие на валюту с тегом «PRO» открывает экран подписки.
+    private func showPro() { isPaywallPresented = true }
 
     /// В iOS 26 поле поиска стоит внизу экрана, как в системных приложениях;
     /// в более ранних версиях такого размещения нет, и поиск остаётся под заголовком.
@@ -43,7 +45,10 @@ struct AddCurrencyView: View {
         NavigationStack {
             listView
         }
+        // Модальные окна не наследуют направление письма — для арабского задаём сами.
+        .environment(\.layoutDirection, store.language.isRightToLeft ? .rightToLeft : .leftToRight)
         .onAppear { pinned = store.selectedCodes }
+        .fullScreenCover(isPresented: $isPaywallPresented) { PaywallView() }
     }
 
     private var listView: some View {

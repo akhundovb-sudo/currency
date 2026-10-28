@@ -85,7 +85,7 @@ struct CurrencyRow: View {
 
     private var amountText: some View {
         HStack(spacing: 2) {
-            Text(value)
+            Text(styledValue)
                 .font(.amount)
                 .monospacedDigit()
                 .foregroundStyle(valueColor)
@@ -111,6 +111,19 @@ struct CurrencyRow: View {
             .foregroundStyle(Color.secondaryLabel)
             .lineLimit(dynamicTypeSize.isAccessibilitySize ? nil : 1)
             .minimumScaleFactor(0.8)
+    }
+
+    /// Сумма, где знаки действий окрашены в цвета своих клавиш.
+    private var styledValue: AttributedString {
+        var result = AttributedString()
+        for character in value {
+            var piece = AttributedString(String(character))
+            if isSource, let color = Color.forOperator(character) {
+                piece.foregroundColor = color
+            }
+            result += piece
+        }
+        return result
     }
 
     private var valueColor: Color {

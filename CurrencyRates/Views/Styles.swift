@@ -72,48 +72,20 @@ struct CardStyle: ViewModifier {
                 shape
                     .fill(Color(.secondarySystemGroupedBackground))
                     .shadow(color: Color(red: 0.2, green: 0.25, blue: 0.4).opacity(0.06), radius: 12, y: 4)
-                // Фокус — приподнятое прозрачное стекло без цвета: карточка светлее остальных,
-                // с бликом сверху и глубокой мягкой тенью, будто парит над списком.
-                ZStack {
-                    if isSelected {
-                        ZStack {
-                            shape.fill(Color.glassBase)
-                            shape.fill(
-                                LinearGradient(
-                                    colors: [Color.glassRim.opacity(0.9), Color.glassRim.opacity(0)],
-                                    startPoint: .top,
-                                    endPoint: UnitPoint(x: 0.5, y: 0.5)
-                                )
-                            )
-                        }
-                        .shadow(color: .black.opacity(0.12), radius: 22, y: 10)
-                        .shadow(color: .black.opacity(0.05), radius: 3, y: 1)
-                        .transition(.opacity)
-                    }
-                }
-                .animation(.easeInOut(duration: 0.25), value: isSelected)
+                    // Приподнятая выбранная карточка: глубокая мягкая тень снизу, без рамки и цвета.
+                    .shadow(
+                        color: Color(red: 0.2, green: 0.25, blue: 0.4).opacity(isSelected ? 0.16 : 0),
+                        radius: isSelected ? 22 : 0,
+                        y: isSelected ? 12 : 0
+                    )
+                    .animation(.spring(response: 0.35, dampingFraction: 0.8), value: isSelected)
             }
             .overlay {
                 // Анимация привязана к самому ободку, а не ко всей карточке: иначе она захватывает
                 // текст, и при смене валюты подписи курса накладываются друг на друга.
-                ZStack {
-                    if isSelected {
-                        // Стеклянный ободок: яркий светлый сверху, тонкая нейтральная грань снизу.
-                        shape.strokeBorder(
-                            LinearGradient(
-                                colors: [Color.glassRim, Color.primary.opacity(0.1)],
-                                startPoint: .top,
-                                endPoint: .bottom
-                            ),
-                            lineWidth: 1.5
-                        )
-                        .transition(.opacity)
-                    } else {
-                        // Светлый ободок: ярче сверху, к низу почти исчезает.
-                        shape.strokeBorder(Color.primary.opacity(0.05), lineWidth: 1)
-                    }
-                }
-                .animation(.easeInOut(duration: 0.25), value: isSelected)
+                // Ободок одинаковый у всех карточек: выбранную выделяет не рамка,
+                // а то, что остальные приглушаются (см. CurrencyListView).
+                shape.strokeBorder(Color.primary.opacity(0.05), lineWidth: 1)
             }
     }
 }
@@ -590,11 +562,46 @@ private struct ProgressiveTopBlur: View {
     }
 }
 
+/// Отслеживает, насколько содержимое прокручено вверх (iOS 18+), и отдаёт прозрачность размытия:
+/// в покое — 0 (ничего не задевает первую строку), дальше плавно до 1.
+private struct TopFadeOnScroll: ViewModifier {
+    @State private var scrolled: CGFloat = 0
+
+    func body(content: Content) -> some View {
+        Group {
+            if #available(iOS 18, *) {
+                content
+                    .onScrollGeometryChange(for: CGFloat.self) { geometry in
+                        geometry.contentOffset.y + geometry.contentInsets.top
+                    } action: { _, newValue in
+                        scrolled = max(0, newValue)
+                    }
+            } else {
+                content
+            }
+        }
+        .overlay(alignment: .top) {
+            TopFade()
+                // До iOS 18 положение прокрутки не прочитать — там размытие остаётся узким (6 pt).
+                .opacity(fadeOpacity)
+                .animation(.easeOut(duration: 0.15), value: fadeOpacity)
+        }
+    }
+
+    private var fadeOpacity: Double {
+        if #available(iOS 18, *) {
+            return min(1, max(0, (Double(scrolled) - 2) / 14))
+        }
+        return 1
+    }
+}
+
 extension View {
-    /// Верхняя панель без фона и без линии: содержимое под ней мягко размывается и затухает.
+    /// Верхняя панель без фона и без линии: содержимое под ней мягко размывается и затухает,
+    /// но только когда оно действительно прокручено под панель — в покое размытия нет.
     func softTopBar() -> some View {
         modifier(HiddenBarBackground())
             .modifier(SoftTopEdge())
-            .overlay(alignment: .top) { TopFade() }
+            .modifier(TopFadeOnScroll())
     }
 }

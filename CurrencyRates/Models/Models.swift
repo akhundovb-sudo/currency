@@ -228,6 +228,11 @@ enum RateFormat {
             guard !number.isEmpty else { return }
             let parts = number.components(separatedBy: decimal)
             var integer = parts[0]
+            // Знак минуса у отрицательного итога — не цифра: иначе выходит «-,619».
+            if integer.hasPrefix("-") {
+                result += "-"
+                integer.removeFirst()
+            }
             var grouped = ""
             while integer.count > 3 {
                 grouped = grouping + String(integer.suffix(3)) + grouped

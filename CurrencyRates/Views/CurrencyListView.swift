@@ -72,6 +72,10 @@ struct CurrencyListView: View {
                             idleSourceCaption: idleSourceCaption
                         )
                         .card(selected: code == store.sourceCode && isKeypadVisible)
+                        // Фокус: выбранная карточка приподнимается — чуть крупнее, с мягкой тенью.
+                        .scaleEffect(isKeypadVisible && code == store.sourceCode ? 1.025 : 1)
+                        .animation(.spring(response: 0.35, dampingFraction: 0.8), value: isKeypadVisible)
+                        .animation(.spring(response: 0.35, dampingFraction: 0.8), value: store.sourceCode)
                         .modifier(ShakeEffect(shakes: shakingCode == code ? shakePhase : 0))
                         }
                         .swipeToDelete(isEnabled: !editMode.isEditing, canDelete: store.canDelete(code), onBlocked: { showBlockedToast(for: code) }, label: L(.delete)) {
@@ -147,6 +151,10 @@ struct CurrencyListView: View {
             }
             .background {
                 EmptySpaceTapCatcher { if isKeypadVisible { hideKeypad() } }
+            }
+            // Подписка закончилась — валюты Pro отключены; объясняем, куда они делись.
+            .onChange(of: store.suspendedCodes.count) { old, new in
+                if new > old { showToast(Toast(kind: .info, message: L(.proSuspended))) }
             }
             // Смахивание списка вниз прячет клавиатуру. Прокрутка вверх её не трогает:
             // иначе клавиатура исчезала посреди жеста и список прыгал под пальцем.
@@ -655,9 +663,9 @@ struct IslandRefreshIndicator: View {
     @State private var startedAt: Date?
     @State private var endedAt: Date?
 
-    private let dropDistance: CGFloat = 84
-    private let coinRadius: CGFloat = 21
-    private let orbit: CGFloat = 27
+    private let dropDistance: CGFloat = 96
+    private let coinRadius: CGFloat = 26
+    private let orbit: CGFloat = 33
     private let period: Double = 1.4
     private let inDuration: Double = 0.55
     private let outDuration: Double = 0.4
@@ -720,7 +728,7 @@ struct IslandRefreshIndicator: View {
     private func drops(amount: CGFloat, angle: Double, width: CGFloat) -> some View {
         let island = Self.islandRect(screenWidth: width)
         let center = CGPoint(x: width / 2, y: island.midY + dropDistance * amount)
-        let items = [("$", 0.0), ("₿", Double.pi)].map { pair in
+        let items = [("dollarsign", 0.0), ("bitcoinsign", Double.pi)].map { pair in
             let (glyph, shift) = pair
             let a = angle + shift
             let depth = (cos(a) + 1) / 2   // 1 — спереди, 0 — сзади
@@ -751,8 +759,8 @@ struct IslandRefreshIndicator: View {
             }
             ForEach(items.indices, id: \.self) { index in
                 let item = items[index]
-                Text(verbatim: item.glyph)
-                    .font(.system(size: 22, weight: .bold, design: .rounded))
+                Image(systemName: item.glyph)
+                    .font(.system(size: 22, weight: .heavy, design: .rounded))
                     .foregroundStyle(.white)
                     .scaleEffect(0.82 + 0.18 * item.depth)
                     .opacity(Double(amount) * (0.5 + 0.5 * item.depth))

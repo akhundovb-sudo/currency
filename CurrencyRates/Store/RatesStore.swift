@@ -15,6 +15,12 @@ final class RatesStore {
         didSet { defaults?.set(sourceCode, forKey: Keys.sourceCode) }
     }
 
+    /// Валюты Pro, отключённые после окончания подписки. Хранятся, чтобы вернуть их
+    /// в список, когда Pro снова появится.
+    private(set) var suspendedCodes: [String] {
+        didSet { defaults?.set(suspendedCodes, forKey: Keys.suspendedCodes) }
+    }
+
     /// Сумма в том виде, как её ввёл пользователь.
     var amountText: String {
         didSet { defaults?.set(amountText, forKey: Keys.amountText) }
@@ -80,6 +86,7 @@ final class RatesStore {
             ?? defaults?.stringArray(forKey: Keys.selectedCodes)
             ?? Self.defaultSelection
         self.amountText = amountText ?? defaults?.string(forKey: Keys.amountText) ?? ""
+        self.suspendedCodes = defaults?.stringArray(forKey: Keys.suspendedCodes) ?? []
         self.theme = defaults?.string(forKey: Keys.theme).flatMap(AppTheme.init(rawValue:)) ?? .system
         let language = defaults?.string(forKey: Keys.language).flatMap(AppLanguage.init(rawValue:)) ?? .systemDefault
         self.language = language
@@ -96,7 +103,7 @@ final class RatesStore {
         for code in Self.defaultSelection where self.selectedCodes.count < Self.minimumCount {
             if !self.selectedCodes.contains(code) { self.selectedCodes.append(code) }
         }
-        pinFreeCurrencies()
+        applyPlanLimits()
         // Валюта ввода всегда одна из строк списка.
         if !self.selectedCodes.contains(self.sourceCode), let first = self.selectedCodes.first {
             self.sourceCode = first
@@ -120,6 +127,7 @@ final class RatesStore {
     // MARK: - Сумма и пересчёт
 
     /// Введённая сумма: результат выражения в строке ввода; пустое поле означает 1.
+    /// Может быть отрицательной («5 − 10») — тогда и остальные суммы с минусом.
     var amount: Double {
         Calculator.evaluate(amountText) ?? 1
     }
@@ -196,7 +204,7 @@ final class RatesStore {
     var isPro: Bool {
         didSet {
             defaults?.set(isPro, forKey: Keys.isPro)
-            pinFreeCurrencies()
+            applyPlanLimits()
         }
     }
 
@@ -242,6 +250,36 @@ final class RatesStore {
 
     func canDelete(_ code: String) -> Bool {
         canRemove && !isPinned(code)
+    }
+
+    /// Приводит список к текущему плану.
+    /// Без Pro: валюты, недоступные бесплатно, и всё сверх лимита отключаются —
+    /// уходят из списка в `suspendedCodes`. С Pro: отключённые возвращаются на место.
+    private func applyPlanLimits() {
+        if isPro {
+            guard !suspendedCodes.isEmpty else { return }
+            selectedCodes += suspendedCodes.filter { !selectedCodes.contains($0) }
+            suspendedCodes = []
+            return
+        }
+        pinFreeCurrencies()
+        let free = freeCodes
+        var kept: [String] = []
+        var dropped: [String] = []
+        for code in selectedCodes {
+            if free.contains(code) && kept.count < Self.freeLimit {
+                kept.append(code)
+            } else {
+                dropped.append(code)
+            }
+        }
+        guard !dropped.isEmpty else { return }
+        // Если отключается валюта ввода — ввод переходит на USD с тем же эквивалентом.
+        if dropped.contains(sourceCode), let next = kept.first {
+            beginEditing(next)
+        }
+        suspendedCodes += dropped.filter { !suspendedCodes.contains($0) }
+        selectedCodes = kept
     }
 
     /// Ставит USD и EUR в начало списка (без подписки), добавляя их, если их нет.
@@ -361,6 +399,7 @@ final class RatesStore {
 
     private enum Keys {
         static let selectedCodes = "selectedCodes"
+        static let suspendedCodes = "suspendedCodes"
         static let sourceCode = "sourceCode"
         static let amountText = "amountText"
         static let theme = "theme"
