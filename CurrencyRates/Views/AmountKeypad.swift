@@ -53,6 +53,8 @@ struct AmountKeypad: View {
                 }
             }
         }
+        // Цифры и знаки как на калькуляторе — слева направо и в арабском: зеркальные «3 2 1» путают.
+        .environment(\.layoutDirection, .leftToRight)
         // На iPad клавиши не растягиваются на всю ширину — блок по центру, панель во всю ширину.
         .frame(maxWidth: 520)
         .padding(.horizontal, 16)

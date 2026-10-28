@@ -82,6 +82,8 @@ struct CurrencyRow: View {
             .font(.subheadline)
             .foregroundStyle(Color.secondaryLabel)
             .lineLimit(dynamicTypeSize.isAccessibilitySize ? nil : 1)
+            // Длинное название («Dólar estadounidense») сначала чуть уменьшается, а не обрезается.
+            .minimumScaleFactor(0.75)
             // Хотя бы пара букв с «…», а не пустая черта.
             .frame(minWidth: 36, alignment: .leading)
     }
