@@ -37,6 +37,8 @@ struct SplashView: View {
             "Stone": (0xCAC5C5, 0x8E8A88, 0.448, 0.758),
             "Blocks": (0x07031C, 0xFFD34D, 0.512, 0.691),
             "Doodle": (0xE9E9E9, 0xFF7A1A, 0.540, 0.768),
+            "Pixel": (0x7CC5F3, 0xF2D3A6, 0.316, 0.637),
+            "Engraving": (0xA2D104, 0xF4F6EC, 0.340, 0.656),
             "Amethyst": (0x07031C, 0xC9A7F5, 0.394, 0.275),
             "Sticker": (0xCC9DF1, 0xFFFFFF, 0.394, 0.257),
             "Puffy": (0x07031C, 0x9C8BFF, 0.273, 0.507),

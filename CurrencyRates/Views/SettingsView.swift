@@ -211,6 +211,8 @@ struct AppIconPicker: View {
             Option(name: "AppIcon-Stone", preview: "IconPreview-Stone", title: L(.iconStone), isPro: true),
             Option(name: "AppIcon-Blocks", preview: "IconPreview-Blocks", title: L(.iconBlocks), isPro: true),
             Option(name: "AppIcon-Doodle", preview: "IconPreview-Doodle", title: L(.iconDoodle), isPro: true),
+            Option(name: "AppIcon-Pixel", preview: "IconPreview-Pixel", title: L(.iconPixel), isPro: true),
+            Option(name: "AppIcon-Engraving", preview: "IconPreview-Engraving", title: L(.iconEngraving), isPro: true),
         ]
     }
 
