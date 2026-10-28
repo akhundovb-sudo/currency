@@ -4,6 +4,8 @@ import UIKit
 @main
 struct CurrencyRatesApp: App {
     @State private var store = RatesStore.live()
+    /// Сплэш поверх списка при запуске; сам убирается после анимации.
+    @State private var showsSplash = true
 
     init() {
         // Системная панель полностью прозрачная на всех версиях iOS: у её размытия резкий
@@ -37,6 +39,12 @@ struct CurrencyRatesApp: App {
                         Task { await store.refreshIfStale() }
                     }
                 }
+                .overlay {
+                    if showsSplash {
+                        SplashView { showsSplash = false }
+                    }
+                }
+                .statusBarHidden(showsSplash)
         }
     }
 

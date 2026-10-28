@@ -642,42 +642,44 @@ struct CardInsetShape: Shape {
 }
 
 
-/// Индикатор обновления: из Dynamic Island вытекает чёрная капля-пилюля и сливается
-/// с ним, как жидкость (круги размываются и обрезаются по порогу прозрачности).
-/// Внутри — барабан слот-машины: знаки валют по очереди прокручиваются вверх.
-/// Когда курсы обновились, барабан останавливается на ✓, и капля втягивается обратно.
-/// Без Dynamic Island капля выходит из-за верхнего края экрана.
+/// Индикатор обновления: из Dynamic Island выпадает монета со знаком ¢ из иконки —
+/// тянется за ним жидкой каплей (фигуры размываются и обрезаются по порогу прозрачности)
+/// и крутится вокруг своей оси, как подброшенная. Чем сильнее тянут, тем ниже она опускается.
+/// Когда курсы обновились, монета разворачивается лицом, подпрыгивает и улетает обратно
+/// в остров; при ошибке вокруг неё вспыхивает красное свечение.
+/// Без Dynamic Island монета выходит из-за верхнего края экрана.
 struct IslandRefreshIndicator: View {
     let isActive: Bool
     /// Насколько список потянут вниз: 0 — нет, 1 — до конца (сейчас начнётся обновление).
     var pull: CGFloat = 0
-    /// Обновить не удалось — барабан останавливается на ✕, а не на ✓.
+    /// Обновить не удалось — вокруг монеты вспыхивает красное свечение.
     var failed = false
 
     @State private var startedAt: Date?
     @State private var endedAt: Date?
 
-    private static let symbols = ["$", "€", "£", "¥", "₿"]
+    private let dropDistance: CGFloat = 72
+    private let coinSize: CGFloat = 46
+    private let inDuration: Double = 0.45
+    /// Оборотов в секунду, пока идёт обновление.
+    private let spinRate: Double = 1.1
+    /// Завершение: монета доворачивается лицом и подпрыгивает, потом улетает в остров.
+    private let settleDuration: Double = 0.35
+    private let hopDuration: Double = 0.3
+    private let outDuration: Double = 0.35
 
-    private let dropDistance: CGFloat = 74
-    private let pillSize = CGSize(width: 64, height: 42)
-    /// Один шаг барабана: знак едет вверх, потом короткая пауза.
-    private let step: Double = 0.34
-    private let inDuration: Double = 0.5
-    /// После остановки на ✓: сколько держим галочку и за сколько втягиваемся.
-    private let checkDuration: Double = 0.3
-    private let holdUntil: Double = 0.85
-    private let outDuration: Double = 0.4
+    private static let face = Color(hex: 0x2C2456)
+    private static let failure = Color(hex: 0xF87171)
 
     var body: some View {
         GeometryReader { proxy in
             if let startedAt {
                 TimelineView(.animation) { context in
-                    spinning(at: context.date, startedAt: startedAt, width: proxy.size.width)
+                    running(at: context.date, startedAt: startedAt, width: proxy.size.width)
                 }
             } else if pull > 0 {
-                // Пока тянут — капля выходит из острова ровно настолько, насколько потянули.
-                pill(amount: pull, current: Self.symbols[0], next: nil, roll: 0, width: proxy.size.width)
+                // Пока тянут — монета выходит и поворачивается вслед за пальцем.
+                coin(amount: pull, angle: Double(pull) * .pi, lift: 0, alert: 0, width: proxy.size.width)
             }
         }
         .ignoresSafeArea()
@@ -687,21 +689,21 @@ struct IslandRefreshIndicator: View {
         .accessibilityHidden(!isActive)
         .onChange(of: isActive) { _, active in
             if active {
-                // Если капля уже вытянута жестом, не начинаем выход заново.
+                // Если монета уже вытянута жестом, не начинаем выход заново.
                 startedAt = pull > 0.5 ? Date.now.addingTimeInterval(-inDuration) : .now
                 endedAt = nil
             } else if startedAt != nil {
                 endedAt = .now
                 Task {
-                    try? await Task.sleep(for: .seconds(checkDuration))
+                    try? await Task.sleep(for: .seconds(settleDuration))
                     if endedAt != nil {
                         if failed {
                             UINotificationFeedbackGenerator().notificationOccurred(.error)
                         } else {
-                            UIImpactFeedbackGenerator(style: .light).impactOccurred()
+                            UIImpactFeedbackGenerator(style: .soft).impactOccurred()
                         }
                     }
-                    try? await Task.sleep(for: .seconds(holdUntil + outDuration - checkDuration))
+                    try? await Task.sleep(for: .seconds(hopDuration + outDuration))
                     // Если за это время началось новое обновление, endedAt уже сброшен.
                     if endedAt != nil {
                         startedAt = nil
@@ -712,105 +714,89 @@ struct IslandRefreshIndicator: View {
         }
     }
 
-    /// Положение барабана: целая часть — какой знак сейчас, дробная — насколько уехал вверх.
-    /// Знак едет 60% шага с плавным разгоном и торможением, остальное время стоит.
-    private func reel(at elapsed: Double) -> (index: Int, roll: CGFloat) {
-        let position = elapsed / step
-        let index = Int(position)
-        let f = position - Double(index)
-        let t = min(1, f / 0.6)
-        let eased = t * t * (3 - 2 * t)
-        return (index, CGFloat(eased))
+    private static func smooth(_ x: Double) -> Double {
+        let t = min(1, max(0, x))
+        return t * t * (3 - 2 * t)
     }
 
-    private func spinning(at date: Date, startedAt: Date, width: CGFloat) -> some View {
+    private func running(at date: Date, startedAt: Date, width: CGFloat) -> some View {
         let elapsed = date.timeIntervalSince(startedAt)
         // Быстро выходит, мягко останавливается.
         var amount = 1 - pow(1 - min(1, elapsed / inDuration), 3)
+        // Вращение начинается с того поворота, на котором монету отпустили.
+        let spin = Double(max(pull, 0.5)) * .pi + elapsed * spinRate * 2 * .pi
 
         guard let endedAt else {
-            let (index, roll) = reel(at: elapsed)
-            let symbols = Self.symbols
-            return pill(
-                amount: amount,
-                current: symbols[index % symbols.count],
-                next: symbols[(index + 1) % symbols.count],
-                roll: roll,
-                width: width
-            )
+            return coin(amount: amount, angle: spin, lift: 0, alert: 0, width: width)
         }
-
-        // Остановка: текущий знак уезжает, снизу приходит ✓; потом капля втягивается.
         let sinceEnd = date.timeIntervalSince(endedAt)
-        let (index, roll) = reel(at: endedAt.timeIntervalSince(startedAt))
-        let frozen = Self.symbols[(index + (roll > 0.5 ? 1 : 0)) % Self.symbols.count]
-        let t = min(1, sinceEnd / checkDuration)
-        let checkRoll = 1 - pow(1 - t, 3)
-        if sinceEnd > holdUntil {
-            let back = min(1, (sinceEnd - holdUntil) / outDuration)
+        // Доворот до ближайшего «лица» (целое число оборотов) с замедлением.
+        let frozen = Double(max(pull, 0.5)) * .pi + endedAt.timeIntervalSince(startedAt) * spinRate * 2 * .pi
+        let target = (frozen / (2 * .pi)).rounded(.up) * 2 * .pi
+        let settle = 1 - pow(1 - min(1, sinceEnd / settleDuration), 3)
+        let angle = frozen + (target - frozen) * settle
+        // Подпрыгивает вниз-вверх, потом улетает в остров с ускорением.
+        let hop = sinceEnd - settleDuration
+        let lift: CGFloat = hop > 0 && hop < hopDuration ? CGFloat(sin(hop / hopDuration * .pi)) * 10 : 0
+        let outTime = sinceEnd - settleDuration - hopDuration
+        if outTime > 0 {
+            let back = min(1, outTime / outDuration)
             amount *= 1 - back * back
         }
-        return pill(amount: amount, current: frozen, next: failed ? "✕" : "✓", roll: CGFloat(checkRoll), width: width)
+        let alert = failed ? sin(min(1, sinceEnd / (settleDuration + hopDuration)) * .pi) : 0
+        return coin(amount: amount, angle: angle, lift: lift, alert: alert, width: width)
     }
 
-    private func pill(amount: CGFloat, current: String, next: String?, roll: CGFloat, width: CGFloat) -> some View {
+    /// `angle` — поворот вокруг вертикальной оси; `lift` — подскок вниз (pt);
+    /// `alert` — сила красной вспышки (0…1).
+    private func coin(amount: CGFloat, angle: Double, lift: CGFloat, alert: Double, width: CGFloat) -> some View {
         let island = Self.islandRect(screenWidth: width)
         let scale = 0.4 + 0.6 * amount
-        let size = CGSize(width: pillSize.width * scale, height: pillSize.height * scale)
-        let center = CGPoint(x: width / 2, y: island.midY + dropDistance * amount)
-        let rect = CGRect(x: center.x - size.width / 2, y: center.y - size.height / 2, width: size.width, height: size.height)
+        let size = coinSize * scale
+        let center = CGPoint(x: width / 2, y: island.midY + dropDistance * amount + lift)
+        // Видимая ширина монеты при повороте (ребро не исчезает до нуля).
+        let squash = max(0.12, abs(cos(angle)))
+        let blob = CGRect(x: center.x - size / 2, y: center.y - size / 2, width: size, height: size)
 
         return ZStack(alignment: .topLeading) {
+            // Жидкая перемычка между островом и монетой.
             Canvas { context, _ in
                 context.addFilter(.alphaThreshold(min: 0.5, color: .black))
                 context.addFilter(.blur(radius: 7))
                 context.drawLayer { layer in
                     layer.fill(Path(roundedRect: island, cornerRadius: island.height / 2), with: .color(.black))
-                    layer.fill(Path(roundedRect: rect, cornerRadius: size.height / 2), with: .color(.black))
+                    layer.fill(Path(ellipseIn: blob.insetBy(dx: blob.width * (1 - squash) / 2, dy: 0)), with: .color(.black))
                 }
             }
-            // Барабан: окно размером с каплю, знаки уезжают вверх и гаснут у краёв.
-            ZStack {
-                // Уходящий знак гаснет — не просвечивает, когда капля сжимается.
-                glyph(current)
-                    .offset(y: -roll * size.height * 0.75)
-                    .opacity(Double(1 - roll))
-                if let next {
-                    glyph(next)
-                        .offset(y: (1 - roll) * size.height * 0.75)
-                        .opacity(Double(0.3 + 0.7 * roll))
-                }
-            }
-            .frame(width: size.width, height: size.height)
-            .scaleEffect(scale)
-            .clipped()
-            .mask(
-                LinearGradient(
-                    stops: [
-                        .init(color: .clear, location: 0),
-                        .init(color: .black, location: 0.3),
-                        .init(color: .black, location: 0.7),
-                        .init(color: .clear, location: 1),
-                    ],
-                    startPoint: .top,
-                    endPoint: .bottom
-                )
-            )
-            .opacity(Double(min(1, amount * 1.6)))
-            .position(center)
+            coinFace(alert: alert)
+                .frame(width: coinSize, height: coinSize)
+                .scaleEffect(x: squash, y: 1)
+                // Обратная сторона — темнее: видно, что монета крутится.
+                .brightness(cos(angle) < 0 ? -0.12 : 0)
+                .scaleEffect(scale)
+                .opacity(Double(min(1, max(0, amount * 2 - 0.2))))
+                .position(center)
         }
     }
 
-    @ViewBuilder
-    private func glyph(_ symbol: String) -> some View {
-        if symbol == "✓" || symbol == "✕" {
-            Image(systemName: symbol == "✓" ? "checkmark" : "xmark")
-                .font(.system(size: 20, weight: .heavy, design: .rounded))
-                .foregroundStyle(.white)
-        } else {
-            Text(verbatim: symbol)
-                .font(.system(size: 24, weight: .heavy, design: .rounded))
-                .foregroundStyle(.white)
+    private func coinFace(alert: Double) -> some View {
+        ZStack {
+            Circle().fill(Self.face)
+            // Блик сверху слева — монета объёмная.
+            Circle().fill(
+                RadialGradient(colors: [.white.opacity(0.18), .clear], center: .init(x: 0.3, y: 0.25), startRadius: 0, endRadius: 30)
+            )
+            Image("SplashLogo")
+                .resizable()
+                .scaledToFit()
+                .padding(10)
+        }
+        // Без обводки; при ошибке вокруг монеты вспыхивает красное свечение.
+        .background {
+            Circle()
+                .fill(Self.failure)
+                .blur(radius: 10)
+                .opacity(alert)
         }
     }
 

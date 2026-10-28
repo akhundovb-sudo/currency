@@ -628,6 +628,7 @@ private struct ProgressiveTopBlur: View {
     /// Размытие заканчивается чуть ниже панели: содержимое в покое под него не попадает
     /// (в модальных окнах оно начинается сразу под заголовком).
     private let fadeLength: CGFloat = 6
+    @Environment(\.colorScheme) private var colorScheme
 
     var body: some View {
         GeometryReader { proxy in
@@ -635,6 +636,13 @@ private struct ProgressiveTopBlur: View {
             let height = barBottom + fadeLength
             Rectangle()
                 .fill(.ultraThinMaterial)
+                // В тёмной теме материал на чёрном фоне выглядит светло-серой полосой —
+                // тонируем его в цвет фона, размытие под ним остаётся.
+                .overlay {
+                    if colorScheme == .dark {
+                        Color(.systemGroupedBackground).opacity(0.8)
+                    }
+                }
                 .mask {
                     LinearGradient(
                         stops: [
