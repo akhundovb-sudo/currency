@@ -20,6 +20,11 @@ struct CurrencyListView: View {
     @State private var shakeCounts: [String: Int] = [:]
     /// Перетаскивание карточки: какая, откуда, куда и на сколько сдвинута под пальцем.
     @State private var drag: RowDrag?
+    /// Палец держит поднятую долгим нажатием карточку. Сбрасывается сам, даже если жест
+    /// отменила система, — тогда карточка возвращается на место.
+    @GestureState private var isHoldingRow = false
+    /// Когда отпустили карточку: нажатие, пришедшее сразу за этим, не открывает клавиатуру.
+    @State private var lastDragEnd = Date.distantPast
     /// Размеры строк для определения, куда пришлось нажатие. Обычный класс, а не состояние:
     /// запись при прокрутке не должна перерисовывать весь список.
     @State private var rowSizes = RowSizeStore()
@@ -141,22 +146,14 @@ struct CurrencyListView: View {
                         .zIndex(drag?.code == code ? 1 : 0)
                         // Перестановка — в режиме правки: потянуть карточку (за неё или за ручку справа).
                         .simultaneousGesture(editReorderGesture(for: code), including: editMode.isEditing ? .all : .none)
-                        // В списке вся строка ловит нажатие, поэтому смотрим, куда оно пришлось:
-                        // в карточку — выбор валюты, в отступ вокруг — закрыть клавиатуру.
-                        // Долгое нажатие на карточку включает режим правки (как на экране «Домой»),
-                        // и карточку сразу можно тащить. Обычное нажатие не задерживается.
-                        .simultaneousGesture(
-                            LongPressGesture(minimumDuration: 0.45).onEnded { _ in
-                                guard !editMode.isEditing else { return }
-                                UIImpactFeedbackGenerator(style: .medium).impactOccurred()
-                                hideKeypad()
-                                withAnimation(.smooth(duration: 0.32)) { editMode = .active }
-                            },
-                            including: editMode.isEditing ? .none : .all
-                        )
+                        // Долгое нажатие поднимает карточку, и её сразу можно перетащить —
+                        // без режима правки. Обычное нажатие не задерживается.
+                        .simultaneousGesture(holdReorderGesture(for: code), including: editMode.isEditing ? .none : .all)
                         // В списке вся строка ловит нажатие, поэтому смотрим, куда оно пришлось:
                         // в карточку — выбор валюты, в отступ вокруг — закрыть клавиатуру.
                         .onTapGesture(coordinateSpace: .local) { location in
+                            // Отпустили поднятую карточку — это не нажатие.
+                            guard drag == nil, Date().timeIntervalSince(lastDragEnd) > 0.3 else { return }
                             if isInsideCard(location, rowSize: rowSizes.sizes[code]) {
                                 startEditing(code)
                             } else {
@@ -177,6 +174,10 @@ struct CurrencyListView: View {
             .scrollContentBackground(.hidden)
             .background(Color(.systemGroupedBackground))
             .environment(\.editMode, $editMode)
+            // Жест долгого нажатия отменён системой (звонок, уход в фон) — опустить карточку.
+            .onChange(of: isHoldingRow) { _, holding in
+                if !holding, drag != nil, !editMode.isEditing { dragEnded() }
+            }
             // Пока карточку тащат, список не прокручивается под пальцем.
             .scrollDisabled(drag != nil)
             // «Потяните, чтобы обновить» — своё: капли из Dynamic Island следуют за пальцем,
@@ -342,6 +343,20 @@ struct CurrencyListView: View {
             .onEnded { _ in dragEnded() }
     }
 
+    /// Вне режима правки: долгое нажатие поднимает карточку, дальше она едет за пальцем.
+    private func holdReorderGesture(for code: String) -> some Gesture {
+        LongPressGesture(minimumDuration: 0.4)
+            .sequenced(before: DragGesture(minimumDistance: 0, coordinateSpace: .global))
+            .updating($isHoldingRow) { value, holding, _ in
+                if case .second(true, _) = value { holding = true }
+            }
+            .onChanged { value in
+                guard case .second(true, let dragValue) = value else { return }
+                dragChanged(code, translation: dragValue?.translation.height ?? 0)
+            }
+            .onEnded { _ in dragEnded() }
+    }
+
     private func dragChanged(_ code: String, translation: CGFloat) {
         guard let from = store.selectedCodes.firstIndex(of: code) else { return }
         if drag == nil {
@@ -367,6 +382,7 @@ struct CurrencyListView: View {
 
     private func dragEnded() {
         guard let finished = drag else { return }
+        lastDragEnd = Date()
         // Ставим строку на новое место без анимации, а затем плавно убираем сдвиги:
         // карточка «доезжает» в свою ячейку, остальные остаются, где расступились.
         var settle = Transaction()
