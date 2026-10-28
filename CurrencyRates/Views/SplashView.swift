@@ -29,9 +29,14 @@ struct SplashView: View {
     }
 
     private var style: Style {
-        let name = UIApplication.shared.alternateIconName?.replacingOccurrences(of: "AppIcon-", with: "") ?? "Silver"
+        let name = UIApplication.shared.alternateIconName?.replacingOccurrences(of: "AppIcon-", with: "") ?? "Chrome"
         let table: [String: (UInt32, UInt32, CGFloat, CGFloat)] = [
-            "Silver": (0x131313, 0xE8ECF4, 0.394, 0.276),
+            "Chrome": (0x07031C, 0xE8ECF4, 0.283, 0.477),
+            "Knit": (0x07031C, 0xC9A7F5, 0.286, 0.511),
+            "Rubber": (0xF3F1F1, 0x9A9AA0, 0.504, 0.267),
+            "Stone": (0xCAC5C5, 0x8E8A88, 0.448, 0.758),
+            "Blocks": (0x07031C, 0xFFD34D, 0.512, 0.691),
+            "Doodle": (0xE9E9E9, 0xFF7A1A, 0.540, 0.768),
             "Amethyst": (0x07031C, 0xC9A7F5, 0.394, 0.275),
             "Sticker": (0xCC9DF1, 0xFFFFFF, 0.394, 0.257),
             "Puffy": (0x07031C, 0x9C8BFF, 0.273, 0.507),
@@ -41,7 +46,7 @@ struct SplashView: View {
             "Bubbles": (0x02000E, 0xC9A7F5, 0.619, 0.740),
             "Holo": (0x02000E, 0x8FE3FF, 0.263, 0.506),
         ]
-        let v = table[name] ?? table["Silver"]!
+        let v = table[name] ?? table["Chrome"]!
         return Style(image: "SplashIcon-\(name)", background: Color(hex: v.0), glow: Color(hex: v.1), anchor: UnitPoint(x: v.2, y: v.3))
     }
 

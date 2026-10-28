@@ -803,7 +803,7 @@ struct IslandRefreshIndicator: View {
 
     /// Знак выбранной иконки — тот же, что на сплэше.
     private static var markImage: String {
-        let name = UIApplication.shared.alternateIconName?.replacingOccurrences(of: "AppIcon-", with: "") ?? "Silver"
+        let name = UIApplication.shared.alternateIconName?.replacingOccurrences(of: "AppIcon-", with: "") ?? "Chrome"
         return "SplashIcon-\(name)"
     }
 

@@ -197,7 +197,7 @@ struct AppIconPicker: View {
 
     static var options: [Option] {
         [
-            Option(name: nil, preview: "IconPreview-Silver", title: L(.iconSilver), isPro: false),
+            Option(name: nil, preview: "IconPreview-Chrome", title: L(.iconChrome), isPro: false),
             Option(name: "AppIcon-Amethyst", preview: "IconPreview-Amethyst", title: L(.iconAmethyst), isPro: false),
             Option(name: "AppIcon-Sticker", preview: "IconPreview-Sticker", title: L(.iconSticker), isPro: false),
             Option(name: "AppIcon-Puffy", preview: "IconPreview-Puffy", title: L(.iconPuffy), isPro: true),
@@ -206,6 +206,11 @@ struct AppIconPicker: View {
             Option(name: "AppIcon-Gummy", preview: "IconPreview-Gummy", title: L(.iconGummy), isPro: true),
             Option(name: "AppIcon-Bubbles", preview: "IconPreview-Bubbles", title: L(.iconBubbles), isPro: true),
             Option(name: "AppIcon-Holo", preview: "IconPreview-Holo", title: L(.iconHolo), isPro: true),
+            Option(name: "AppIcon-Knit", preview: "IconPreview-Knit", title: L(.iconKnit), isPro: true),
+            Option(name: "AppIcon-Rubber", preview: "IconPreview-Rubber", title: L(.iconRubber), isPro: true),
+            Option(name: "AppIcon-Stone", preview: "IconPreview-Stone", title: L(.iconStone), isPro: true),
+            Option(name: "AppIcon-Blocks", preview: "IconPreview-Blocks", title: L(.iconBlocks), isPro: true),
+            Option(name: "AppIcon-Doodle", preview: "IconPreview-Doodle", title: L(.iconDoodle), isPro: true),
         ]
     }
 

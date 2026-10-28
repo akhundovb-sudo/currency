@@ -67,7 +67,7 @@ enum L10n {
         case proHeadline, planMonthly, planYearly, planLifetime, perMonth, perYear, oneTime
         case bestValue, included, featUnlimited, featFiat, featCrypto, featSupport
         case rateApp, manageSubscription, proActive, support, termsPrivacy
-        case appIcon, iconSilver, iconAmethyst, iconSticker, iconPuffy, iconSponge, iconPlush, iconGummy, iconBubbles, iconHolo
+        case appIcon, iconChrome, iconKnit, iconRubber, iconStone, iconBlocks, iconDoodle, iconAmethyst, iconSticker, iconPuffy, iconSponge, iconPlush, iconGummy, iconBubbles, iconHolo
         case getFullAccess, startTrial, trialNote, terms, privacy, restore
         case formatAutomatic, formatInternational, formatEuropean, formatSpaced
         case errNoInternet, errTimeout, errServer, errRateLimited, errBadResponse
@@ -151,7 +151,12 @@ enum L10n {
         .trialNote: ["7 дней бесплатно, отмена в любой момент", "7-day free trial, cancel anytime", "7 gün ücretsiz, istediğin zaman iptal", "7 jours gratuits, sans engagement", "7 días gratis, cancela cuando quieras", "7 Tage gratis, jederzeit kündbar", "免费试用 7 天，可随时取消", "7 أيام مجانًا، ألغِ في أي وقت"],
         .startTrial: ["Попробовать бесплатно", "Start Free Trial", "Ücretsiz Denemeyi Başlat", "Commencer l’essai gratuit", "Empezar prueba gratis", "Gratis testen", "开始免费试用", "ابدأ التجربة المجانية"],
         .appIcon: ["Иконка приложения", "App Icon", "Uygulama Simgesi", "Icône de l’app", "Icono de la app", "App-Symbol", "应用图标", "أيقونة التطبيق"],
-        .iconSilver: ["Серебро", "Silver", "Gümüş", "Argent", "Plata", "Silber", "银色", "فضي"],
+        .iconChrome: ["Хром", "Chrome", "Krom", "Chrome", "Cromo", "Chrom", "铬", "كروم"],
+        .iconKnit: ["Вязка", "Knit", "Örgü", "Tricot", "Punto", "Strick", "针织", "تريكو"],
+        .iconRubber: ["Резина", "Rubber", "Kauçuk", "Caoutchouc", "Goma", "Gummi", "橡胶", "مطاط"],
+        .iconStone: ["Камень", "Stone", "Taş", "Pierre", "Piedra", "Stein", "石头", "حجر"],
+        .iconBlocks: ["Кубики", "Blocks", "Bloklar", "Blocs", "Bloques", "Bausteine", "积木", "مكعبات"],
+        .iconDoodle: ["Рисунок", "Doodle", "Karalama", "Gribouillis", "Garabato", "Kritzel", "涂鸦", "رسمة"],
         .iconAmethyst: ["Аметист", "Amethyst", "Ametist", "Améthyste", "Amatista", "Amethyst", "紫晶", "جمشت"],
         .iconSticker: ["Стикер", "Sticker", "Çıkartma", "Autocollant", "Pegatina", "Sticker", "贴纸", "ملصق"],
         .iconPuffy: ["Пышный", "Puffy", "Kabarık", "Gonflé", "Inflado", "Aufgeblasen", "蓬松", "منفوخ"],
