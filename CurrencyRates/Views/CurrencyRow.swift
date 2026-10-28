@@ -70,9 +70,9 @@ struct CurrencyRow: View {
     }
 
     private var codeText: some View {
-        // Код того же размера, что и сумма, — строки читаются ровно, как в макете.
+        // Код чуть меньше суммы: крупнее подписи, но не спорит с цифрами.
         Text(code)
-            .font(.title2)
+            .font(.title3)
             .foregroundStyle(Color.primary)
             .fixedSize()
     }
