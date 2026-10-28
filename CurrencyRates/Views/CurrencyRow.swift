@@ -70,15 +70,16 @@ struct CurrencyRow: View {
     }
 
     private var codeText: some View {
+        // Код того же размера, что и сумма, — строки читаются ровно, как в макете.
         Text(code)
-            .font(.body.weight(.semibold))
+            .font(.title2)
             .foregroundStyle(Color.primary)
             .fixedSize()
     }
 
     private var nameText: some View {
         Text(Currency.name(for: code))
-            .font(.footnote)
+            .font(.subheadline)
             .foregroundStyle(Color.secondaryLabel)
             .lineLimit(dynamicTypeSize.isAccessibilitySize ? nil : 1)
             // Хотя бы пара букв с «…», а не пустая черта.
@@ -122,7 +123,7 @@ struct CurrencyRow: View {
 
     private var captionView: some View {
         Text(captionText)
-            .font(.footnote.monospacedDigit())
+            .font(.subheadline.monospacedDigit())
             .foregroundStyle(Color.secondaryLabel)
             .lineLimit(dynamicTypeSize.isAccessibilitySize ? nil : 1)
             .minimumScaleFactor(0.8)
