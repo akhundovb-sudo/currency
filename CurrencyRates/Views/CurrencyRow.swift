@@ -16,6 +16,9 @@ struct CurrencyRow: View {
     var idleSourceCaption: String?
     /// Каждое изменение запускает тряску суммы — сумма не помещается.
     var shakeTrigger = 0
+    /// Режим правки: карточка уже из-за «−» и ручки, поэтому сумма и курс прячутся —
+    /// иначе длинные суммы уменьшаются, и карточки меняются неравномерно.
+    var isReordering = false
 
     @Environment(\.dynamicTypeSize) private var dynamicTypeSize
 
@@ -37,8 +40,8 @@ struct CurrencyRow: View {
                     codeText
                 }
                 nameText
-                amountText
-                captionView
+                amountSlot
+                captionSlot
             } else {
                 HStack(spacing: 12) {
                     CurrencyIcon(currency: Currency(code: code))
@@ -49,12 +52,12 @@ struct CurrencyRow: View {
                         HStack(alignment: .center, spacing: 8) {
                             codeText
                             Spacer(minLength: 8)
-                            amountText
+                            amountSlot
                         }
                         HStack(alignment: .center, spacing: 8) {
                             nameText
                             Spacer(minLength: 8)
-                            captionView.layoutPriority(1)
+                            captionSlot.layoutPriority(1)
                         }
                     }
                 }
@@ -67,6 +70,27 @@ struct CurrencyRow: View {
         .accessibilityLabel(accessibilityText)
         .accessibilityAddTraits(isEditing ? [.isButton, .isSelected] : .isButton)
         .accessibilityHint(isSource ? L(.sourceHint) : L(.enterHint))
+    }
+
+    /// Сумма и курс быстро гаснут при входе в правку — раньше, чем карточка сузится,
+    /// поэтому их уменьшение не видно; при выходе появляются уже в полный размер.
+    private static let valueTransition = AnyTransition.opacity.animation(.easeOut(duration: 0.12))
+
+    /// Сумма, а в режиме правки — пустое место той же высоты: карточка не меняет высоту.
+    @ViewBuilder private var amountSlot: some View {
+        if isReordering {
+            Text(verbatim: "0").font(.amount).hidden()
+        } else {
+            amountText.transition(Self.valueTransition)
+        }
+    }
+
+    @ViewBuilder private var captionSlot: some View {
+        if isReordering {
+            Text(verbatim: " ").font(.subheadline).hidden()
+        } else {
+            captionView.transition(Self.valueTransition)
+        }
     }
 
     private var codeText: some View {

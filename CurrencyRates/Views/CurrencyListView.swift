@@ -84,7 +84,8 @@ struct CurrencyListView: View {
                             unitRate: store.unitRate(to: code),
                             showsCursor: isKeypadVisible,
                             idleSourceCaption: idleSourceCaption,
-                            shakeTrigger: shakeCounts[code, default: 0]
+                            shakeTrigger: shakeCounts[code, default: 0],
+                            isReordering: editMode.isEditing
                         )
                         .card(selected: code == store.sourceCode && isKeypadVisible)
                         // Фокус: выбранная карточка приподнимается — чуть крупнее, с мягкой тенью.
