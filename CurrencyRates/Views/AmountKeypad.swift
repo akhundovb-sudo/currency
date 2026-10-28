@@ -53,9 +53,12 @@ struct AmountKeypad: View {
                 }
             }
         }
+        // На iPad клавиши не растягиваются на всю ширину — блок по центру, панель во всю ширину.
+        .frame(maxWidth: 520)
         .padding(.horizontal, 16)
         .padding(.top, 20)
         .padding(.bottom, 8)
+        .frame(maxWidth: .infinity)
         .background {
             // Стеклянная панель со скруглённым верхом, продолжается под нижнюю безопасную зону.
             PanelGlass()

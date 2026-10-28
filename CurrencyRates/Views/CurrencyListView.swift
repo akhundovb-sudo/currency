@@ -22,6 +22,13 @@ struct CurrencyListView: View {
     /// запись при прокрутке не должна перерисовывать весь список.
     @State private var rowSizes = RowSizeStore()
     @State private var pullTracker = PullTracker()
+    /// Ширина экрана — на iPad и в широком окне карточки не растягиваются на всю ширину.
+    @State private var screenWidth: CGFloat = 0
+    /// Фокус для ввода с внешней клавиатуры (iPad).
+    @FocusState private var isKeyboardFocused: Bool
+
+    /// Карточки не шире этого — на iPad список стоит колонкой по центру.
+    private static let maxContentWidth: CGFloat = 640
 
     /// Отступы вокруг карточки внутри строки списка.
     private static let rowPadding = CGSize(width: 16, height: 6)
@@ -37,6 +44,13 @@ struct CurrencyListView: View {
             .toolbar { toolbar }
             // Вместо панели с резкой нижней границей — плавное затухание сверху.
             .modifier(HiddenBarBackground())
+            .onGeometryChange(for: CGFloat.self) { $0.size.width } action: { screenWidth = $0 }
+            // Внешняя клавиатура (iPad): суммы можно набирать с неё.
+            .focusable()
+            .focusEffectDisabled()
+            .focused($isKeyboardFocused)
+            .onKeyPress(phases: .down, action: handleHardwareKey)
+            .onAppear { isKeyboardFocused = true }
             .sheet(isPresented: $isAddPresented) {
                 AddCurrencyView()
             }
@@ -133,6 +147,8 @@ struct CurrencyListView: View {
                 statusSection
             }
             .listStyle(.plain)
+            // На широком экране — колонка по центру, а не карточки во всю ширину.
+            .contentMargins(.horizontal, max(0, (screenWidth - Self.maxContentWidth) / 2), for: .scrollContent)
             .scrollContentBackground(.hidden)
             .background(Color(.systemGroupedBackground))
             .environment(\.editMode, $editMode)
@@ -153,6 +169,7 @@ struct CurrencyListView: View {
             .overlay(alignment: .bottom) {
                 if let toast {
                     ToastView(toast: toast, onClose: dismissToast)
+                        .frame(maxWidth: 480)
                         .padding(.horizontal, 16)
                         .padding(.bottom, 12)
                         .transition(.move(edge: .bottom).combined(with: .opacity))
@@ -182,14 +199,7 @@ struct CurrencyListView: View {
             )
                 if isKeypadVisible {
                     AmountKeypad(
-                        onKey: { key in
-                            let accepted = withAnimation(.snappy(duration: 0.2)) { store.press(key) }
-                            if !accepted {
-                                // Не помещается: тряска карточки и вибрация ошибки.
-                                UINotificationFeedbackGenerator().notificationOccurred(.error)
-                                shake(store.sourceCode)
-                            }
-                        },
+                        onKey: press,
                         onClear: { withAnimation { store.amountText = "" } },
                         onDone: hideKeypad
                     )
@@ -311,6 +321,42 @@ struct CurrencyListView: View {
                 refreshedCount += 1
             }
         }
+    }
+
+    /// Нажатие клавиши — на экранной клавиатуре или на внешней.
+    private func press(_ key: KeypadKey) {
+        let accepted = withAnimation(.snappy(duration: 0.2)) { store.press(key) }
+        if !accepted {
+            // Не помещается: тряска карточки и вибрация ошибки.
+            UINotificationFeedbackGenerator().notificationOccurred(.error)
+            shake(store.sourceCode)
+        }
+    }
+
+    /// Ввод с внешней клавиатуры (iPad): цифры, запятая/точка, + − × ÷, = и Enter,
+    /// ⌫ стирает, Esc прячет клавиатуру. Работает, пока открыта экранная клавиатура.
+    private func handleHardwareKey(_ keyPress: KeyPress) -> KeyPress.Result {
+        guard isKeypadVisible else { return .ignored }
+        if keyPress.key == .delete { press(.backspace); return .handled }
+        if keyPress.key == .return { press(.equals); return .handled }
+        if keyPress.key == .escape { hideKeypad(); return .handled }
+        guard let character = keyPress.characters.first else { return .ignored }
+        let key: KeypadKey
+        if character.isASCII, let digit = character.wholeNumberValue {
+            key = .digit(digit)
+        } else {
+            switch character {
+            case ".", ",": key = .decimal
+            case "+": key = .add
+            case "-", "−": key = .subtract
+            case "*", "x", "X", "×": key = .multiply
+            case "/", "÷": key = .divide
+            case "=": key = .equals
+            default: return .ignored
+            }
+        }
+        press(key)
+        return .handled
     }
 
     private func hideKeypad() {
