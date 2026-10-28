@@ -31,7 +31,7 @@ struct SplashView: View {
     private var style: Style {
         let name = UIApplication.shared.alternateIconName?.replacingOccurrences(of: "AppIcon-", with: "") ?? "Chrome"
         let table: [String: (UInt32, UInt32, CGFloat, CGFloat)] = [
-            "Chrome": (0x07031C, 0xE8ECF4, 0.283, 0.477),
+            "Chrome": (0x000000, 0xE8ECF4, 0.283, 0.477),
             "Knit": (0x07031C, 0xC9A7F5, 0.286, 0.511),
             "Rubber": (0xF3F1F1, 0x9A9AA0, 0.504, 0.267),
             "Stone": (0xCAC5C5, 0x8E8A88, 0.448, 0.758),
@@ -116,9 +116,9 @@ struct SplashView: View {
                         if sweep > -0.2 && sweep < 1.2 {
                             LinearGradient(
                                 stops: [
-                                    .init(color: .clear, location: max(0, sweep - 0.14)),
-                                    .init(color: .white.opacity(0.75), location: min(1, max(0, sweep))),
-                                    .init(color: .clear, location: min(1, sweep + 0.14)),
+                                    .init(color: .clear, location: max(0, sweep - 0.12)),
+                                    .init(color: .white.opacity(0.3), location: min(1, max(0, sweep))),
+                                    .init(color: .clear, location: min(1, sweep + 0.12)),
                                 ],
                                 startPoint: .topTrailing,
                                 endPoint: .bottomLeading
