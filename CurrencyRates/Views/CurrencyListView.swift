@@ -20,9 +20,6 @@ struct CurrencyListView: View {
     @State private var shakeCounts: [String: Int] = [:]
     /// Перетаскивание карточки: какая, откуда, куда и на сколько сдвинута под пальцем.
     @State private var drag: RowDrag?
-    /// Палец держит поднятую долгим нажатием карточку. Сбрасывается сам, даже если жест
-    /// отменила система, — тогда карточка возвращается на место.
-    @GestureState private var isHoldingRow = false
     /// Когда отпустили карточку: нажатие, пришедшее сразу за этим, не открывает клавиатуру.
     @State private var lastDragEnd = Date.distantPast
     /// Размеры строк для определения, куда пришлось нажатие. Обычный класс, а не состояние:
@@ -148,7 +145,11 @@ struct CurrencyListView: View {
                         .simultaneousGesture(editReorderGesture(for: code), including: editMode.isEditing ? .all : .none)
                         // Долгое нажатие поднимает карточку, и её сразу можно перетащить —
                         // без режима правки. Обычное нажатие не задерживается.
-                        .simultaneousGesture(holdReorderGesture(for: code), including: editMode.isEditing ? .none : .all)
+                        .modifier(HoldToDrag(
+                            isEnabled: !editMode.isEditing,
+                            onChanged: { dragChanged(code, translation: $0) },
+                            onEnded: dragEnded
+                        ))
                         // В списке вся строка ловит нажатие, поэтому смотрим, куда оно пришлось:
                         // в карточку — выбор валюты, в отступ вокруг — закрыть клавиатуру.
                         .onTapGesture(coordinateSpace: .local) { location in
@@ -174,9 +175,10 @@ struct CurrencyListView: View {
             .scrollContentBackground(.hidden)
             .background(Color(.systemGroupedBackground))
             .environment(\.editMode, $editMode)
-            // Жест долгого нажатия отменён системой (звонок, уход в фон) — опустить карточку.
-            .onChange(of: isHoldingRow) { _, holding in
-                if !holding, drag != nil, !editMode.isEditing { dragEnded() }
+            // Страховка: если жест перетаскивания не сообщил о конце, карточка не остаётся
+            // поднятой — иначе список не прокручивается и нажатия не доходят.
+            .onChange(of: editMode.isEditing) { _, _ in
+                if drag != nil { dragEnded() }
             }
             // Пока карточку тащат, список не прокручивается под пальцем.
             .scrollDisabled(drag != nil)
@@ -340,20 +342,6 @@ struct CurrencyListView: View {
     private func editReorderGesture(for code: String) -> some Gesture {
         DragGesture(minimumDistance: 6, coordinateSpace: .global)
             .onChanged { value in dragChanged(code, translation: value.translation.height) }
-            .onEnded { _ in dragEnded() }
-    }
-
-    /// Вне режима правки: долгое нажатие поднимает карточку, дальше она едет за пальцем.
-    private func holdReorderGesture(for code: String) -> some Gesture {
-        LongPressGesture(minimumDuration: 0.4)
-            .sequenced(before: DragGesture(minimumDistance: 0, coordinateSpace: .global))
-            .updating($isHoldingRow) { value, holding, _ in
-                if case .second(true, _) = value { holding = true }
-            }
-            .onChanged { value in
-                guard case .second(true, let dragValue) = value else { return }
-                dragChanged(code, translation: dragValue?.translation.height ?? 0)
-            }
             .onEnded { _ in dragEnded() }
     }
 
@@ -1150,5 +1138,65 @@ private struct HardwareKeyboardInput: ViewModifier {
         } else {
             content
         }
+    }
+}
+
+/// Вне режима правки: долгое нажатие поднимает карточку, дальше она едет за пальцем.
+/// Системный жест UIKit: пока палец не задержался, он ничего не перехватывает —
+/// нажатия на карточку и прокрутка работают как обычно. Связка жестов SwiftUI
+/// «долгое нажатие → перетаскивание» мешала обычным нажатиям, и сумма не вводилась.
+private struct HoldToDrag: ViewModifier {
+    let isEnabled: Bool
+    /// Сдвиг пальца по вертикали от места, где карточку подняли.
+    let onChanged: (CGFloat) -> Void
+    let onEnded: () -> Void
+
+    func body(content: Content) -> some View {
+        if #available(iOS 18, *) {
+            content.gesture(HoldToDragGesture(isEnabled: isEnabled, onChanged: onChanged, onEnded: onEnded))
+        } else {
+            // iOS 17: переставляют в режиме правки.
+            content
+        }
+    }
+}
+
+@available(iOS 18, *)
+private struct HoldToDragGesture: UIGestureRecognizerRepresentable {
+    let isEnabled: Bool
+    let onChanged: (CGFloat) -> Void
+    let onEnded: () -> Void
+
+    func makeCoordinator(converter: CoordinateSpaceConverter) -> Coordinator { Coordinator() }
+
+    func makeUIGestureRecognizer(context: Context) -> UILongPressGestureRecognizer {
+        let press = UILongPressGestureRecognizer()
+        press.minimumPressDuration = 0.4
+        press.isEnabled = isEnabled
+        return press
+    }
+
+    func updateUIGestureRecognizer(_ recognizer: UILongPressGestureRecognizer, context: Context) {
+        recognizer.isEnabled = isEnabled
+    }
+
+    func handleUIGestureRecognizerAction(_ recognizer: UILongPressGestureRecognizer, context: Context) {
+        // Координаты окна: строка сама едет за пальцем, её собственные координаты сдвигаются.
+        let y = recognizer.location(in: nil).y
+        switch recognizer.state {
+        case .began:
+            context.coordinator.startY = y
+            onChanged(0)
+        case .changed:
+            onChanged(y - context.coordinator.startY)
+        case .ended, .cancelled, .failed:
+            onEnded()
+        default:
+            break
+        }
+    }
+
+    final class Coordinator {
+        var startY: CGFloat = 0
     }
 }
