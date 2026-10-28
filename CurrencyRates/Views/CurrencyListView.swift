@@ -18,6 +18,8 @@ struct CurrencyListView: View {
     /// смена выбранной валюты не «проигрывает» тряску.
     /// Сколько раз тряслась сумма каждой валюты: смена числа запускает тряску.
     @State private var shakeCounts: [String: Int] = [:]
+    /// Перетаскивание карточки: какая, откуда, куда и на сколько сдвинута под пальцем.
+    @State private var drag: RowDrag?
     /// Размеры строк для определения, куда пришлось нажатие. Обычный класс, а не состояние:
     /// запись при прокрутке не должна перерисовывать весь список.
     @State private var rowSizes = RowSizeStore()
@@ -123,11 +125,14 @@ struct CurrencyListView: View {
                             }
                         }
                         .contentShape(Rectangle())
-                        // При перетаскивании поднимается только карточка, без отступов вокруг.
-                        .contentShape(
-                            .dragPreview,
-                            CardInsetShape(inset: Self.rowPadding, cornerRadius: 24)
-                        )
+                        // Своё перетаскивание: долгое нажатие поднимает карточку, дальше она едет
+                        // за пальцем, остальные расступаются. Системное перетаскивание List
+                        // конфликтовало с жестами карточки и не давало поставить валюту первой.
+                        .scaleEffect(drag?.code == code ? 1.04 : 1)
+                        .shadow(color: .black.opacity(drag?.code == code ? 0.18 : 0), radius: 18, y: 10)
+                        .offset(y: rowOffset(for: code))
+                        .zIndex(drag?.code == code ? 1 : 0)
+                        .gesture(reorderGesture(for: code))
                         // В списке вся строка ловит нажатие, поэтому смотрим, куда оно пришлось:
                         // в карточку — выбор валюты, в отступ вокруг — закрыть клавиатуру.
                         .onTapGesture(coordinateSpace: .local) { location in
@@ -141,7 +146,6 @@ struct CurrencyListView: View {
                         .listRowSeparator(.hidden)
                         .listRowInsets(EdgeInsets())
                     }
-                    .onMove { store.move(fromOffsets: $0, toOffset: $1) }
                 }
 
                 statusSection
@@ -152,6 +156,8 @@ struct CurrencyListView: View {
             .scrollContentBackground(.hidden)
             .background(Color(.systemGroupedBackground))
             .environment(\.editMode, $editMode)
+            // Пока карточку тащат, список не прокручивается под пальцем.
+            .scrollDisabled(drag != nil)
             // «Потяните, чтобы обновить» — своё: капли из Dynamic Island следуют за пальцем,
             // обновление начинается, когда список отпустили, потянув до конца.
             .onAppear {
@@ -287,6 +293,72 @@ struct CurrencyListView: View {
     /// и сумма не двигалась — была только вибрация.
     private func shake(_ code: String) {
         shakeCounts[code, default: 0] += 1
+    }
+
+    // MARK: - Перетаскивание
+
+    struct RowDrag: Equatable {
+        let code: String
+        let from: Int
+        var to: Int
+        var offset: CGFloat
+        let rowHeight: CGFloat
+    }
+
+    /// Сдвиг строки: перетаскиваемая — за пальцем, остальные расступаются на её место.
+    private func rowOffset(for code: String) -> CGFloat {
+        guard let drag, let index = store.selectedCodes.firstIndex(of: code) else { return 0 }
+        if code == drag.code { return drag.offset }
+        if drag.from < drag.to, index > drag.from, index <= drag.to { return -drag.rowHeight }
+        if drag.from > drag.to, index >= drag.to, index < drag.from { return drag.rowHeight }
+        return 0
+    }
+
+    private func reorderGesture(for code: String) -> some Gesture {
+        LongPressGesture(minimumDuration: 0.35)
+            .sequenced(before: DragGesture(minimumDistance: 0, coordinateSpace: .global))
+            .onChanged { value in
+                guard case .second(true, let dragValue) = value,
+                      let from = store.selectedCodes.firstIndex(of: code) else { return }
+                if drag == nil {
+                    if isKeypadVisible { hideKeypad() }
+                    UIImpactFeedbackGenerator(style: .medium).impactOccurred()
+                    let height = rowSizes.sizes[code]?.height ?? 88
+                    withAnimation(.snappy(duration: 0.2)) {
+                        drag = RowDrag(code: code, from: from, to: from, offset: 0, rowHeight: height)
+                    }
+                }
+                guard var current = drag else { return }
+                current.offset = dragValue?.translation.height ?? 0
+                let steps = Int((current.offset / current.rowHeight).rounded())
+                let target = min(max(current.from + steps, 0), store.selectedCodes.count - 1)
+                if target != current.to {
+                    UISelectionFeedbackGenerator().selectionChanged()
+                    current.to = target
+                    withAnimation(.snappy(duration: 0.25)) { drag = current }
+                } else {
+                    drag = current
+                }
+            }
+            .onEnded { _ in
+                guard let finished = drag else { return }
+                // Ставим строку на новое место без анимации, а затем плавно убираем сдвиги:
+                // карточка «доезжает» в свою ячейку, остальные остаются, где расступились.
+                var settle = Transaction()
+                settle.disablesAnimations = true
+                withTransaction(settle) {
+                    if finished.to != finished.from {
+                        store.move(
+                            fromOffsets: IndexSet(integer: finished.from),
+                            toOffset: finished.to > finished.from ? finished.to + 1 : finished.to
+                        )
+                    }
+                    let landed = CGFloat(finished.to - finished.from) * finished.rowHeight
+                    drag = RowDrag(code: finished.code, from: finished.to, to: finished.to,
+                                   offset: finished.offset - landed, rowHeight: finished.rowHeight)
+                }
+                withAnimation(.snappy(duration: 0.3)) { drag = nil }
+            }
     }
 
     private func startEditing(_ code: String) {
