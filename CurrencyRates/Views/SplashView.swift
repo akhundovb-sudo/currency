@@ -97,7 +97,7 @@ struct SplashView: View {
                 ZStack {
                     Color("SplashBackground")
                     style.background.opacity(appear)
-                    RadialGradient(colors: [style.glow.opacity(0.22), .clear], center: .center, startRadius: 0, endRadius: 260)
+                    RadialGradient(colors: [style.glow.opacity(0.06), .clear], center: .center, startRadius: 0, endRadius: 220)
                         .opacity(appear * (1 - windowed))
                 }
                 .mask {
@@ -129,7 +129,7 @@ struct SplashView: View {
                             .blendMode(.screen)
                         }
                     }
-                    .shadow(color: style.glow.opacity(0.35 * appear), radius: 22)
+                    .shadow(color: style.glow.opacity(0.1 * appear), radius: 16)
                     .opacity(appear * (1 - windowed))
             }
             .opacity(1 - smoothstep(revealEnd - 0.12, revealEnd, t))
