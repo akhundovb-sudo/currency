@@ -45,8 +45,13 @@ struct CurrencyRatesApp: App {
                     if phase == .active {
                         applyTheme(store.theme)
                         Task { await store.refreshIfStale() }
+                    } else {
+                        // Уходим с экрана — виджеты получают последние валюты и суммы.
+                        WidgetBridge.publish(store)
                     }
                 }
+                // Новые курсы — сразу и в виджеты.
+                .onChange(of: store.snapshot) { _, _ in WidgetBridge.publish(store) }
                 .overlay {
                     if showsSplash {
                         SplashView(
