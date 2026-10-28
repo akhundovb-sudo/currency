@@ -153,7 +153,18 @@ private struct KeypadButton: View {
                 Text("\(digit)").font(.title)
             }
         case .decimal:
-            Text(Calculator.decimalSeparator).font(.title)
+            if L10n.current == .ar {
+                // Арабский ноль «٠» — точка; разделитель рядом — арабская запятая «٫»,
+                // под ней — тот, что появится в сумме. Так клавиши не путаются.
+                VStack(spacing: -2) {
+                    Text(verbatim: "٫").font(.title)
+                    Text(Calculator.decimalSeparator)
+                        .font(.caption2.weight(.medium))
+                        .foregroundStyle(Color.secondaryLabel)
+                }
+            } else {
+                Text(Calculator.decimalSeparator).font(.title)
+            }
         case .backspace:
             AppIcon("icon-backspace", size: 26)
                 .foregroundStyle(Color.primary)
