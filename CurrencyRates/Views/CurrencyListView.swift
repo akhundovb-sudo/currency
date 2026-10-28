@@ -128,9 +128,9 @@ struct CurrencyListView: View {
                         .shadow(color: .black.opacity(drag?.code == code ? 0.18 : 0), radius: 18, y: 10)
                         .offset(y: rowOffset(for: code))
                         .zIndex(drag?.code == code ? 1 : 0)
-                        // Одновременно с нажатием: иначе жест перетаскивания перехватывал
-                        // обычное нажатие, и клавиатура не открывалась.
-                        .simultaneousGesture(reorderGesture(for: code))
+                        // Перетаскивание — только в режиме правки (Edit). В обычном режиме на карточке
+                        // нет лишних жестов, и нажатия срабатывают сразу.
+                        .simultaneousGesture(reorderGesture(for: code), including: editMode.isEditing ? .all : .none)
                         // В списке вся строка ловит нажатие, поэтому смотрим, куда оно пришлось:
                         // в карточку — выбор валюты, в отступ вокруг — закрыть клавиатуру.
                         .onTapGesture(coordinateSpace: .local) { location in
@@ -313,11 +313,9 @@ struct CurrencyListView: View {
     }
 
     private func reorderGesture(for code: String) -> some Gesture {
-        LongPressGesture(minimumDuration: 0.35)
-            .sequenced(before: DragGesture(minimumDistance: 0, coordinateSpace: .global))
-            .onChanged { value in
-                guard case .second(true, let dragValue) = value,
-                      let from = store.selectedCodes.firstIndex(of: code) else { return }
+        DragGesture(minimumDistance: 6, coordinateSpace: .global)
+            .onChanged { dragValue in
+                guard let from = store.selectedCodes.firstIndex(of: code) else { return }
                 if drag == nil {
                     if isKeypadVisible { hideKeypad() }
                     UIImpactFeedbackGenerator(style: .medium).impactOccurred()
@@ -327,7 +325,7 @@ struct CurrencyListView: View {
                     }
                 }
                 guard var current = drag else { return }
-                current.offset = dragValue?.translation.height ?? 0
+                current.offset = dragValue.translation.height
                 let steps = Int((current.offset / current.rowHeight).rounded())
                 let target = min(max(current.from + steps, 0), store.selectedCodes.count - 1)
                 if target != current.to {
