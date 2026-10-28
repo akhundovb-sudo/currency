@@ -67,7 +67,7 @@ enum L10n {
         case proHeadline, planMonthly, planYearly, planLifetime, perMonth, perYear, oneTime
         case bestValue, included, featUnlimited, featFiat, featCrypto, featSupport
         case rateApp, manageSubscription, proActive, support, termsPrivacy
-        case appIcon, iconChrome, iconKnit, iconRubber, iconStone, iconBlocks, iconDoodle, iconAmethyst, iconSticker, iconPuffy, iconSponge, iconPlush, iconGummy, iconBubbles, iconHolo
+        case appIcon, iconChrome, iconKnit, iconRubber, iconStone, iconBlocks, iconDoodle, iconPixel, iconEngraving, iconAmethyst, iconSticker, iconPuffy, iconSponge, iconPlush, iconGummy, iconBubbles, iconHolo
         case getFullAccess, startTrial, trialNote, terms, privacy, restore
         case formatAutomatic, formatInternational, formatEuropean, formatSpaced
         case errNoInternet, errTimeout, errServer, errRateLimited, errBadResponse
@@ -157,6 +157,8 @@ enum L10n {
         .iconStone: ["Камень", "Stone", "Taş", "Pierre", "Piedra", "Stein", "石头", "حجر"],
         .iconBlocks: ["Кубики", "Blocks", "Bloklar", "Blocs", "Bloques", "Bausteine", "积木", "مكعبات"],
         .iconDoodle: ["Рисунок", "Doodle", "Karalama", "Gribouillis", "Garabato", "Kritzel", "涂鸦", "رسمة"],
+        .iconPixel: ["Пиксели", "Pixel", "Piksel", "Pixel", "Píxel", "Pixel", "像素", "بكسل"],
+        .iconEngraving: ["Гравюра", "Engraving", "Gravür", "Gravure", "Grabado", "Gravur", "版画", "نقش"],
         .iconAmethyst: ["Аметист", "Amethyst", "Ametist", "Améthyste", "Amatista", "Amethyst", "紫晶", "جمشت"],
         .iconSticker: ["Стикер", "Sticker", "Çıkartma", "Autocollant", "Pegatina", "Sticker", "贴纸", "ملصق"],
         .iconPuffy: ["Пышный", "Puffy", "Kabarık", "Gonflé", "Inflado", "Aufgeblasen", "蓬松", "منفوخ"],
