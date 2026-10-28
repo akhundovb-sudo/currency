@@ -6,6 +6,8 @@ struct CurrencyRatesApp: App {
     @State private var store = RatesStore.live()
     /// Сплэш поверх списка при запуске; сам убирается после анимации.
     @State private var showsSplash = true
+    /// Список под сплэшем: чуть увеличен и встаёт на место, когда сплэш раскрывается.
+    @State private var contentScale: CGFloat = 1.08
 
     init() {
         // Системная панель полностью прозрачная на всех версиях iOS: у её размытия резкий
@@ -27,6 +29,7 @@ struct CurrencyRatesApp: App {
     var body: some Scene {
         WindowGroup {
             CurrencyListView()
+                .scaleEffect(contentScale)
                 .environment(store)
                 .environment(\.locale, store.language.locale)
                 .environment(\.layoutDirection, store.language.isRightToLeft ? .rightToLeft : .leftToRight)
@@ -41,7 +44,10 @@ struct CurrencyRatesApp: App {
                 }
                 .overlay {
                     if showsSplash {
-                        SplashView { showsSplash = false }
+                        SplashView(
+                            onReveal: { withAnimation(.smooth(duration: 0.7)) { contentScale = 1 } },
+                            onFinish: { showsSplash = false }
+                        )
                     }
                 }
                 .statusBarHidden(showsSplash)
