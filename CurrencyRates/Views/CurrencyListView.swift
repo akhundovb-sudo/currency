@@ -35,7 +35,7 @@ struct CurrencyListView: View {
     private static let maxContentWidth: CGFloat = 640
 
     /// Отступы вокруг карточки внутри строки списка.
-    private static let rowPadding = CGSize(width: 16, height: 6)
+    private static let rowPadding = CGSize(width: 16, height: 4)
 
     var body: some View {
         NavigationStack {
