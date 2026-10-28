@@ -658,10 +658,11 @@ struct ShakeEffect: GeometryEffect {
     }
 }
 
-/// Индикатор обновления: из Dynamic Island вытекают две чёрные капли-монеты с белыми $ и ₿,
-/// кружат под ним, а по окончании втягиваются обратно. Капли и остров сливаются, как жидкость:
-/// круги размываются и обрезаются по порогу прозрачности. Без Dynamic Island капли
-/// появляются из-за верхнего края экрана.
+/// Индикатор обновления: из Dynamic Island вытекает чёрная капля-пилюля и сливается
+/// с ним, как жидкость (круги размываются и обрезаются по порогу прозрачности).
+/// Внутри — барабан слот-машины: знаки валют по очереди прокручиваются вверх.
+/// Когда курсы обновились, барабан останавливается на ✓, и капля втягивается обратно.
+/// Без Dynamic Island капля выходит из-за верхнего края экрана.
 struct IslandRefreshIndicator: View {
     let isActive: Bool
     /// Насколько список потянут вниз: 0 — нет, 1 — до конца (сейчас начнётся обновление).
@@ -670,23 +671,27 @@ struct IslandRefreshIndicator: View {
     @State private var startedAt: Date?
     @State private var endedAt: Date?
 
-    private let dropDistance: CGFloat = 96
-    private let coinRadius: CGFloat = 26
-    private let orbit: CGFloat = 33
-    private let period: Double = 1.4
-    private let inDuration: Double = 0.55
+    private static let symbols = ["$", "€", "£", "¥", "₿"]
+
+    private let dropDistance: CGFloat = 74
+    private let pillSize = CGSize(width: 64, height: 42)
+    /// Один шаг барабана: знак едет вверх, потом короткая пауза.
+    private let step: Double = 0.34
+    private let inDuration: Double = 0.5
+    /// После остановки на ✓: сколько держим галочку и за сколько втягиваемся.
+    private let checkDuration: Double = 0.3
+    private let holdUntil: Double = 0.85
     private let outDuration: Double = 0.4
 
     var body: some View {
         GeometryReader { proxy in
             if let startedAt {
                 TimelineView(.animation) { context in
-                    drops(at: context.date, startedAt: startedAt, width: proxy.size.width)
+                    spinning(at: context.date, startedAt: startedAt, width: proxy.size.width)
                 }
             } else if pull > 0 {
-                // Пока тянут — капли выходят из острова ровно настолько, насколько потянули,
-                // и чуть поворачиваются.
-                drops(amount: pull, angle: Double(pull) * .pi * 0.6, width: proxy.size.width)
+                // Пока тянут — капля выходит из острова ровно настолько, насколько потянули.
+                pill(amount: pull, current: Self.symbols[0], next: nil, roll: 0, width: proxy.size.width)
             }
         }
         .ignoresSafeArea()
@@ -696,13 +701,15 @@ struct IslandRefreshIndicator: View {
         .accessibilityHidden(!isActive)
         .onChange(of: isActive) { _, active in
             if active {
-                // Если капли уже вытянуты жестом, не начинаем выход заново.
+                // Если капля уже вытянута жестом, не начинаем выход заново.
                 startedAt = pull > 0.5 ? Date.now.addingTimeInterval(-inDuration) : .now
                 endedAt = nil
             } else if startedAt != nil {
                 endedAt = .now
                 Task {
-                    try? await Task.sleep(for: .seconds(outDuration))
+                    try? await Task.sleep(for: .seconds(checkDuration))
+                    if endedAt != nil { UIImpactFeedbackGenerator(style: .light).impactOccurred() }
+                    try? await Task.sleep(for: .seconds(holdUntil + outDuration - checkDuration))
                     // Если за это время началось новое обновление, endedAt уже сброшен.
                     if endedAt != nil {
                         startedAt = nil
@@ -713,39 +720,53 @@ struct IslandRefreshIndicator: View {
         }
     }
 
-    private struct Drop {
-        let glyph: String
-        let center: CGPoint
-        let radius: CGFloat
-        let depth: Double
+    /// Положение барабана: целая часть — какой знак сейчас, дробная — насколько уехал вверх.
+    /// Знак едет 60% шага с плавным разгоном и торможением, остальное время стоит.
+    private func reel(at elapsed: Double) -> (index: Int, roll: CGFloat) {
+        let position = elapsed / step
+        let index = Int(position)
+        let f = position - Double(index)
+        let t = min(1, f / 0.6)
+        let eased = t * t * (3 - 2 * t)
+        return (index, CGFloat(eased))
     }
 
-    private func drops(at date: Date, startedAt: Date, width: CGFloat) -> some View {
+    private func spinning(at date: Date, startedAt: Date, width: CGFloat) -> some View {
         let elapsed = date.timeIntervalSince(startedAt)
-        // Насколько капли вытекли: быстро в начале, мягко в конце; при завершении — обратно.
+        // Быстро выходит, мягко останавливается.
         var amount = 1 - pow(1 - min(1, elapsed / inDuration), 3)
-        if let endedAt {
-            let back = min(1, date.timeIntervalSince(endedAt) / outDuration)
-            amount *= 1 - back * back
-        }
-        let angle = (elapsed.truncatingRemainder(dividingBy: period) / period) * 2 * .pi
-        return drops(amount: amount, angle: angle, width: width)
-    }
 
-    private func drops(amount: CGFloat, angle: Double, width: CGFloat) -> some View {
-        let island = Self.islandRect(screenWidth: width)
-        let center = CGPoint(x: width / 2, y: island.midY + dropDistance * amount)
-        let items = [("dollarsign", 0.0), ("bitcoinsign", Double.pi)].map { pair in
-            let (glyph, shift) = pair
-            let a = angle + shift
-            let depth = (cos(a) + 1) / 2   // 1 — спереди, 0 — сзади
-            return Drop(
-                glyph: glyph,
-                center: CGPoint(x: center.x + orbit * amount * sin(a), y: center.y),
-                radius: coinRadius * (0.45 + 0.55 * amount) * (0.82 + 0.18 * depth),
-                depth: depth
+        guard let endedAt else {
+            let (index, roll) = reel(at: elapsed)
+            let symbols = Self.symbols
+            return pill(
+                amount: amount,
+                current: symbols[index % symbols.count],
+                next: symbols[(index + 1) % symbols.count],
+                roll: roll,
+                width: width
             )
         }
+
+        // Остановка: текущий знак уезжает, снизу приходит ✓; потом капля втягивается.
+        let sinceEnd = date.timeIntervalSince(endedAt)
+        let (index, roll) = reel(at: endedAt.timeIntervalSince(startedAt))
+        let frozen = Self.symbols[(index + (roll > 0.5 ? 1 : 0)) % Self.symbols.count]
+        let t = min(1, sinceEnd / checkDuration)
+        let checkRoll = 1 - pow(1 - t, 3)
+        if sinceEnd > holdUntil {
+            let back = min(1, (sinceEnd - holdUntil) / outDuration)
+            amount *= 1 - back * back
+        }
+        return pill(amount: amount, current: frozen, next: "✓", roll: CGFloat(checkRoll), width: width)
+    }
+
+    private func pill(amount: CGFloat, current: String, next: String?, roll: CGFloat, width: CGFloat) -> some View {
+        let island = Self.islandRect(screenWidth: width)
+        let scale = 0.4 + 0.6 * amount
+        let size = CGSize(width: pillSize.width * scale, height: pillSize.height * scale)
+        let center = CGPoint(x: width / 2, y: island.midY + dropDistance * amount)
+        let rect = CGRect(x: center.x - size.width / 2, y: center.y - size.height / 2, width: size.width, height: size.height)
 
         return ZStack(alignment: .topLeading) {
             Canvas { context, _ in
@@ -753,27 +774,51 @@ struct IslandRefreshIndicator: View {
                 context.addFilter(.blur(radius: 7))
                 context.drawLayer { layer in
                     layer.fill(Path(roundedRect: island, cornerRadius: island.height / 2), with: .color(.black))
-                    for item in items {
-                        let rect = CGRect(
-                            x: item.center.x - item.radius,
-                            y: item.center.y - item.radius,
-                            width: item.radius * 2,
-                            height: item.radius * 2
-                        )
-                        layer.fill(Path(ellipseIn: rect), with: .color(.black))
-                    }
+                    layer.fill(Path(roundedRect: rect, cornerRadius: size.height / 2), with: .color(.black))
                 }
             }
-            ForEach(items.indices, id: \.self) { index in
-                let item = items[index]
-                Image(systemName: item.glyph)
-                    .font(.system(size: 22, weight: .heavy, design: .rounded))
-                    .foregroundStyle(.white)
-                    .scaleEffect(0.82 + 0.18 * item.depth)
-                    .opacity(Double(amount) * (0.5 + 0.5 * item.depth))
-                    .position(item.center)
-                    .zIndex(item.depth)
+            // Барабан: окно размером с каплю, знаки уезжают вверх и гаснут у краёв.
+            ZStack {
+                // Уходящий знак гаснет — не просвечивает, когда капля сжимается.
+                glyph(current)
+                    .offset(y: -roll * size.height * 0.75)
+                    .opacity(Double(1 - roll))
+                if let next {
+                    glyph(next)
+                        .offset(y: (1 - roll) * size.height * 0.75)
+                        .opacity(Double(0.3 + 0.7 * roll))
+                }
             }
+            .frame(width: size.width, height: size.height)
+            .scaleEffect(scale)
+            .clipped()
+            .mask(
+                LinearGradient(
+                    stops: [
+                        .init(color: .clear, location: 0),
+                        .init(color: .black, location: 0.3),
+                        .init(color: .black, location: 0.7),
+                        .init(color: .clear, location: 1),
+                    ],
+                    startPoint: .top,
+                    endPoint: .bottom
+                )
+            )
+            .opacity(Double(min(1, amount * 1.6)))
+            .position(center)
+        }
+    }
+
+    @ViewBuilder
+    private func glyph(_ symbol: String) -> some View {
+        if symbol == "✓" {
+            Image(systemName: "checkmark")
+                .font(.system(size: 20, weight: .heavy, design: .rounded))
+                .foregroundStyle(.white)
+        } else {
+            Text(verbatim: symbol)
+                .font(.system(size: 24, weight: .heavy, design: .rounded))
+                .foregroundStyle(.white)
         }
     }
 

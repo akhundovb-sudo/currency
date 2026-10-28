@@ -33,7 +33,7 @@ struct ProBanner: View {
         .frame(maxWidth: .infinity)
         .background { ProBannerBackground() }
         .clipShape(shape)
-        .shadow(color: Color(hex: 0x2B33A8).opacity(0.3), radius: 12, y: 6)
+        .shadow(color: Color.proIndigo.opacity(0.35), radius: 12, y: 6)
     }
 
     /// «Перейдите на Pro»: слово Pro — стеклянное; порядок слов из перевода.
@@ -56,18 +56,30 @@ struct ProBanner: View {
 
 }
 
-/// Фон плашки, как в референсе: сверху светлее, книзу глубже — в синих тонах приложения,
-/// с лёгким фиолетовым у правого нижнего угла и мерцающими звёздочками.
+/// Фон плашки — цвета экрана подписки: глубокий синий слева, фиолетовый справа,
+/// мягкий блик в верхнем левом углу и мерцающие звёздочки.
 struct ProBannerBackground: View {
     var body: some View {
         ZStack {
+            // Те же цвета, что вверху экрана подписки: глубокий синий слева, фиолетовый справа.
+            // Фиолетового справа больше: он начинается раньше и к краю чуть насыщеннее.
             LinearGradient(
-                colors: [Color(hex: 0x4458E0), Color(hex: 0x2B33A8)],
-                startPoint: .top,
-                endPoint: .bottom
+                stops: [
+                    .init(color: Color.proIndigo, location: 0),
+                    .init(color: Color.proViolet, location: 0.6),
+                    .init(color: Color(hex: 0x5A2E9A), location: 1),
+                ],
+                startPoint: .leading,
+                endPoint: .trailing
             )
             RadialGradient(
-                colors: [Color(hex: 0x5A3BC4).opacity(0.55), .clear],
+                colors: [.white.opacity(0.1), .clear],
+                center: .topLeading,
+                startRadius: 0,
+                endRadius: 220
+            )
+            RadialGradient(
+                colors: [Color.black.opacity(0.2), .clear],
                 center: .bottomTrailing,
                 startRadius: 0,
                 endRadius: 220
@@ -151,7 +163,7 @@ struct ProStatusCard: View {
         .frame(maxWidth: .infinity)
         .background { ProBannerBackground() }
         .clipShape(shape)
-        .shadow(color: Color(hex: 0x2B33A8).opacity(0.3), radius: 12, y: 6)
+        .shadow(color: Color.proIndigo.opacity(0.35), radius: 12, y: 6)
         .accessibilityElement(children: .combine)
     }
 
@@ -261,6 +273,9 @@ private struct RunningRimHighlight: View {
 }
 
 extension Color {
+    /// Цвета Pro (плашка и экран подписки): глубокий синий и фиолетовый.
+    static let proIndigo = Color(hex: 0x2B3488)
+    static let proViolet = Color(hex: 0x4A2A80)
     /// Нижний цвет градиента плашки Pro — глубокий оттенок акцента.
     static let proBannerDeep = Color.dynamic(light: 0x2A1A8C, dark: 0x1E1266)
 }

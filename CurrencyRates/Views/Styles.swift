@@ -29,6 +29,13 @@ extension Color {
     /// Цвет вводимой суммы и курсора.
     static let amountHighlight = Color.accentColor
 
+    /// Текст и значки на лавандовой заливке акцентом — тёмно-сливовые.
+    /// Акцент: тёмная тема — лаванда 0xE9B3FB, светлая — та же лаванда глубже (0xA24FCF),
+    /// чтобы ссылки и суммы были контрастными на белом. (Прежний акцент: 0x5B3DEA / 0x826CF5.)
+    static let onAccent = Color(hex: 0x4A0530)
+    /// Заливка акцентных кнопок — светлее самого акцента.
+    static let accentButton = Color.dynamic(light: 0xDA9CF6, dark: 0xE9B3FB)
+
     /// Фон карточки валюты (Semantic/Background/Primary в макете).
     static let cardBackground = Color(UIColor { traits in
         traits.userInterfaceStyle == .dark
@@ -128,11 +135,13 @@ struct GlassButtonStyle: ViewModifier {
 struct GlassBubbleStyle: ButtonStyle {
     let tint: Color
     var prominent = false
+    /// Чуть насыщеннее свечение цвета — для выбранных кружков, чтобы их было видно.
+    var prominentTint = false
 
     func makeBody(configuration: Configuration) -> some View {
         configuration.label
             .foregroundStyle(Color.primary)
-            .background { GlassBubbleBackground(tint: tint, prominent: prominent, isPressed: configuration.isPressed) }
+            .background { GlassBubbleBackground(tint: tint, prominent: prominent, isPressed: configuration.isPressed, strongTint: prominentTint) }
             .modifier(ClearGlassOverlay())
             .contentShape(Capsule())
             .scaleEffect(configuration.isPressed ? 0.9 : 1)
@@ -148,6 +157,7 @@ struct GlassBubbleBackground: View {
     let tint: Color
     let prominent: Bool
     var isPressed = false
+    var strongTint = false
     @Environment(\.colorScheme) private var colorScheme
 
     var body: some View {
@@ -166,7 +176,9 @@ struct GlassBubbleBackground: View {
                     RadialGradient(
                         colors: prominent
                             ? [tint, tint.opacity(0.55)]
-                            : [tint.opacity(isNeutral ? 0.22 : 0.32), tint.opacity(0.04)],
+                            : strongTint
+                                ? [tint.opacity(0.42), tint.opacity(0.16)]
+                                : [tint.opacity(isNeutral ? 0.22 : 0.32), tint.opacity(0.04)],
                         center: .center,
                         startRadius: 0,
                         endRadius: radius
@@ -183,7 +195,7 @@ struct GlassBubbleBackground: View {
                 )
                 // Цветная обводка — как в светлой теме, но только у знаков.
                 if !isNeutral {
-                    Capsule().strokeBorder(tint.opacity(prominent ? 0.8 : 0.4), lineWidth: 1)
+                    Capsule().strokeBorder(tint.opacity(prominent ? 0.8 : (strongTint ? 0.65 : 0.4)), lineWidth: 1)
                 }
                 // Нажатие: клавиша вспыхивает своим цветом (стекло в тёмной теме выключено,
                 // поэтому подсветку рисуем сами).
@@ -204,7 +216,7 @@ struct GlassBubbleBackground: View {
                     RadialGradient(
                         colors: prominent
                             ? [tint, tint.opacity(0.55)]
-                            : [tint.opacity(0.22), tint.opacity(0.04)],
+                            : [tint.opacity(strongTint ? 0.34 : 0.22), tint.opacity(strongTint ? 0.1 : 0.04)],
                         center: .center,
                         startRadius: 0,
                         endRadius: radius
@@ -220,7 +232,7 @@ struct GlassBubbleBackground: View {
                     lineWidth: 2.5
                 )
                 // Тонкая цветная обводка снаружи ободка.
-                Capsule().strokeBorder(tint.opacity(prominent ? 0.8 : 0.45), lineWidth: 1)
+                Capsule().strokeBorder(tint.opacity(prominent ? 0.8 : (strongTint ? 0.6 : 0.45)), lineWidth: 1)
             }
         }
     }
@@ -571,10 +583,11 @@ struct EmptySpaceTapCatcher: UIViewRepresentable {
 struct AccentBubbleStyle: ButtonStyle {
     func makeBody(configuration: Configuration) -> some View {
         configuration.label
-            .foregroundStyle(.white)
+            .foregroundStyle(Color.onAccent)
             .background {
+                // Фон светлее акцента: лаванда с картинки, сливовый текст хорошо читается.
                 Capsule()
-                    .fill(Color.accentColor.gradient)
+                    .fill(Color.accentButton.gradient)
                     .overlay(Capsule().strokeBorder(.white.opacity(0.3), lineWidth: 1))
                     .shadow(color: Color.accentColor.opacity(0.3), radius: 8, y: 2)
             }
@@ -696,5 +709,37 @@ extension View {
         modifier(HiddenBarBackground())
             .modifier(SoftTopEdge())
             .modifier(TopFadeOnScroll())
+    }
+}
+
+/// Глянцевая выпуклая капсула в цвете акцентных кнопок: сверху светлее, книзу темнее,
+/// блик в верхней половине, светлая кромка сверху и мягкая тень. Для меток и отметок.
+struct GlossyAccentBackground: View {
+    var shadow = true
+
+    var body: some View {
+        GeometryReader { proxy in
+            ZStack {
+                Capsule().fill(Color.accentButton)
+                Capsule().fill(
+                    LinearGradient(
+                        colors: [.white.opacity(0.3), .clear, Color.accentColor.opacity(0.35)],
+                        startPoint: .top,
+                        endPoint: .bottom
+                    )
+                )
+                Capsule()
+                    .fill(LinearGradient(colors: [.white.opacity(0.6), .white.opacity(0.05)], startPoint: .top, endPoint: .bottom))
+                    .frame(height: proxy.size.height * 0.45)
+                    .padding(.horizontal, proxy.size.height * 0.25)
+                    .padding(.top, 1.5)
+                    .frame(maxHeight: .infinity, alignment: .top)
+                Capsule().strokeBorder(
+                    LinearGradient(colors: [.white.opacity(0.8), .white.opacity(0.05)], startPoint: .top, endPoint: .bottom),
+                    lineWidth: 1
+                )
+            }
+        }
+        .shadow(color: Color.accentColor.opacity(shadow ? 0.35 : 0), radius: 3, y: 1.5)
     }
 }

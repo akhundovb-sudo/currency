@@ -169,7 +169,7 @@ struct PaywallView: View {
                 Text(plan.hasTrial ? L(.startTrial) : L(.getFullAccess))
                     .contentTransition(.opacity)
                     .font(.headline)
-                    .foregroundStyle(.white)
+                    .foregroundStyle(Color.onAccent)
                     .frame(maxWidth: .infinity)
                     .frame(height: 56)
                     .background(Capsule().fill(Color.accentColor))
@@ -204,7 +204,7 @@ private struct PaywallBackground: View {
         ZStack {
             Color.paywallInk
             LinearGradient(
-                colors: [Color(hex: 0x2B3488), Color(hex: 0x4A2A80)],
+                colors: [Color.proIndigo, Color.proViolet],
                 startPoint: .leading,
                 endPoint: .trailing
             )
@@ -265,21 +265,35 @@ private struct BestValueBadge: View {
     var body: some View {
         Text(L(.bestValue))
             .font(.caption2.weight(.bold))
-            .foregroundStyle(.white)
+            .foregroundStyle(Color.onAccent)
             .padding(.horizontal, 10)
             .padding(.vertical, 5)
             .background {
-                ZStack {
-                    Capsule().fill(.ultraThinMaterial)
-                    Capsule().fill(Color.accentColor.opacity(0.55))
-                    Capsule().fill(
-                        LinearGradient(colors: [.white.opacity(0.35), .white.opacity(0)], startPoint: .top, endPoint: .center)
-                    )
-                    Capsule().strokeBorder(
-                        LinearGradient(colors: [.white.opacity(0.8), .white.opacity(0.2)], startPoint: .top, endPoint: .bottom),
-                        lineWidth: 1
-                    )
+                // Объём: сверху светлее, книзу темнее, глянцевый блик в верхней половине,
+                // светлая кромка сверху и тень под меткой.
+                GeometryReader { proxy in
+                    ZStack {
+                        Capsule().fill(Color.accentColor)
+                        Capsule().fill(
+                            LinearGradient(
+                                colors: [.white.opacity(0.25), .clear, .black.opacity(0.22)],
+                                startPoint: .top,
+                                endPoint: .bottom
+                            )
+                        )
+                        Capsule()
+                            .fill(LinearGradient(colors: [.white.opacity(0.55), .white.opacity(0.05)], startPoint: .top, endPoint: .bottom))
+                            .frame(height: proxy.size.height * 0.45)
+                            .padding(.horizontal, proxy.size.height * 0.3)
+                            .padding(.top, 2)
+                            .frame(maxHeight: .infinity, alignment: .top)
+                        Capsule().strokeBorder(
+                            LinearGradient(colors: [.white.opacity(0.7), .white.opacity(0.05)], startPoint: .top, endPoint: .bottom),
+                            lineWidth: 1
+                        )
+                    }
                 }
+                .shadow(color: .black.opacity(0.35), radius: 4, y: 2)
             }
     }
 }

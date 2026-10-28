@@ -250,7 +250,7 @@ private struct SelectionBubble: View {
 
     var body: some View {
         Image(systemName: "checkmark")
-            .font(.system(size: 13, weight: .bold))
+            .font(.system(size: 13, weight: .heavy))
             .foregroundStyle(Color.amountHighlight)
             .opacity(isSelected ? 1 : 0)
             .scaleEffect(isSelected ? 1 : 0.4)
@@ -258,7 +258,7 @@ private struct SelectionBubble: View {
             .background {
                 // Тот же стеклянный пузырь, что у клавиш; выбранный — с синим оттенком.
                 Button(action: {}) { Color.clear.frame(width: 30, height: 30) }
-                    .buttonStyle(GlassBubbleStyle(tint: isSelected ? .amountHighlight : .glassNeutral))
+                    .buttonStyle(GlassBubbleStyle(tint: isSelected ? .amountHighlight : .glassNeutral, prominentTint: isSelected))
                     .allowsHitTesting(false)
             }
             .animation(.spring(response: 0.3, dampingFraction: 0.6), value: isSelected)
@@ -281,13 +281,13 @@ private struct ProBadge: View {
             // и тонкая цветная обводка. В тёмной теме — как клавиши: светлая кромка сверху.
             .background {
                 if colorScheme == .dark {
-                    GlassBubbleBackground(tint: .accentColor, prominent: false)
+                    GlassBubbleBackground(tint: .accentColor, prominent: false, strongTint: true)
                 } else {
                     ZStack {
                         Capsule().fill(Color.glassBase)
                         Capsule().fill(
                             RadialGradient(
-                                colors: [Color.accentColor.opacity(0.14), Color.accentColor.opacity(0.03)],
+                                colors: [Color.accentColor.opacity(0.24), Color.accentColor.opacity(0.06)],
                                 center: .center,
                                 startRadius: 0,
                                 endRadius: 30
@@ -301,7 +301,7 @@ private struct ProBadge: View {
                             ),
                             lineWidth: 1.5
                         )
-                        Capsule().strokeBorder(Color.accentColor.opacity(0.35), lineWidth: 0.75)
+                        Capsule().strokeBorder(Color.accentColor.opacity(0.55), lineWidth: 1)
                     }
                 }
             }
