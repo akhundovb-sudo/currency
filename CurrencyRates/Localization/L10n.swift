@@ -115,7 +115,7 @@ enum L10n {
         case appearance, theme, language, source, updated, fiatCurrencies, fiatFooter
         case cryptoCurrencies, cryptoFooter, refreshRates, offlineFooter, version, noData, demoShort
         case themeSystem, themeLight, themeDark
-        case minTwoCurrencies, proOnly, proDiscover, seeDetails, proTest, proSuspended, freeSetChanged
+        case minTwoCurrencies, proOnly, proDiscover, seeDetails, proSuspended, freeSetChanged
         case numbers, numberFormat, decimalPlaces, auto, formatFooter
         case example, rates, about, dataFooter
         case proBecome, proSubscription, upgrade
@@ -245,7 +245,6 @@ enum L10n {
         .formatInternational: ["Международный", "International", "Uluslararası", "International", "Internacional", "International", "国际", "دولي", "国際", "Internacional", "국제", "國際", "Internazionale", "Międzynarodowy"],
         .formatEuropean: ["Европейский", "European", "Avrupa", "Européen", "Europeo", "Europäisch", "欧洲", "أوروبي", "ヨーロッパ", "Europeu", "유럽", "歐洲", "Europeo", "Europejski"],
         .formatSpaced: ["С пробелами", "With Spaces", "Boşluklu", "Avec espaces", "Con espacios", "Mit Leerzeichen", "带空格", "بمسافات", "スペース区切り", "Com espaços", "공백 포함", "帶空格", "Con spazi", "Ze spacjami"],
-        .proTest: ["Pro (для теста)", "Pro (testing)", "Pro (test için)", "Pro (test)", "Pro (prueba)", "Pro (Test)", "Pro（测试）", "Pro (للاختبار)", "Pro（テスト）", "Pro (teste)", "Pro(테스트)", "Pro（測試）", "Pro (test)", "Pro (test)"],
         .errNoInternet: ["нет подключения к интернету.", "no internet connection.", "internet bağlantısı yok.", "pas de connexion Internet.", "no hay conexión a Internet.", "keine Internetverbindung.", "没有网络连接。", "لا يوجد اتصال بالإنترنت.", "インターネットに接続されていません。", "sem conexão com a internet.", "인터넷에 연결되어 있지 않습니다.", "沒有網路連線。", "nessuna connessione a Internet.", "brak połączenia z internetem."],
         .errTimeout: ["сервер не ответил вовремя.", "the server didn’t respond in time.", "sunucu zamanında yanıt vermedi.", "le serveur n’a pas répondu à temps.", "el servidor no respondió a tiempo.", "der Server hat nicht rechtzeitig geantwortet.", "服务器未及时响应。", "لم يستجب الخادم في الوقت المحدد.", "サーバーの応答がありませんでした。", "o servidor não respondeu a tempo.", "서버가 제시간에 응답하지 않았습니다.", "伺服器未及時回應。", "il server non ha risposto in tempo.", "serwer nie odpowiedział na czas."],
         .errServer: ["не удалось связаться с сервером.", "couldn’t reach the server.", "sunucuya ulaşılamadı.", "impossible de joindre le serveur.", "no se pudo conectar con el servidor.", "Server nicht erreichbar.", "无法连接服务器。", "تعذّر الوصول إلى الخادم.", "サーバーに接続できませんでした。", "não foi possível conectar ao servidor.", "서버에 연결할 수 없습니다.", "無法連線至伺服器。", "impossibile raggiungere il server.", "nie udało się połączyć z serwerem."],
