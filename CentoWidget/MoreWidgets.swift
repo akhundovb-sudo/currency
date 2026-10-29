@@ -659,29 +659,16 @@ struct TravelEntry: TimelineEntry {
 
 /// Когда показать полёт: прилёт в новую страну или смена суммы кнопкой.
 enum TravelArrival {
-    private static func key(home: String) -> String { "travel.lastLocal.\(home)" }
-    private static let flightKey = "travel.flightAt"
+    private static let key = "travel.lastPair"
 
-    /// Сумму сменили кнопкой — следующее обновление покажет полёт.
-    static func requestFlight() {
-        WidgetSnapshot.defaults?.set(Date.now.timeIntervalSince1970, forKey: flightKey)
-    }
-
-    /// Просили ли полёт только что; запрос срабатывает один раз.
-    static func takeFlightRequest(now: Date = .now) -> Bool {
-        guard let defaults = WidgetSnapshot.defaults, let at = defaults.object(forKey: flightKey) as? Double else { return false }
-        defaults.removeObject(forKey: flightKey)
-        return now.timeIntervalSince1970 - at < 15
-    }
-
-    /// Сменилась ли местная валюта с прошлого показа; запоминает текущую.
+    /// Сменилась ли пара «местная → домашняя» с прошлого показа (новая страна или другая
+    /// домашняя валюта в настройках); запоминает текущую.
     static func isNew(_ entry: TravelEntry) -> Bool {
         guard case .abroad(let local, _?) = entry.state, !entry.isLocked else { return false }
+        let pair = "\(local)-\(entry.home)"
         let defaults = WidgetSnapshot.defaults
-        let key = key(home: entry.home)
-        let last = defaults?.string(forKey: key)
-        guard last != local else { return false }
-        defaults?.set(local, forKey: key)
+        guard defaults?.string(forKey: key) != pair else { return false }
+        defaults?.set(pair, forKey: key)
         return true
     }
 }
@@ -701,16 +688,14 @@ struct TravelProvider: AppIntentTimelineProvider {
     func timeline(for configuration: TravelIntent, in context: Context) async -> Timeline<TravelEntry> {
         let rates = await WidgetRates.current()
         let entry = TravelEntry.make(configuration, snapshot: WidgetSnapshot.load(), rates: rates)
-        // Новая страна или новая сумма: сначала кадр с облаками и самолётом, через пару секунд — курс.
+        // Новая страна или другая домашняя валюта: сначала кадр с облаками и самолётом, через пару секунд — курс.
         // В виджете анимируется только смена кадров: появляются облака, самолёт влетает слева,
         // затем улетает вправо, и курс проявляется.
-        let isNewCountry = TravelArrival.isNew(entry)
-        let isAmountChanged = TravelArrival.takeFlightRequest()
-        if isNewCountry || isAmountChanged, case .abroad(_, _?) = entry.state, !entry.isLocked {
+        if TravelArrival.isNew(entry) {
             var flight = entry
             flight.isArriving = true
             var landed = entry
-            landed.date = entry.date.addingTimeInterval(isNewCountry ? 2.5 : 1.6)
+            landed.date = entry.date.addingTimeInterval(2.5)
             return Timeline(entries: [flight, landed], policy: .after(WidgetRates.nextUpdate))
         }
         return Timeline(entries: [entry], policy: .after(WidgetRates.nextUpdate))
@@ -739,15 +724,16 @@ struct TravelWidgetView: View {
         ZStack {
             if entry.isArriving {
                 SkyClouds()
-                    .transition(.opacity.combined(with: .scale(scale: 1.15)))
+                    .transition(.opacity)
                 FlyingPlane(country: entry.countryName)
-                    .transition(.asymmetric(insertion: .move(edge: .leading), removal: .move(edge: .trailing)))
+                    .transition(.asymmetric(insertion: .move(edge: .leading).combined(with: .opacity), removal: .move(edge: .trailing).combined(with: .opacity)))
             } else {
                 content
-                    .transition(.asymmetric(insertion: .scale(scale: 0.92).combined(with: .opacity), removal: .opacity))
+                    .transition(.opacity)
             }
         }
-        .animation(.smooth(duration: 1.0), value: entry.isArriving)
+        // Плавно и без пружины: виджет ограничивает анимацию двумя секундами.
+        .animation(.easeInOut(duration: 1.6), value: entry.isArriving)
         .environment(\.layoutDirection, entry.isRightToLeft ? .rightToLeft : .leftToRight)
         .modifier(TintedWidget(tint: entry.tint))
     }
@@ -823,11 +809,10 @@ struct TravelWidgetView: View {
     }
 
     /// Ходовые суммы в местной валюте — сколько это дома. Как у «Курса»: нажатие на строку
-    /// показывает эту сумму слева, а самолётик перелетает к выбранной строке.
+    /// показывает эту сумму слева.
     private func amounts(local: String, rate: Double) -> some View {
         let options = TravelEntry.choices(rate: rate)
         let selected = entry.amount(rate: rate)
-        let index = options.firstIndex(of: selected) ?? 0
         return VStack(alignment: .leading, spacing: 0) {
             ForEach(options, id: \.self) { amount in
                 if amount != options[0] { Divider().opacity(0.5) }
@@ -843,25 +828,12 @@ struct TravelWidgetView: View {
                     // Один размер шрифта у всех строк — без поштучного сжатия.
                     .font(.caption.monospacedDigit())
                     .lineLimit(1)
-                    .padding(.leading, 16)
                     .frame(maxHeight: .infinity)
                     .contentShape(Rectangle())
                 }
                 .buttonStyle(.plain)
             }
         }
-        // Самолётик у выбранной строки: при смене суммы он перелетает к новой строке.
-        .overlay(alignment: .topLeading) {
-            GeometryReader { proxy in
-                let row = proxy.size.height / CGFloat(options.count)
-                Image(systemName: "airplane")
-                    .font(.system(size: 12, weight: .bold))
-                    .foregroundStyle(WidgetColor.accent)
-                    .position(x: 6, y: row * (CGFloat(index) + 0.5))
-            }
-            .allowsHitTesting(false)
-        }
-        .animation(.spring(response: 0.6, dampingFraction: 0.8), value: index)
         .frame(maxWidth: .infinity)
     }
 
