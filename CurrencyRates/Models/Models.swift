@@ -1,5 +1,12 @@
 import Foundation
 
+/// Кэш названий валют по языкам: `Locale` каждый раз заново ищет их в данных ICU.
+private enum NameCache {
+    nonisolated(unsafe) static var names: [AppLanguage: [String: String]] = [:]
+    nonisolated(unsafe) static var english: [String: String] = [:]
+    static let englishLocale = Locale(identifier: "en_US")
+}
+
 enum CurrencyKind: String, CaseIterable, Identifiable, Sendable {
     case fiat, crypto
 
@@ -24,16 +31,27 @@ struct Currency: Identifiable, Hashable, Sendable {
     /// Локаль выбранного языка: названия валют, числа и даты.
     static var locale: Locale { L10n.current.locale }
 
-    /// Русское название валюты, с заглавной буквы.
+    /// Название валюты на языке приложения, с заглавной буквы.
+    /// Названия кэшируются: при смене языка весь список строится заново.
     static func name(for code: String) -> String {
-        if let crypto = CryptoAsset.byCode[code] {
-            if L10n.current == .ru, let ru = ["BTC": "Биткоин", "ETH": "Эфириум"][code] { return ru }
-            return crypto.name
+        let language = L10n.current
+        if let cached = NameCache.names[language]?[code] { return cached }
+        let name: String
+        if L10n.current == .ru, let ru = ["BTC": "Биткоин", "ETH": "Эфириум"][code] {
+            name = ru
+        } else {
+            name = CurrencyCatalog.name(for: code, locale: locale)
         }
-        guard let name = locale.localizedString(forCurrencyCode: code), !name.isEmpty else {
-            return code
-        }
-        return name.prefix(1).uppercased(with: locale) + name.dropFirst()
+        NameCache.names[language, default: [:]][code] = name
+        return name
+    }
+
+    /// Английское название — поиск по нему работает на любом языке приложения.
+    static func englishName(for code: String) -> String {
+        if let cached = NameCache.english[code] { return cached }
+        let name = CurrencyCatalog.name(for: code, locale: NameCache.englishLocale)
+        NameCache.english[code] = name
+        return name
     }
 
     /// Код страны (или «EU») для флага валюты, если его можно определить по коду ISO 4217.
@@ -42,7 +60,9 @@ struct Currency: Identifiable, Hashable, Sendable {
     func matches(_ query: String) -> Bool {
         let query = query.trimmingCharacters(in: .whitespacesAndNewlines)
         guard !query.isEmpty else { return true }
-        return code.localizedStandardContains(query) || name.localizedStandardContains(query)
+        return code.localizedStandardContains(query)
+            || name.localizedStandardContains(query)
+            || Currency.englishName(for: code).localizedStandardContains(query)
     }
 }
 

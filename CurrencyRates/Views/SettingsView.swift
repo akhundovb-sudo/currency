@@ -8,6 +8,20 @@ struct SettingsView: View {
     @Environment(\.requestReview) private var requestReview
     @Environment(\.openURL) private var openURL
 
+    /// Выбор языка применяется, когда меню уже закрылось: смена языка пересобирает весь
+    /// интерфейс, и вместе с анимацией закрытия меню это подвисало.
+    private var languageSelection: Binding<AppLanguage> {
+        Binding(
+            get: { store.language },
+            set: { language in
+                Task { @MainActor in
+                    try? await Task.sleep(for: .milliseconds(200))
+                    store.language = language
+                }
+            }
+        )
+    }
+
     var body: some View {
         @Bindable var store = store
 
@@ -27,7 +41,7 @@ struct SettingsView: View {
                 }
 
                 Section(L(.appearance)) {
-                    Picker(L(.language), selection: $store.language) {
+                    Picker(L(.language), selection: languageSelection) {
                         // По алфавиту (по английскому названию языка).
                         ForEach(AppLanguage.sortedByName) { language in
                             Text(verbatim: language.nativeName).tag(language)
