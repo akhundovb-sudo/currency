@@ -127,7 +127,7 @@ struct CurrencyRow: View {
                 .animation(showsCursor ? nil : .snappy(duration: 0.35), value: value)
                 .transaction { if showsCursor { $0.animation = nil } }
             if showsCursor && isSource {
-                BlinkingCursor(isLarge: isEditing)
+                BlinkingCursor()
             }
         }
         // Тряска «не помещается»: короткие затухающие колебания влево-вправо.
@@ -171,13 +171,8 @@ struct CurrencyRow: View {
 
 /// Мигающий курсор ввода, как у текстового поля.
 private struct BlinkingCursor: View {
-    /// Под крупную сумму строки ввода.
-    var isLarge = false
     @State private var isVisible = true
-    @ScaledMetric(relativeTo: .title2) private var regularHeight = 24
-    @ScaledMetric(relativeTo: .title) private var largeHeight = 28
-
-    private var height: CGFloat { isLarge ? largeHeight : regularHeight }
+    @ScaledMetric(relativeTo: .title2) private var height = 24
 
     var body: some View {
         Capsule()
