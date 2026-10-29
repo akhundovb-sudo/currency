@@ -121,8 +121,8 @@ struct PairWidgetView: View {
                         Text(verbatim: "\(AmountFormat.amount(amount, locale: entry.numberLocale, decimalPlaces: 0)) \(entry.source)")
                             .foregroundStyle(.secondary)
                         Spacer(minLength: 4)
-                        // Крупные суммы — без копеек: иначе обрезались «4,558.87…».
-                        Text(verbatim: "\(entry.formatAmount(amount * rate, whole: amount * rate >= 1000)) \(entry.target)")
+                        // Суммы от 100 — без копеек: иначе обрезались «121.55 S…».
+                        Text(verbatim: "\(entry.formatAmount(amount * rate, whole: amount * rate >= 100)) \(entry.target)")
                             .fontWeight(.semibold)
                             .foregroundStyle(amount == entry.amount ? WidgetColor.accent : Color.primary)
                     }
