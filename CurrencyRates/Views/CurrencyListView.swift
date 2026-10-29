@@ -91,8 +91,7 @@ struct CurrencyListView: View {
                             isReordering: editMode.isEditing
                         )
                         .card(selected: code == store.sourceCode && isKeypadVisible)
-                        // Фокус: выбранная карточка приподнимается — чуть крупнее, с мягкой тенью.
-                        .scaleEffect(isKeypadVisible && code == store.sourceCode ? 1.025 : 1)
+                        // Фокус: выбранная карточка выделяется тенью и жирной суммой, но не увеличивается.
                         .animation(.spring(response: 0.35, dampingFraction: 0.8), value: isKeypadVisible)
                         .animation(.spring(response: 0.35, dampingFraction: 0.8), value: store.sourceCode)
                         // Курсы обновились: карточки по очереди сверху вниз коротко увеличиваются
