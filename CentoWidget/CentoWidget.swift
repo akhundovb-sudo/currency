@@ -429,7 +429,7 @@ private struct TintedWidget: ViewModifier {
     }
 }
 
-/// Свет из правого верхнего угла: широкое свечение, два размытых луча по диагонали
+/// Свет из правого верхнего угла: свечение, три размытых луча по диагонали
 /// и слабый отсвет снизу слева — как северное сияние на тёмном стекле.
 private struct CornerLight: View {
     let color: Color
@@ -437,53 +437,65 @@ private struct CornerLight: View {
 
     var body: some View {
         // В светлой теме те же слои, но мягче — пастель на белом, текст остаётся тёмным.
-        let strength = isDark ? 1.0 : 0.5
+        let strength = isDark ? 1.0 : 0.55
         GeometryReader { geo in
             let w = geo.size.width
             let h = geo.size.height
+            let m = max(w, h)
             ZStack {
                 isDark ? Color(red: 0.04, green: 0.05, blue: 0.07) : Color.white
 
-                // Главное свечение в углу.
+                // Свечение в углу.
                 RadialGradient(
-                    colors: [color.opacity(0.9 * strength), color.opacity(0.35 * strength), .clear],
+                    stops: [
+                        .init(color: color.opacity(0.5 * strength), location: 0),
+                        .init(color: color.opacity(0.16 * strength), location: 0.4),
+                        .init(color: color.opacity(0), location: 1),
+                    ],
                     center: .topTrailing,
                     startRadius: 0,
-                    endRadius: max(w, h) * 0.95
+                    endRadius: m * 0.7
                 )
 
-                // Лучи: вытянутые капсулы, яркие у угла и гаснущие к середине.
-                beam(width: w * 0.24, height: h * 1.5, angle: 38, opacity: 0.75 * strength)
-                    .position(x: w * 0.78, y: h * 0.22)
-                    .blur(radius: 22)
-                beam(width: w * 0.12, height: h * 1.2, angle: 26, opacity: 0.55 * strength)
-                    .position(x: w * 0.56, y: h * 0.08)
-                    .blur(radius: 16)
+                // Лучи: яркий конец у края в правом верхнем углу, дальше гаснут к середине.
+                beam(from: CGPoint(x: w * 0.98, y: -h * 0.05), width: m * 0.14, length: m * 0.95, angle: 42, opacity: 0.9 * strength, blur: 9)
+                beam(from: CGPoint(x: w * 0.72, y: -h * 0.05), width: m * 0.07, length: m * 0.8, angle: 30, opacity: 0.75 * strength, blur: 6)
+                beam(from: CGPoint(x: w * 1.02, y: h * 0.25), width: m * 0.06, length: m * 0.7, angle: 58, opacity: 0.65 * strength, blur: 6)
 
                 // Отсвет внизу слева — чтобы низ не был пустым.
                 RadialGradient(
-                    colors: [color.opacity(0.28 * strength), .clear],
+                    colors: [color.opacity(0.2 * strength), color.opacity(0)],
                     center: .bottomLeading,
                     startRadius: 0,
-                    endRadius: max(w, h) * 0.7
-                )
-
-                // Блик сверху, как у стеклянных карточек приложения.
-                LinearGradient(
-                    colors: [.white.opacity(isDark ? 0.08 : 0.4), .clear],
-                    startPoint: .top,
-                    endPoint: .center
+                    endRadius: m * 0.55
                 )
             }
         }
     }
 
-    private func beam(width: CGFloat, height: CGFloat, angle: Double, opacity: Double) -> some View {
-        Capsule()
-            .fill(LinearGradient(colors: [color.opacity(opacity), color.opacity(0)], startPoint: .top, endPoint: .bottom))
-            .frame(width: width, height: height)
-            // По часовой: верх капсулы уходит вправо — луч идёт из правого верхнего угла вниз влево.
-            .rotationEffect(.degrees(angle))
+    /// Луч: капсула, повёрнутая по часовой на `angle` и поставленная так, что её яркий конец — в `start`.
+    private func beam(from start: CGPoint, width: CGFloat, length: CGFloat, angle: Double, opacity: Double, blur: CGFloat) -> some View {
+        let radians = angle * .pi / 180
+        let center = CGPoint(
+            x: start.x - sin(radians) * length / 2,
+            y: start.y + cos(radians) * length / 2
+        )
+        return Capsule()
+            .fill(
+                LinearGradient(
+                    stops: [
+                        .init(color: color.opacity(opacity), location: 0),
+                        .init(color: color.opacity(opacity * 0.35), location: 0.45),
+                        .init(color: color.opacity(0), location: 1),
+                    ],
+                    startPoint: .top,
+                    endPoint: .bottom
+                )
+            )
+            .frame(width: width, height: length)
+            .rotationEffect(.radians(radians))
+            .position(center)
+            .blur(radius: blur)
     }
 }
 
