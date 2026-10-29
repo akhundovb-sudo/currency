@@ -39,6 +39,8 @@ struct CurrencyRatesApp: App {
                 // Pro закончился — иконка из Pro возвращается к основной.
                 .onChange(of: store.isPro, initial: true) { _, isPro in resetProIconIfNeeded(isPro: isPro) }
                 .task { await store.refresh() }
+                // Покупки: цены, текущий доступ Pro и слежение за подпиской.
+                .task { Purchases.shared.start(store) }
                 // Первая валюта — местная, по геолокации; без неё — доллар и евро.
                 .task { requestCountry() }
                 .onChange(of: scenePhase) { _, phase in
