@@ -169,6 +169,57 @@ struct ListIntent: WidgetConfigurationIntent {
     @Parameter(title: "Color", default: .standard)
     var tint: WidgetTint
 
+    /// В настройках столько полей валют, сколько помещается в выбранный размер:
+    /// маленький и средний — 4, большой — 6, на экране блокировки — 2 или 3.
+    static var parameterSummary: some ParameterSummary {
+        When(widgetFamily: .equalTo, .systemLarge) {
+            Summary {
+                \.$source
+                \.$second
+                \.$third
+                \.$fourth
+                \.$fifth
+                \.$sixth
+                \.$amount
+                \.$tint
+            }
+        } otherwise: {
+            When(widgetFamily: .equalTo, .accessoryRectangular) {
+                Summary {
+                    \.$source
+                    \.$second
+                    \.$third
+                    \.$amount
+                }
+            } otherwise: {
+                When(widgetFamily: .equalTo, .accessoryInline) {
+                    Summary {
+                        \.$source
+                        \.$second
+                        \.$amount
+                    }
+                } otherwise: {
+                    When(widgetFamily: .equalTo, .accessoryCircular) {
+                        Summary {
+                            \.$source
+                            \.$second
+                            \.$amount
+                        }
+                    } otherwise: {
+                        Summary {
+                            \.$source
+                            \.$second
+                            \.$third
+                            \.$fourth
+                            \.$amount
+                            \.$tint
+                        }
+                    }
+                }
+            }
+        }
+    }
+
     /// Выбранные валюты кроме основной — в порядке полей, без повторов.
     var others: [String] {
         var seen = Set<String>()
