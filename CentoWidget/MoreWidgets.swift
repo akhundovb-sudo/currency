@@ -723,17 +723,29 @@ struct TravelWidgetView: View {
         // Облака и самолёт — во весь виджет, поэтому `.move` проводит самолёт через весь виджет.
         ZStack {
             if entry.isArriving {
+                // Облака и название страны стоят на месте и только проявляются — летит один самолёт.
                 SkyClouds()
-                    .transition(.opacity)
-                FlyingPlane(country: entry.countryName)
-                    .transition(.asymmetric(insertion: .move(edge: .leading).combined(with: .opacity), removal: .move(edge: .trailing).combined(with: .opacity)))
+                    .transition(.opacity.animation(.easeInOut(duration: 0.8)))
+                CountryCaption(country: entry.countryName)
+                    .transition(.opacity.animation(.easeInOut(duration: 0.8)))
+                FlyingPlane()
+                    .transition(.asymmetric(
+                        // Прилёт по дуге снизу слева, с замедлением и лёгким перелётом точки —
+                        // пружина «дотягивает» и успокаивается (follow-through).
+                        insertion: .offset(x: -320, y: 46)
+                            .combined(with: .scale(scale: 0.6))
+                            .animation(.spring(response: 1.1, dampingFraction: 0.72)),
+                        // Улёт вверх вправо с разгоном (ease-in) и уменьшением — уходит вдаль.
+                        removal: .offset(x: 340, y: -56)
+                            .combined(with: .scale(scale: 0.7))
+                            .combined(with: .opacity)
+                            .animation(.timingCurve(0.5, 0, 0.9, 0.6, duration: 1.2))
+                    ))
             } else {
                 content
-                    .transition(.opacity)
+                    .transition(.opacity.animation(.easeInOut(duration: 0.8).delay(0.4)))
             }
         }
-        // Плавно и без пружины: виджет ограничивает анимацию двумя секундами.
-        .animation(.easeInOut(duration: 1.6), value: entry.isArriving)
         .environment(\.layoutDirection, entry.isRightToLeft ? .rightToLeft : .leftToRight)
         .modifier(TintedWidget(tint: entry.tint))
     }
@@ -894,23 +906,31 @@ private struct SkyClouds: View {
     }
 }
 
-/// Самолёт с названием страны по центру; рамка на весь виджет — чтобы перелёт шёл от края до края.
+/// Самолёт; рамка на весь виджет — чтобы перелёт шёл от края до края.
 private struct FlyingPlane: View {
+    var body: some View {
+        Image(systemName: "airplane")
+            .font(.system(size: 32, weight: .semibold))
+            .foregroundStyle(.secondary)
+            // Нос чуть вверх — самолёт набирает высоту.
+            .rotationEffect(.degrees(-12))
+            .offset(y: -10)
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
+    }
+}
+
+/// Название страны под самолётом — неподвижное.
+private struct CountryCaption: View {
     let country: String?
 
     var body: some View {
-        VStack(spacing: 6) {
-            Image(systemName: "airplane")
-                .font(.system(size: 32, weight: .semibold))
-                .foregroundStyle(.secondary)
-                .rotationEffect(.degrees(-12))
-            if let country {
-                Text(verbatim: country)
-                    .font(.caption.weight(.bold))
-                    .lineLimit(1)
-                    .minimumScaleFactor(0.7)
-            }
+        if let country {
+            Text(verbatim: country)
+                .font(.caption.weight(.bold))
+                .lineLimit(1)
+                .minimumScaleFactor(0.7)
+                .offset(y: 24)
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
         }
-        .frame(maxWidth: .infinity, maxHeight: .infinity)
     }
 }
