@@ -94,6 +94,9 @@ struct RateSet: Codable, Equatable, Sendable {
 
 /// Сведения о валюте по коду — без настроек приложения, чтобы ими пользовались и виджеты.
 enum CurrencyCatalog {
+    /// Коды стран ISO — один раз: список строится заново при каждом обращении к `Locale.Region`.
+    private static let isoRegions = Set(Locale.Region.isoRegions.map(\.identifier))
+
     static func isCrypto(_ code: String) -> Bool {
         CryptoAsset.byCode[code] != nil
     }
@@ -106,7 +109,7 @@ enum CurrencyCatalog {
         if let region = overrides[code] { return region }
         guard !code.hasPrefix("X") else { return nil } // наднациональные: XAF, XOF, XDR…
         let region = String(code.prefix(2))
-        return Locale.Region.isoRegions.contains(Locale.Region(region)) ? region : nil
+        return isoRegions.contains(region) ? region : nil
     }
 
     /// Картинка значка в каталоге `Currency.xcassets`: флаг или значок криптовалюты.

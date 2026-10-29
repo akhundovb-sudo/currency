@@ -10,9 +10,12 @@ struct RatesService: Sendable {
     static let cryptoSourceURL = URL(string: "https://www.coingecko.com")!
 
     private let session: URLSession
+    /// Сколько ждать ответа. Виджету — меньше: iOS не ждёт его долго и показывает «Unable to Load».
+    private let timeout: TimeInterval
 
-    init(session: URLSession = .shared) {
+    init(session: URLSession = .shared, timeout: TimeInterval = 20) {
         self.session = session
+        self.timeout = timeout
     }
 
     // MARK: - Фиат
@@ -81,7 +84,7 @@ struct RatesService: Sendable {
     // MARK: - Общее
 
     private func get<T: Decodable>(_ type: T.Type, from url: URL) async throws -> T {
-        let request = URLRequest(url: url, cachePolicy: .reloadIgnoringLocalCacheData, timeoutInterval: 20)
+        let request = URLRequest(url: url, cachePolicy: .reloadIgnoringLocalCacheData, timeoutInterval: timeout)
         let (data, response) = try await session.data(for: request)
 
         guard let http = response as? HTTPURLResponse else { throw RatesServiceError.badResponse }

@@ -10,14 +10,23 @@ enum WidgetRates {
         let needsCrypto = now.timeIntervalSince(rates.cryptoFetchedAt) > 15 * 60
         guard needsFiat || needsCrypto else { return rates }
 
-        let service = RatesService()
-        let fiat: RateSet? = needsFiat ? (try? await service.fetchFiat()) : nil
-        let crypto: RateSet? = needsCrypto ? (try? await service.fetchCrypto()) : nil
+        // Оба запроса сразу и с коротким ожиданием: без сети виджет показывает сохранённые курсы,
+        // а не зависает до «Unable to Load».
+        let service = RatesService(timeout: 6)
+        async let fiatResult = load(needsFiat) { try await service.fetchFiat() }
+        async let cryptoResult = load(needsCrypto) { try await service.fetchCrypto() }
+        let (fiat, crypto) = await (fiatResult, cryptoResult)
         guard fiat != nil || crypto != nil else { return rates }
 
         rates.record(fiat: fiat?.rates, fiatAt: fiat?.fetchedAt, crypto: crypto?.rates, cryptoAt: crypto?.fetchedAt, now: now)
         rates.save()
         return rates
+    }
+
+    /// Набор курсов, если он нужен и загрузился; ошибка сети — nil.
+    private static func load(_ isNeeded: Bool, _ fetch: @Sendable () async throws -> RateSet) async -> RateSet? {
+        guard isNeeded else { return nil }
+        return try? await fetch()
     }
 
     static var hasData: Bool {
