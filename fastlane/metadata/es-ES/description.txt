@@ -1,14 +1,17 @@
-Cento convierte cualquier importe a todas tus divisas a la vez.
+Tus divisas y criptomonedas, juntas en una sola pantalla.
 
-Escribe un número, añade las divisas que quieras y mira todas las conversiones al instante. Compara el dólar, el euro, el yuan, el rublo, bitcoin, Ethereum y más en una sola lista.
+Introduce un importe en Cento y consulta su valor en varias divisas a la vez. Crea tu propia lista y compara los resultados sin cambiar de pantalla.
 
-• Divisas y más de 60 criptomonedas lado a lado
-• Teclado calculadora integrado: escribe 100 + 25 × 2 y mira el resultado en cada divisa
-• Tu divisa local se añade sola en el primer inicio
-• Reordena arrastrando y elimina deslizando
-• Tipos actualizados; los últimos valores se guardan sin conexión
-• Temas claro y oscuro, formatos de número a elegir
-• Funciona en iPhone y iPad
-• Disponible en español, inglés, ruso, turco, francés, alemán, chino y árabe
+• Convierte varias divisas
+Añade las divisas que necesitas. Los importes se recalculan mientras escribes.
 
-Cento Pro desbloquea divisas ilimitadas, todas las criptomonedas e iconos exclusivos de la app.
+• Divisas y criptomonedas juntas
+Consulta monedas tradicionales junto con Bitcoin, Ethereum y otras criptomonedas en la misma lista.
+
+• Calculadora integrada
+Suma, resta, multiplica y divide directamente en el conversor.
+
+• A tu estilo
+Elige tu icono favorito y utiliza el tema claro u oscuro.
+
+Ya sea para comparar precios antes de un viaje, consultar un importe en otra moneda o convertir criptomonedas, Cento reúne tus conversiones en un solo lugar.

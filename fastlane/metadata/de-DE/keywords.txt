@@ -1,1 +1,1 @@
-währung,rechner,wechselkurs,bitcoin,krypto,umrechnen,geld,reise,dollar,euro,devisen
+wechselkurs,devisen,umrechnen,bitcoin,ethereum,dollar,euro,forex,btc,eth,usd,eur,cny,usdt

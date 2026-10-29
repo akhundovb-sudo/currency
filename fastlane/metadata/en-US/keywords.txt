@@ -1,1 +1,1 @@
-currency,converter,exchange rate,forex,bitcoin,crypto,calculator,money,travel,usd,eur
+exchange,forex,fiat,bitcoin,ethereum,btc,eth,usd,eur,rub,cny,try,brl,inr,usdt,solana,money,prices

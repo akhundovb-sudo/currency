@@ -1,14 +1,17 @@
-Cento rechnet jeden Betrag gleichzeitig in alle deine Währungen um.
+Deine Währungen und Kryptowährungen auf einem Bildschirm.
 
-Zahl eingeben, Währungen hinzufügen und alle Umrechnungen sofort sehen. Vergleiche Dollar, Euro, Yuan, Rubel, Bitcoin, Ethereum und mehr in einer einzigen Liste.
+Gib einen Betrag in Cento ein und sieh seinen Wert in mehreren Währungen gleichzeitig. Stelle deine eigene Liste zusammen und vergleiche die Ergebnisse, ohne zwischen Ansichten zu wechseln.
 
-• Währungen und über 60 Kryptowährungen nebeneinander
-• Integrierte Rechner-Tastatur: 100 + 25 × 2 eintippen und das Ergebnis in jeder Währung sehen
-• Deine lokale Währung wird beim ersten Start automatisch hinzugefügt
-• Per Ziehen sortieren, per Wischen löschen
-• Aktuelle Kurse; die letzten Werte bleiben offline gespeichert
-• Heller und dunkler Modus, Zahlenformate nach Wahl
-• Für iPhone und iPad
-• Verfügbar auf Deutsch, Englisch, Russisch, Türkisch, Französisch, Spanisch, Chinesisch und Arabisch
+• Mehrere Währungen gleichzeitig
+Füge die gewünschten Währungen hinzu. Die umgerechneten Beträge aktualisieren sich während der Eingabe.
 
-Cento Pro schaltet unbegrenzte Währungen, alle Kryptowährungen und exklusive App-Symbole frei.
+• Währungen und Krypto zusammen
+Zeige klassische Währungen gemeinsam mit Bitcoin, Ethereum und anderen Kryptowährungen an.
+
+• Integrierter Taschenrechner
+Addiere, subtrahiere, multipliziere und dividiere direkt im Währungsrechner.
+
+• Dein persönlicher Look
+Wähle dein Lieblings-App-Symbol und nutze das helle oder dunkle Design.
+
+Ob du Reisepreise vergleichst, einen Fremdwährungsbetrag prüfst oder Kryptowährungen umrechnest: Mit Cento behältst du deine Umrechnungen im Blick.
