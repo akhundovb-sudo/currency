@@ -1,18 +1,18 @@
-# App Store: тексты и скриншоты
+# App Store: тексты
 
-`metadata/<locale>/` — тексты для App Store Connect (en-US, ru, tr, fr-FR, es-ES, de-DE, zh-Hans, ar-SA).
-`screenshots/<locale>/` — скриншоты; в репозитории не хранятся (в `.gitignore`), лежат локально.
+`metadata/<locale>/` — тексты для App Store Connect: en-US, ru, tr, fr-FR, es-ES, de-DE, zh-Hans, ar-SA
+(name, subtitle, promotional_text, description, keywords, release_notes).
 
-Загрузка (на Mac, под вашим Apple ID):
+Загрузка на Mac, под вашим Apple ID:
 
 ```sh
-brew install fastlane        # один раз; если уже стоит — brew upgrade fastlane
+brew install fastlane   # один раз
 cd <папка проекта>
 fastlane deliver
 ```
 
-Fastlane спросит Apple ID и пароль (или используйте ключ App Store Connect API через `--api_key_path`).
-Он загрузит тексты и скриншоты для каждого языка, на проверку ничего не отправляет.
+Fastlane спросит Apple ID и пароль и заполнит тексты для каждого языка. Скриншоты, сборку и отправку на проверку не трогает:
+после загрузки откройте App Store Connect, проверьте и нажмите «Add for Review».
 
-Ссылки поддержки и политики конфиденциальности (`support_url.txt`, `privacy_url.txt`, `marketing_url.txt`)
-не заданы — добавьте файлы в `metadata/<locale>/` со своими адресами или впишите в App Store Connect.
+Ссылки поддержки и политики конфиденциальности не заданы: добавьте `support_url.txt`, `privacy_url.txt` (и при желании `marketing_url.txt`)
+в `metadata/<locale>/` или впишите их в App Store Connect.
