@@ -1,0 +1,8 @@
+# Загружает в App Store Connect только тексты (metadata). Скриншоты, сборку и отправку на проверку не трогает.
+skip_screenshots(true)
+skip_binary_upload(true)
+skip_app_version_update(true)
+submit_for_review(false)
+automatic_release(false)
+force(true) # без окна предпросмотра HTML
+precheck_include_in_app_purchases(false)
