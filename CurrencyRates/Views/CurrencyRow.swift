@@ -47,7 +47,7 @@ struct CurrencyRow: View {
                     CurrencyIcon(currency: Currency(code: code))
                     // Две строки: код и сумма, затем название и курс — каждая пара на одной базовой линии,
                     // поэтому отступ от кода до названия равен отступу от суммы до курса.
-                    VStack(spacing: 4) {
+                    VStack(spacing: 2) {
                         HStack(alignment: .firstTextBaseline, spacing: 8) {
                             codeText
                             Spacer(minLength: 8)
@@ -172,7 +172,7 @@ struct CurrencyRow: View {
 /// Мигающий курсор ввода, как у текстового поля.
 private struct BlinkingCursor: View {
     @State private var isVisible = true
-    @ScaledMetric(relativeTo: .title3) private var height = 22
+    @ScaledMetric(relativeTo: .title) private var height = 28
 
     var body: some View {
         Capsule()
