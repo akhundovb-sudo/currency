@@ -405,8 +405,8 @@ struct CurrencyWidgetView: View {
 
 // MARK: - Общее
 
-/// Фон виджета по настройке «Цвет»: обычный или градиент цвета валюты. В тёмной теме —
-/// от насыщенного цвета к почти чёрному, в светлой — пастельный на белом.
+/// Фон виджета по настройке «Цвет»: обычный или «цветная карточка» валюты —
+/// тёмная с оттенком цвета, свечением снизу и тонким цветным ободком. В светлой теме — то же мягче на белом.
 private struct TintedWidget: ViewModifier {
     let tint: UInt32?
 
@@ -414,48 +414,61 @@ private struct TintedWidget: ViewModifier {
 
     func body(content: Content) -> some View {
         if let tint {
-            let color = WidgetColor.rgb(tint)
-            if colorScheme == .dark {
-                content
-                    .containerBackground(for: .widget) {
-                        ZStack {
-                            Color(red: 0.06, green: 0.06, blue: 0.08)
-                            LinearGradient(
-                                stops: [
-                                    .init(color: color, location: 0),
-                                    .init(color: color.opacity(0.45), location: 0.6),
-                                    .init(color: color.opacity(0), location: 1),
-                                ],
-                                startPoint: .topLeading,
-                                endPoint: .bottomTrailing
-                            )
-                            // Мягкий блик сверху — как у стеклянных карточек приложения.
-                            LinearGradient(colors: [.white.opacity(0.12), .clear], startPoint: .top, endPoint: .center)
-                        }
-                    }
-            } else {
-                // Светлая тема: пастельный градиент цвета валюты на белом, текст обычный тёмный —
-                // насыщенный тёмный фон среди светлых виджетов выглядел чужим.
-                content
-                    .containerBackground(for: .widget) {
-                        ZStack {
-                            Color.white
-                            LinearGradient(
-                                stops: [
-                                    .init(color: color.opacity(0.42), location: 0),
-                                    .init(color: color.opacity(0.16), location: 0.6),
-                                    .init(color: color.opacity(0.05), location: 1),
-                                ],
-                                startPoint: .topLeading,
-                                endPoint: .bottomTrailing
-                            )
-                            LinearGradient(colors: [.white.opacity(0.5), .clear], startPoint: .top, endPoint: .center)
-                        }
-                    }
-            }
+            content
+                .containerBackground(for: .widget) {
+                    GlowCard(color: WidgetColor.rgb(tint), isDark: colorScheme == .dark)
+                }
         } else {
             content
                 .containerBackground(for: .widget) { Color(.systemBackground) }
+        }
+    }
+}
+
+/// Карточка со свечением цвета снизу: сверху почти нейтральная, к низу цвет набирает силу.
+private struct GlowCard: View {
+    let color: Color
+    let isDark: Bool
+
+    var body: some View {
+        ZStack {
+            if isDark {
+                Color(red: 0.07, green: 0.07, blue: 0.08)
+                color.opacity(0.07)
+                LinearGradient(
+                    stops: [
+                        .init(color: color.opacity(0), location: 0.25),
+                        .init(color: color.opacity(0.26), location: 0.7),
+                        .init(color: color.opacity(0.58), location: 1),
+                    ],
+                    startPoint: .top,
+                    endPoint: .bottom
+                )
+                RadialGradient(colors: [color.opacity(0.35), color.opacity(0)], center: .bottom, startRadius: 0, endRadius: 220)
+            } else {
+                Color.white
+                color.opacity(0.06)
+                LinearGradient(
+                    stops: [
+                        .init(color: color.opacity(0), location: 0.2),
+                        .init(color: color.opacity(0.16), location: 0.7),
+                        .init(color: color.opacity(0.3), location: 1),
+                    ],
+                    startPoint: .top,
+                    endPoint: .bottom
+                )
+                RadialGradient(colors: [color.opacity(0.18), color.opacity(0)], center: .bottom, startRadius: 0, endRadius: 220)
+            }
+            // Тонкий ободок: цветной сверху и гаснущий книзу — край карточки как у стекла.
+            ContainerRelativeShape()
+                .strokeBorder(
+                    LinearGradient(
+                        colors: [color.opacity(isDark ? 0.55 : 0.4), Color.white.opacity(isDark ? 0.06 : 0.3), color.opacity(isDark ? 0.25 : 0.2)],
+                        startPoint: .top,
+                        endPoint: .bottom
+                    ),
+                    lineWidth: 1.5
+                )
         }
     }
 }
