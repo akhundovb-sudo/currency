@@ -409,8 +409,8 @@ struct CurrencyWidgetView: View {
 
 // MARK: - Общее
 
-/// Фон виджета по настройке «Цвет»: обычный или градиент цвета валюты. В тёмной теме —
-/// от насыщенного цвета к почти чёрному, в светлой — пастельный на белом.
+/// Фон виджета по настройке «Цвет»: обычный или «свет из угла» цвета валюты —
+/// свечение и лучи из правого верхнего угла. В тёмной теме на почти чёрном, в светлой — на белом.
 private struct TintedWidget: ViewModifier {
     let tint: UInt32?
 
@@ -418,49 +418,72 @@ private struct TintedWidget: ViewModifier {
 
     func body(content: Content) -> some View {
         if let tint {
-            let color = WidgetColor.rgb(tint)
-            if colorScheme == .dark {
-                content
-                    .containerBackground(for: .widget) {
-                        ZStack {
-                            Color(red: 0.06, green: 0.06, blue: 0.08)
-                            LinearGradient(
-                                stops: [
-                                    .init(color: color, location: 0),
-                                    .init(color: color.opacity(0.45), location: 0.6),
-                                    .init(color: color.opacity(0), location: 1),
-                                ],
-                                startPoint: .topLeading,
-                                endPoint: .bottomTrailing
-                            )
-                            // Мягкий блик сверху — как у стеклянных карточек приложения.
-                            LinearGradient(colors: [.white.opacity(0.12), .clear], startPoint: .top, endPoint: .center)
-                        }
-                    }
-            } else {
-                // Светлая тема: пастельный градиент цвета валюты на белом, текст обычный тёмный —
-                // насыщенный тёмный фон среди светлых виджетов выглядел чужим.
-                content
-                    .containerBackground(for: .widget) {
-                        ZStack {
-                            Color.white
-                            LinearGradient(
-                                stops: [
-                                    .init(color: color.opacity(0.42), location: 0),
-                                    .init(color: color.opacity(0.16), location: 0.6),
-                                    .init(color: color.opacity(0.05), location: 1),
-                                ],
-                                startPoint: .topLeading,
-                                endPoint: .bottomTrailing
-                            )
-                            LinearGradient(colors: [.white.opacity(0.5), .clear], startPoint: .top, endPoint: .center)
-                        }
-                    }
-            }
+            content
+                .containerBackground(for: .widget) {
+                    CornerLight(color: WidgetColor.rgb(tint), isDark: colorScheme == .dark)
+                }
         } else {
             content
                 .containerBackground(for: .widget) { Color(.systemBackground) }
         }
+    }
+}
+
+/// Свет из правого верхнего угла: широкое свечение, два размытых луча по диагонали
+/// и слабый отсвет снизу слева — как северное сияние на тёмном стекле.
+private struct CornerLight: View {
+    let color: Color
+    let isDark: Bool
+
+    var body: some View {
+        // В светлой теме те же слои, но мягче — пастель на белом, текст остаётся тёмным.
+        let strength = isDark ? 1.0 : 0.5
+        GeometryReader { geo in
+            let w = geo.size.width
+            let h = geo.size.height
+            ZStack {
+                isDark ? Color(red: 0.04, green: 0.05, blue: 0.07) : Color.white
+
+                // Главное свечение в углу.
+                RadialGradient(
+                    colors: [color.opacity(0.9 * strength), color.opacity(0.35 * strength), .clear],
+                    center: .topTrailing,
+                    startRadius: 0,
+                    endRadius: max(w, h) * 0.95
+                )
+
+                // Лучи: вытянутые капсулы, яркие у угла и гаснущие к середине.
+                beam(width: w * 0.24, height: h * 1.5, angle: 38, opacity: 0.75 * strength)
+                    .position(x: w * 0.78, y: h * 0.22)
+                    .blur(radius: 22)
+                beam(width: w * 0.12, height: h * 1.2, angle: 26, opacity: 0.55 * strength)
+                    .position(x: w * 0.56, y: h * 0.08)
+                    .blur(radius: 16)
+
+                // Отсвет внизу слева — чтобы низ не был пустым.
+                RadialGradient(
+                    colors: [color.opacity(0.28 * strength), .clear],
+                    center: .bottomLeading,
+                    startRadius: 0,
+                    endRadius: max(w, h) * 0.7
+                )
+
+                // Блик сверху, как у стеклянных карточек приложения.
+                LinearGradient(
+                    colors: [.white.opacity(isDark ? 0.08 : 0.4), .clear],
+                    startPoint: .top,
+                    endPoint: .center
+                )
+            }
+        }
+    }
+
+    private func beam(width: CGFloat, height: CGFloat, angle: Double, opacity: Double) -> some View {
+        Capsule()
+            .fill(LinearGradient(colors: [color.opacity(opacity), color.opacity(0)], startPoint: .top, endPoint: .bottom))
+            .frame(width: width, height: height)
+            // По часовой: верх капсулы уходит вправо — луч идёт из правого верхнего угла вниз влево.
+            .rotationEffect(.degrees(angle))
     }
 }
 
