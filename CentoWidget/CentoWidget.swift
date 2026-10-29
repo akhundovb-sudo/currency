@@ -83,7 +83,17 @@ struct PairWidgetView: View {
             HStack(alignment: .top, spacing: 0) {
                 PairBadges(source: entry.source, target: entry.target, size: 38)
                 Spacer(minLength: 4)
-                if entry.isLocked { ProMark() }
+                // Знак Cento в углу напротив флагов — как логотип у банковских виджетов.
+                VStack(alignment: .trailing, spacing: 6) {
+                    Image("CentoMark")
+                        .resizable()
+                        .renderingMode(.template)
+                        .scaledToFit()
+                        .frame(width: 24, height: 24)
+                        .foregroundStyle(entry.tint == nil ? WidgetColor.accent : Color.white.opacity(0.9))
+                        .accessibilityHidden(true)
+                    if entry.isLocked { ProMark() }
+                }
             }
             Spacer(minLength: 8)
             Text(verbatim: "1 \(entry.source) =")
