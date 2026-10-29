@@ -391,9 +391,12 @@ struct CurrencyListView: View {
 
     private func startEditing(_ code: String) {
         guard !editMode.isEditing else { return }
-        if code != store.sourceCode || !isKeypadVisible {
-            UISelectionFeedbackGenerator().selectionChanged()
+        // Повторное нажатие на валюту, которую уже вводят, закрывает клавиатуру.
+        if code == store.sourceCode && isKeypadVisible {
+            hideKeypad()
+            return
         }
+        UISelectionFeedbackGenerator().selectionChanged()
         store.beginEditing(code)
         let wasVisible = isKeypadVisible
         withAnimation(Self.keypadAnimation) { isKeypadVisible = true }

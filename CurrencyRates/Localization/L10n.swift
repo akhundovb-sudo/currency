@@ -52,7 +52,17 @@ enum AppLanguage: String, CaseIterable, Identifiable, Sendable {
         allCases.sorted { $0.englishName < $1.englishName }
     }
 
+    /// Локаль языка; создаётся один раз — её спрашивают при каждом форматировании числа.
     var locale: Locale {
+        if let cached = Self.locales[self] { return cached }
+        let locale = makeLocale()
+        Self.locales[self] = locale
+        return locale
+    }
+
+    nonisolated(unsafe) private static var locales: [AppLanguage: Locale] = [:]
+
+    private func makeLocale() -> Locale {
         switch self {
         case .ru: Locale(identifier: "ru_RU")
         case .en: Locale(identifier: "en_US")

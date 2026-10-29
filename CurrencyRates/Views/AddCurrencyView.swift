@@ -6,9 +6,6 @@ struct AddCurrencyView: View {
     @Environment(\.dismiss) private var dismiss
     @State private var kind: CurrencyKind = .fiat
     @State private var query = ""
-    /// Валюты, выбранные на момент открытия окна, — они идут первыми.
-    /// Порядок фиксируется при открытии, чтобы строки не прыгали при отметке.
-    @State private var pinned: [String] = []
 
     private var currencies: [Currency] {
         switch kind {
@@ -20,10 +17,12 @@ struct AddCurrencyView: View {
         }
     }
 
+    /// Выбранные валюты всегда первыми — в порядке списка; отмеченная валюта сразу поднимается наверх.
     private var results: [Currency] {
         let all = currencies.filter { $0.matches(query) }
-        let top = pinned.compactMap { code in all.first { $0.code == code } }
-        return top + all.filter { !pinned.contains($0.code) }
+        let selected = store.selectedCodes
+        let top = selected.compactMap { code in all.first { $0.code == code } }
+        return top + all.filter { !selected.contains($0.code) }
     }
 
     @State private var isPaywallPresented = false
@@ -47,7 +46,6 @@ struct AddCurrencyView: View {
         }
         // Модальные окна не наследуют направление письма — для арабского задаём сами.
         .environment(\.layoutDirection, store.language.isRightToLeft ? .rightToLeft : .leftToRight)
-        .onAppear { pinned = store.selectedCodes }
         .fullScreenCover(isPresented: $isPaywallPresented) { PaywallView() }
     }
 
