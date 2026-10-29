@@ -8,9 +8,6 @@ struct CurrencyEntity: AppEntity, Identifiable {
     static let typeDisplayRepresentation: TypeDisplayRepresentation = "Currency"
     static let defaultQuery = CurrencyQuery()
 
-    /// Настройки приложения — один раз на запуск расширения, а не для каждой из сотен строк списка.
-    private static let snapshot = WidgetSnapshot.load()
-
     /// Код строки «Не выбрано».
     static let noneID = "-"
 
@@ -21,13 +18,65 @@ struct CurrencyEntity: AppEntity, Identifiable {
 
     var displayRepresentation: DisplayRepresentation {
         guard let code else { return DisplayRepresentation(title: "Not selected") }
+        let label = CurrencyLabels.shared.label(for: code)
+        return DisplayRepresentation(title: "\(label.title)", subtitle: "\(label.subtitle)")
+    }
+}
+
+/// Подписи валют для окна выбора — считаются один раз на запуск расширения.
+/// При быстрой прокрутке система запрашивает подписи сразу для многих строк; если считать
+/// название и флаг каждый раз, расширение не успевает и строки показывают «Unable to Load».
+final class CurrencyLabels: @unchecked Sendable {
+    static let shared = CurrencyLabels()
+
+    struct Label {
+        let title: String
+        let subtitle: String
+        /// Название по-английски — для поиска.
+        let english: String
+    }
+
+    /// Все валюты в порядке списка: свои из приложения, криптовалюты, остальной фиат.
+    let codes: [String]
+    private var labels: [String: Label] = [:]
+    private let lock = NSLock()
+
+    private init() {
+        let app = WidgetSnapshot.load()
+        var fiat = SharedRates.load().map { Array($0.fiat.keys) } ?? []
+        if fiat.isEmpty { fiat = Locale.commonISOCurrencyCodes }
+        let rest = CryptoAsset.all.map(\.code) + fiat.filter { !CurrencyCatalog.isCrypto($0) }.sorted()
+        var seen = Set(app?.codes ?? [])
+        codes = (app?.codes ?? []) + rest.filter { seen.insert($0).inserted }
+
+        let english = Locale(identifier: "en_US")
+        for code in codes {
+            labels[code] = Self.makeLabel(code, app: app, english: english)
+        }
+    }
+
+    func label(for code: String) -> Label {
+        lock.lock()
+        defer { lock.unlock() }
+        if let label = labels[code] { return label }
+        // Валюта не из списка (например, сохранённая раньше) — считаем и запоминаем.
+        let label = Self.makeLabel(code, app: WidgetSnapshot.load(), english: Locale(identifier: "en_US"))
+        labels[code] = label
+        return label
+    }
+
+    private static func makeLabel(_ code: String, app: WidgetSnapshot?, english: Locale) -> Label {
         var name = CurrencyCatalog.name(for: code, locale: .current)
         if CurrencyCatalog.isCrypto(code) { name = "₿ " + name }
         // Без подписки платные валюты помечены — в виджете вместо них останутся валюты из приложения.
-        if let app = Self.snapshot, !app.allows(code) { name += " · PRO" }
+        if let app, !app.allows(code) { name += " · PRO" }
         // Флаг — эмодзи в заголовке: картинки из каталога окно настроек виджета загружает ненадёжно.
-        let flag = CurrencyCatalog.flagRegion(for: code).map(Self.flagEmoji(region:)) ?? ""
-        return DisplayRepresentation(title: "\(flag.isEmpty ? code : flag + " " + code)", subtitle: "\(name)")
+        let flag = CurrencyCatalog.flagRegion(for: code).map(flagEmoji(region:)) ?? ""
+        return Label(
+            title: flag.isEmpty ? code : flag + " " + code,
+            subtitle: name,
+            english: CurrencyCatalog.name(for: code, locale: english)
+        )
     }
 
     /// Флаг-эмодзи по коду страны («US» → 🇺🇸).
@@ -45,31 +94,21 @@ struct CurrencyQuery: EntityStringQuery {
     }
 
     func suggestedEntities() async throws -> [CurrencyEntity] {
-        ([CurrencyEntity.noneID] + Self.allCodes()).map(CurrencyEntity.init(id:))
+        ([CurrencyEntity.noneID] + CurrencyLabels.shared.codes).map(CurrencyEntity.init(id:))
     }
 
     func entities(matching string: String) async throws -> [CurrencyEntity] {
         let query = string.trimmingCharacters(in: .whitespacesAndNewlines)
         guard !query.isEmpty else { return try await suggestedEntities() }
-        let english = Locale(identifier: "en_US")
-        return Self.allCodes()
-            .filter {
-                $0.localizedStandardContains(query)
-                    || CurrencyCatalog.name(for: $0, locale: .current).localizedStandardContains(query)
-                    || CurrencyCatalog.name(for: $0, locale: english).localizedStandardContains(query)
+        let labels = CurrencyLabels.shared
+        return labels.codes
+            .filter { code in
+                let label = labels.label(for: code)
+                return code.localizedStandardContains(query)
+                    || label.subtitle.localizedStandardContains(query)
+                    || label.english.localizedStandardContains(query)
             }
             .map(CurrencyEntity.init(id:))
-    }
-
-    /// Сначала валюты из списка в приложении, затем криптовалюты, затем остальной фиат по алфавиту:
-    /// разделов в системном окне выбора нет, поэтому крипта — сразу после своих валют.
-    static func allCodes() -> [String] {
-        let app = WidgetSnapshot.load()?.codes ?? []
-        var fiat = SharedRates.load().map { Array($0.fiat.keys) } ?? []
-        if fiat.isEmpty { fiat = Locale.commonISOCurrencyCodes }
-        let rest = CryptoAsset.all.map(\.code) + fiat.filter { !CurrencyCatalog.isCrypto($0) }.sorted()
-        var seen = Set(app)
-        return app + rest.filter { seen.insert($0).inserted }
     }
 }
 
