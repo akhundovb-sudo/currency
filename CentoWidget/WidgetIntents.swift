@@ -314,8 +314,6 @@ struct PairAmountIntent: AppIntent {
 
     func perform() async throws -> some IntentResult {
         var state = PairState.load(pair)
-        // «Путешествие»: при смене суммы виджет покажет короткий полёт самолёта.
-        if pair.hasPrefix("travelState."), state.amount != amount { TravelArrival.requestFlight() }
         state.amount = amount
         PairState.save(state, for: pair)
         return .result()
