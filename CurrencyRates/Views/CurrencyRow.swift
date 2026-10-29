@@ -45,16 +45,15 @@ struct CurrencyRow: View {
             } else {
                 HStack(spacing: 12) {
                     CurrencyIcon(currency: Currency(code: code))
-                    // Две строки: код и сумма, затем название и курс — каждая пара на одной линии.
-                    // Выравнивание по центру, а не по базовой линии: уменьшенная длинная сумма
-                    // иначе съезжает вниз на строку курса, и карточка «прыгает».
+                    // Две строки: код и сумма, затем название и курс — каждая пара на одной базовой линии,
+                    // поэтому отступ от кода до названия равен отступу от суммы до курса.
                     VStack(spacing: 4) {
-                        HStack(alignment: .center, spacing: 8) {
+                        HStack(alignment: .firstTextBaseline, spacing: 8) {
                             codeText
                             Spacer(minLength: 8)
                             amountSlot
                         }
-                        HStack(alignment: .center, spacing: 8) {
+                        HStack(alignment: .firstTextBaseline, spacing: 8) {
                             nameText
                             Spacer(minLength: 8)
                             captionSlot.layoutPriority(1)
@@ -96,7 +95,7 @@ struct CurrencyRow: View {
     private var codeText: some View {
         // Код чуть меньше суммы: крупнее подписи, но не спорит с цифрами.
         Text(code)
-            .font(.title3)
+            .font(.title3.weight(.medium))
             .foregroundStyle(Color.primary)
             .fixedSize()
     }
@@ -106,8 +105,7 @@ struct CurrencyRow: View {
             .font(.subheadline)
             .foregroundStyle(Color.secondaryLabel)
             .lineLimit(dynamicTypeSize.isAccessibilitySize ? nil : 1)
-            // Длинное название («Dólar estadounidense») сначала чуть уменьшается, а не обрезается.
-            .minimumScaleFactor(0.75)
+            // Название того же размера, что и курс: длинное не уменьшается, а обрезается с «…».
             // Хотя бы пара букв с «…», а не пустая черта.
             .frame(minWidth: 36, alignment: .leading)
     }
@@ -152,7 +150,6 @@ struct CurrencyRow: View {
             .font(.subheadline.monospacedDigit())
             .foregroundStyle(Color.secondaryLabel)
             .lineLimit(dynamicTypeSize.isAccessibilitySize ? nil : 1)
-            .minimumScaleFactor(0.8)
     }
 
     private var valueColor: Color {
@@ -365,7 +362,7 @@ struct CurrencySelectRow: View {
     var body: some View {
         HStack(spacing: 14) {
             CurrencyIcon(currency: currency)
-            VStack(alignment: .leading, spacing: 3) {
+            VStack(alignment: .leading, spacing: 1) {
                 Text(currency.code)
                     .font(.body.weight(.semibold))
                     .foregroundStyle(Color.primary)

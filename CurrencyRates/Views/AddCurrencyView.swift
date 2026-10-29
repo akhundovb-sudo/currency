@@ -19,10 +19,11 @@ struct AddCurrencyView: View {
 
     /// Валюты, выбранные на момент открытия окна, — они идут первыми. Порядок фиксируется
     /// при открытии: отмеченная сейчас валюта остаётся на месте и поднимется наверх при следующем открытии.
-    private let pinned: [String]
+    /// В `@State`: окно пересоздаётся при каждом изменении списка, а состояние запоминает первое значение.
+    @State private var pinned: [String]
 
     init(pinned: [String] = []) {
-        self.pinned = pinned
+        _pinned = State(initialValue: pinned)
     }
 
     private var results: [Currency] {
@@ -119,7 +120,9 @@ struct AddCurrencyView: View {
                     .buttonStyle(AccentBubbleStyle())
                 }
                 .hidingSharedGlass()
-                ToolbarItem(placement: .principal) {
+                // Слева, а не по центру: на языках с коротким «Готово» («Fine», «OK») центральный
+                // элемент смещался, и переключатель стоял в разных местах.
+                ToolbarItem(placement: .topBarLeading) {
                     KindSwitch(kind: $kind)
                 }
                 .hidingSharedGlass()

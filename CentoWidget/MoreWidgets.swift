@@ -49,23 +49,12 @@ struct ChartIntent: WidgetConfigurationIntent {
     @Parameter(title: "Period", default: .week)
     var period: ChartPeriod
 
-    @Parameter(title: "Color", default: .standard)
-    var tint: WidgetTint
-
+    /// Выбора цвета нет: фон окрашивается по движению курса — зелёный при росте, красный при падении.
     static var parameterSummary: some ParameterSummary {
-        When(widgetFamily: .equalTo, .accessoryRectangular) {
-            Summary {
-                \.$source
-                \.$target
-                \.$period
-            }
-        } otherwise: {
-            Summary {
-                \.$source
-                \.$target
-                \.$period
-                \.$tint
-            }
+        Summary {
+            \.$source
+            \.$target
+            \.$period
         }
     }
 }
@@ -86,12 +75,17 @@ struct ChartEntry: TimelineEntry {
     let numberLocale: Locale
     let isRightToLeft: Bool
     let isLocked: Bool
-    let tint: UInt32?
 
     /// Изменение за период: последняя точка к первой.
     var change: Double? {
         guard points.count >= 2, let first = points.first?.value, let last = points.last?.value, first > 0 else { return nil }
         return last / first - 1
+    }
+
+    /// Фон — по движению курса, как и линия: рост — зелёный, падение — красный; без истории — обычный.
+    var tint: UInt32? {
+        guard let change else { return nil }
+        return change >= 0 ? ChartColor.up : ChartColor.down
     }
 
     func format(_ value: Double) -> String {
@@ -105,11 +99,6 @@ struct ChartEntry: TimelineEntry {
         let source = isLocked ? app.sourceCode : config.source?.code ?? app.sourceCode
         var target = (isLocked ? nil : config.target?.code) ?? app.codes.first(where: { $0 != source }) ?? "EUR"
         if target == source { target = source == "USD" ? "EUR" : "USD" }
-        let tintCode: String? = switch config.tint {
-        case .standard: nil
-        case .main: source
-        case .second: target
-        }
         return ChartEntry(
             date: date,
             source: source,
@@ -120,10 +109,15 @@ struct ChartEntry: TimelineEntry {
             period: config.period,
             numberLocale: app.numberLocale,
             isRightToLeft: app.isRightToLeft,
-            isLocked: isLocked,
-            tint: tintCode.map { CurrencyCatalog.color(for: $0) ?? WidgetTintFallback.color }
+            isLocked: isLocked
         )
     }
+}
+
+/// Цвета роста и падения — системные зелёный и красный.
+enum ChartColor {
+    static let up: UInt32 = 0x30D158
+    static let down: UInt32 = 0xFF453A
 }
 
 struct ChartProvider: AppIntentTimelineProvider {
@@ -199,8 +193,7 @@ struct ChartWidgetView: View {
 
     /// Рост — зелёный, падение — красный, без истории — акцент.
     private var lineColor: Color {
-        guard let change = entry.change else { return WidgetColor.accent }
-        return change >= 0 ? .green : .red
+        entry.tint.map(WidgetColor.rgb) ?? WidgetColor.accent
     }
 
     private func info(_ rate: Double, badgeSize: CGFloat) -> some View {

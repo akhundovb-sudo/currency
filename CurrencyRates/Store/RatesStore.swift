@@ -230,8 +230,8 @@ final class RatesStore {
     /// Сколько валют можно держать в списке без подписки: USD и EUR плюс ещё две.
     static let freeLimit = 4
 
-    /// Сколько валют по алфавиту (кроме USD и EUR) доступны без подписки.
-    static let freeChoiceCount = 3
+    /// Сколько валют по алфавиту (кроме стартовых) доступны без подписки.
+    static let freeChoiceCount = 1
 
     /// Подписка Pro снимает ограничения. Покупки пока не подключены —
     /// для проверки флаг переключается в настройках.
@@ -254,7 +254,7 @@ final class RatesStore {
         return codes.filter { CryptoAsset.byCode[$0] == nil }.sorted()
     }
 
-    /// Бесплатные валюты: USD, EUR и первые три остальных по алфавиту.
+    /// Бесплатные валюты: стартовые и первая из остальных по алфавиту.
     var freeCodes: Set<String> {
         let starting = Self.startingCodes(local: localCurrency)
         let first = fiatCodes.filter { !starting.contains($0) }.prefix(Self.freeChoiceCount)
