@@ -85,13 +85,7 @@ struct PairWidgetView: View {
                 Spacer(minLength: 4)
                 // Знак Cento в углу напротив флагов — как логотип у банковских виджетов.
                 VStack(alignment: .trailing, spacing: 6) {
-                    Image("CentoMark")
-                        .resizable()
-                        .renderingMode(.template)
-                        .scaledToFit()
-                        .frame(width: 24, height: 24)
-                        .foregroundStyle(entry.tint == nil ? WidgetColor.accent : Color.white.opacity(0.9))
-                        .accessibilityHidden(true)
+                    CentoMark(tint: entry.tint)
                     if entry.isLocked { ProMark() }
                 }
             }
@@ -415,40 +409,81 @@ struct CurrencyWidgetView: View {
 
 // MARK: - Общее
 
-/// Фон виджета по настройке «Цвет»: обычный или градиент цвета валюты — от насыщенного
-/// в левом верхнем углу к почти чёрному. На цветном фоне текст светлый, как в тёмной теме.
+/// Фон виджета по настройке «Цвет»: обычный или градиент цвета валюты. В тёмной теме —
+/// от насыщенного цвета к почти чёрному, в светлой — пастельный на белом.
 private struct TintedWidget: ViewModifier {
     let tint: UInt32?
 
+    @Environment(\.colorScheme) private var colorScheme
+
     func body(content: Content) -> some View {
         if let tint {
-            let color = Color(
-                red: Double((tint >> 16) & 0xFF) / 255,
-                green: Double((tint >> 8) & 0xFF) / 255,
-                blue: Double(tint & 0xFF) / 255
-            )
-            content
-                .environment(\.colorScheme, .dark)
-                .containerBackground(for: .widget) {
-                    ZStack {
-                        Color(red: 0.06, green: 0.06, blue: 0.08)
-                        LinearGradient(
-                            stops: [
-                                .init(color: color, location: 0),
-                                .init(color: color.opacity(0.45), location: 0.6),
-                                .init(color: color.opacity(0), location: 1),
-                            ],
-                            startPoint: .topLeading,
-                            endPoint: .bottomTrailing
-                        )
-                        // Мягкий блик сверху — как у стеклянных карточек приложения.
-                        LinearGradient(colors: [.white.opacity(0.12), .clear], startPoint: .top, endPoint: .center)
+            let color = WidgetColor.rgb(tint)
+            if colorScheme == .dark {
+                content
+                    .containerBackground(for: .widget) {
+                        ZStack {
+                            Color(red: 0.06, green: 0.06, blue: 0.08)
+                            LinearGradient(
+                                stops: [
+                                    .init(color: color, location: 0),
+                                    .init(color: color.opacity(0.45), location: 0.6),
+                                    .init(color: color.opacity(0), location: 1),
+                                ],
+                                startPoint: .topLeading,
+                                endPoint: .bottomTrailing
+                            )
+                            // Мягкий блик сверху — как у стеклянных карточек приложения.
+                            LinearGradient(colors: [.white.opacity(0.12), .clear], startPoint: .top, endPoint: .center)
+                        }
                     }
-                }
+            } else {
+                // Светлая тема: пастельный градиент цвета валюты на белом, текст обычный тёмный —
+                // насыщенный тёмный фон среди светлых виджетов выглядел чужим.
+                content
+                    .containerBackground(for: .widget) {
+                        ZStack {
+                            Color.white
+                            LinearGradient(
+                                stops: [
+                                    .init(color: color.opacity(0.42), location: 0),
+                                    .init(color: color.opacity(0.16), location: 0.6),
+                                    .init(color: color.opacity(0.05), location: 1),
+                                ],
+                                startPoint: .topLeading,
+                                endPoint: .bottomTrailing
+                            )
+                            LinearGradient(colors: [.white.opacity(0.5), .clear], startPoint: .top, endPoint: .center)
+                        }
+                    }
+            }
         } else {
             content
                 .containerBackground(for: .widget) { Color(.systemBackground) }
         }
+    }
+}
+
+/// Знак Cento: цвет акцента на обычном фоне; на цветном — белый в тёмной теме
+/// и цвет самой валюты в светлой.
+private struct CentoMark: View {
+    let tint: UInt32?
+
+    @Environment(\.colorScheme) private var colorScheme
+
+    var body: some View {
+        Image("CentoMark")
+            .resizable()
+            .renderingMode(.template)
+            .scaledToFit()
+            .frame(width: 24, height: 24)
+            .foregroundStyle(color)
+            .accessibilityHidden(true)
+    }
+
+    private var color: Color {
+        guard let tint else { return WidgetColor.accent }
+        return colorScheme == .dark ? Color.white.opacity(0.9) : WidgetColor.rgb(tint)
     }
 }
 
@@ -558,6 +593,15 @@ struct CurrencyBadge: View {
 }
 
 enum WidgetColor {
+    /// Цвет из 0xRRGGBB.
+    static func rgb(_ value: UInt32) -> Color {
+        Color(
+            red: Double((value >> 16) & 0xFF) / 255,
+            green: Double((value >> 8) & 0xFF) / 255,
+            blue: Double(value & 0xFF) / 255
+        )
+    }
+
 
     /// Акцентный цвет приложения.
     static let accent = Color(UIColor { traits in
