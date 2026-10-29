@@ -264,17 +264,23 @@ struct CurrencyWidgetView: View {
                     if showsNames && family == .systemLarge {
                         VStack(alignment: .leading, spacing: 1) {
                             Text(verbatim: row.code).font(.subheadline.weight(.medium))
+                                .lineLimit(1)
+                                .fixedSize()
                             Text(verbatim: row.name).font(.caption).foregroundStyle(.secondary).lineLimit(1)
                         }
                     } else {
                         // В среднем виджете название — в той же строке: в две строки
                         // четыре валюты не помещались по высоте и упирались в края.
+                        // Код не переносится по буквам («AZ / N»): места не хватает — сжимается сумма.
                         Text(verbatim: row.code).font(.subheadline.weight(.medium))
+                            .lineLimit(1)
+                            .fixedSize()
                         if showsNames {
                             Text(verbatim: row.name).font(.caption).foregroundStyle(.secondary).lineLimit(1)
                         }
                     }
                     Spacer(minLength: 4)
+                    // Длинная сумма сначала уменьшается, а если и так не влезает — обрезается «…».
                     Text(verbatim: row.value)
                         .font(.subheadline.weight(.semibold).monospacedDigit())
                         .foregroundStyle(row.isSource ? WidgetColor.accent : Color.primary)
@@ -293,6 +299,8 @@ struct CurrencyWidgetView: View {
             ForEach(rows.prefix(3)) { row in
                 HStack(spacing: 4) {
                     Text(verbatim: row.code).font(.caption.weight(.semibold))
+                        .lineLimit(1)
+                        .fixedSize()
                     Spacer(minLength: 2)
                     Text(verbatim: row.value)
                         .font(.caption.monospacedDigit())
