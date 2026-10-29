@@ -774,7 +774,7 @@ struct TravelWidgetView: View {
                 Spacer(minLength: 0)
                 Image(systemName: "airplane")
                     .font(.subheadline.weight(.semibold))
-                    .foregroundStyle(WidgetColor.accent)
+                    .foregroundStyle(.secondary)
             }
             Spacer(minLength: 4)
             // Выбранная сумма — как у «Курса»: кнопками в маленьком, строкой списка в среднем.
@@ -841,7 +841,7 @@ struct TravelWidgetView: View {
         VStack(spacing: 8) {
             HStack(spacing: 6) {
                 CurrencyBadge(code: code, size: 32)
-                Image(systemName: "airplane").foregroundStyle(WidgetColor.accent)
+                Image(systemName: "airplane").foregroundStyle(.secondary)
                 if showsPro { ProMark() }
             }
             Text(text)
@@ -902,7 +902,7 @@ private struct FlyingPlane: View {
         VStack(spacing: 6) {
             Image(systemName: "airplane")
                 .font(.system(size: 32, weight: .semibold))
-                .foregroundStyle(WidgetColor.accent)
+                .foregroundStyle(.secondary)
                 .rotationEffect(.degrees(-12))
             if let country {
                 Text(verbatim: country)
