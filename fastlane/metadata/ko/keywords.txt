@@ -1,0 +1,1 @@
+환율,환전,통화,변환,비트코인,이더리움,BTC,ETH,USD,EUR,KRW,JPY,USDT,암호화폐,계산기

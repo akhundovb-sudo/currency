@@ -1,0 +1,1 @@
+kursy,waluty,przelicznik,kantor,bitcoin,ethereum,dolar,euro,złoty,forex,btc,eth,usd,eur,pln,usdt
