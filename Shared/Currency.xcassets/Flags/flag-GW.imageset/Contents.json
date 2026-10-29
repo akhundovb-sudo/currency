@@ -1,13 +1,15 @@
 {
   "images": [
     {
-      "filename": "flag-GW.png",
-      "idiom": "universal",
-      "scale": "2x"
+      "filename": "flag-GW.svg",
+      "idiom": "universal"
     }
   ],
   "info": {
     "author": "xcode",
     "version": 1
+  },
+  "properties": {
+    "preserves-vector-representation": true
   }
 }
