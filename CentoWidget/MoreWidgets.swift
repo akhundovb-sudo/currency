@@ -49,14 +49,36 @@ struct ChartIntent: WidgetConfigurationIntent {
     @Parameter(title: "Period", default: .week)
     var period: ChartPeriod
 
-    /// Выбора цвета нет: фон окрашивается по движению курса — зелёный при росте, красный при падении.
+    @Parameter(title: "Color", default: .trend)
+    var tint: ChartTint
+
     static var parameterSummary: some ParameterSummary {
-        Summary {
-            \.$source
-            \.$target
-            \.$period
+        When(widgetFamily: .equalTo, .accessoryRectangular) {
+            Summary {
+                \.$source
+                \.$target
+                \.$period
+            }
+        } otherwise: {
+            Summary {
+                \.$source
+                \.$target
+                \.$period
+                \.$tint
+            }
         }
     }
+}
+
+/// Фон «Графика»: по движению курса (зелёный — рост, красный — падение) или обычный.
+enum ChartTint: String, AppEnum {
+    case trend, standard
+
+    static let typeDisplayRepresentation: TypeDisplayRepresentation = "Color"
+    static let caseDisplayRepresentations: [ChartTint: DisplayRepresentation] = [
+        .trend: "Chart color",
+        .standard: "Default",
+    ]
 }
 
 struct ChartPoint: Identifiable {
@@ -75,6 +97,8 @@ struct ChartEntry: TimelineEntry {
     let numberLocale: Locale
     let isRightToLeft: Bool
     let isLocked: Bool
+    /// Окрашивать фон по движению курса.
+    let isTinted: Bool
 
     /// Изменение за период: последняя точка к первой.
     var change: Double? {
@@ -82,11 +106,14 @@ struct ChartEntry: TimelineEntry {
         return last / first - 1
     }
 
-    /// Фон — по движению курса, как и линия: рост — зелёный, падение — красный; без истории — обычный.
-    var tint: UInt32? {
+    /// Цвет линии: рост — зелёный, падение — красный; без истории — nil.
+    var trendColor: UInt32? {
         guard let change else { return nil }
         return change >= 0 ? ChartColor.up : ChartColor.down
     }
+
+    /// Фон — цвет линии или обычный, по настройке «Цвет».
+    var tint: UInt32? { isTinted ? trendColor : nil }
 
     func format(_ value: Double) -> String {
         CompactZeros.apply(AmountFormat.rate(value, locale: numberLocale), locale: numberLocale)
@@ -109,7 +136,8 @@ struct ChartEntry: TimelineEntry {
             period: config.period,
             numberLocale: app.numberLocale,
             isRightToLeft: app.isRightToLeft,
-            isLocked: isLocked
+            isLocked: isLocked,
+            isTinted: config.tint == .trend
         )
     }
 }
@@ -179,7 +207,10 @@ struct ChartWidgetView: View {
                     info(rate, badgeSize: 34)
                         .frame(width: 130)
                     RateChart(points: entry.points, color: lineColor)
+                        .padding(.top, 22)
                 }
+                // Период — в правом верхнем углу виджета, над графиком.
+                .overlay(alignment: .topTrailing) { periodMark }
             default:
                 VStack(alignment: .leading, spacing: 4) {
                     info(rate, badgeSize: 26)
@@ -193,7 +224,17 @@ struct ChartWidgetView: View {
 
     /// Рост — зелёный, падение — красный, без истории — акцент.
     private var lineColor: Color {
-        entry.tint.map(WidgetColor.rgb) ?? WidgetColor.accent
+        entry.trendColor.map(WidgetColor.rgb) ?? WidgetColor.accent
+    }
+
+    @ViewBuilder private var periodMark: some View {
+        if entry.isLocked {
+            ProMark()
+        } else {
+            Text(verbatim: entry.period.shortLabel)
+                .font(.caption2.weight(.bold))
+                .foregroundStyle(.secondary)
+        }
     }
 
     private func info(_ rate: Double, badgeSize: CGFloat) -> some View {
@@ -201,13 +242,8 @@ struct ChartWidgetView: View {
             HStack(alignment: .top, spacing: 4) {
                 PairBadges(source: entry.source, target: entry.target, size: badgeSize)
                 Spacer(minLength: 0)
-                if entry.isLocked {
-                    ProMark()
-                } else {
-                    Text(verbatim: entry.period.shortLabel)
-                        .font(.caption2.weight(.bold))
-                        .foregroundStyle(.secondary)
-                }
+                // В среднем виджете период стоит в углу всего виджета.
+                if family != .systemMedium { periodMark }
             }
             if family == .systemMedium { Spacer(minLength: 2) }
             Text(verbatim: "1 \(entry.source) =")
@@ -449,11 +485,10 @@ struct CryptoWidgetView: View {
         }
     }
 
-    /// «₿ Крипто-рынок» и плашка «в USD» — в какой валюте цены; PRO, если подписки нет.
+    /// «Крипто-рынок» и плашка «в USD» — в какой валюте цены; PRO, если подписки нет.
     private var header: some View {
         HStack(spacing: 5) {
-            Image(systemName: "bitcoinsign.circle.fill").foregroundStyle(WidgetColor.accent)
-            // В маленьком виджете места мало — только значок и валюта цен.
+            // В маленьком виджете места мало — только валюта цен.
             if family != .systemSmall {
                 Text("Crypto market").font(.caption.weight(.bold)).lineLimit(1)
             }
@@ -535,7 +570,7 @@ struct TravelEntry: TimelineEntry {
         case abroad(local: String, rate: Double?)
     }
 
-    let date: Date
+    var date: Date
     let state: State
     let country: String?
     let home: String
@@ -544,6 +579,10 @@ struct TravelEntry: TimelineEntry {
     let isRightToLeft: Bool
     let isLocked: Bool
     let tint: UInt32?
+    /// Сумма в местной валюте, выбранная кнопками; nil — шаг по умолчанию для этой валюты.
+    var chosenAmount: Double? = nil
+    /// Первый кадр после смены страны: облака и самолёт, затем виджет «прилетает» к курсу.
+    var isArriving = false
 
     var countryName: String? {
         country.flatMap { language.localizedString(forRegionCode: $0) }
@@ -553,8 +592,29 @@ struct TravelEntry: TimelineEntry {
         CompactZeros.apply(AmountFormat.rate(value, locale: numberLocale), locale: numberLocale)
     }
 
+    /// Крупные суммы — без копеек: «588.55…» не помещалось в строку.
     func formatAmount(_ value: Double) -> String {
-        CompactZeros.apply(AmountFormat.amount(value, locale: numberLocale, decimalPlaces: nil), locale: numberLocale)
+        CompactZeros.apply(AmountFormat.amount(value, locale: numberLocale, decimalPlaces: value >= 100 ? 0 : nil), locale: numberLocale)
+    }
+
+    /// Ключ состояния кнопок суммы — своя запись для каждой местной валюты.
+    static func stateKey(local: String) -> String { "travelState.\(local)" }
+
+    /// Шаг сумм под валюту: у иены — 100, 1 000…, у евро — 1, 10…
+    static func baseStep(rate: Double) -> Double {
+        rate > 0 ? pow(10, max(0, floor(log10(1 / rate)))) : 1
+    }
+
+    /// Варианты на кнопках: шаг, ×10, ×100.
+    static func choices(rate: Double) -> [Double] {
+        let base = baseStep(rate: rate)
+        return [base, base * 10, base * 100]
+    }
+
+    /// Выбранная сумма, если она из текущих вариантов, иначе — шаг по умолчанию.
+    func amount(rate: Double) -> Double {
+        let options = Self.choices(rate: rate)
+        return chosenAmount.flatMap { options.contains($0) ? $0 : nil } ?? options[0]
     }
 
     static func make(_ config: TravelIntent, snapshot: WidgetSnapshot?, rates: SharedRates, date: Date = .now) -> TravelEntry {
@@ -578,6 +638,10 @@ struct TravelEntry: TimelineEntry {
         case .main: local ?? home
         case .second: home
         }
+        // Сумма из кнопок хранится как у «Курса»: изменение через PairAmountIntent.
+        let chosen: Double? = local.flatMap { code in
+            WidgetSnapshot.defaults?.data(forKey: stateKey(local: code)) != nil ? PairState.load(stateKey(local: code)).amount : nil
+        }
         return TravelEntry(
             date: date,
             state: state,
@@ -587,8 +651,25 @@ struct TravelEntry: TimelineEntry {
             language: app.language,
             isRightToLeft: app.isRightToLeft,
             isLocked: isLocked,
-            tint: tintCode.map { CurrencyCatalog.color(for: $0) ?? WidgetTintFallback.color }
+            tint: tintCode.map { CurrencyCatalog.color(for: $0) ?? WidgetTintFallback.color },
+            chosenAmount: chosen
         )
+    }
+}
+
+/// Последняя страна, которую показал виджет «Путешествие», — чтобы заметить прилёт в новую.
+enum TravelArrival {
+    private static func key(home: String) -> String { "travel.lastLocal.\(home)" }
+
+    /// Сменилась ли местная валюта с прошлого показа; запоминает текущую.
+    static func isNew(_ entry: TravelEntry) -> Bool {
+        guard case .abroad(let local, _?) = entry.state, !entry.isLocked else { return false }
+        let defaults = WidgetSnapshot.defaults
+        let key = key(home: entry.home)
+        let last = defaults?.string(forKey: key)
+        guard last != local else { return false }
+        defaults?.set(local, forKey: key)
+        return true
     }
 }
 
@@ -607,6 +688,15 @@ struct TravelProvider: AppIntentTimelineProvider {
     func timeline(for configuration: TravelIntent, in context: Context) async -> Timeline<TravelEntry> {
         let rates = await WidgetRates.current()
         let entry = TravelEntry.make(configuration, snapshot: WidgetSnapshot.load(), rates: rates)
+        // Новая страна: сначала кадр с облаками и самолётом, через пару секунд — курс.
+        // Смена кадров анимируется: самолёт улетает, курс проявляется.
+        if TravelArrival.isNew(entry) {
+            var arrival = entry
+            arrival.isArriving = true
+            var landed = entry
+            landed.date = entry.date.addingTimeInterval(2.5)
+            return Timeline(entries: [arrival, landed], policy: .after(WidgetRates.nextUpdate))
+        }
         return Timeline(entries: [entry], policy: .after(WidgetRates.nextUpdate))
     }
 }
@@ -628,9 +718,19 @@ struct TravelWidgetView: View {
     @Environment(\.widgetFamily) private var family
 
     var body: some View {
-        content
-            .environment(\.layoutDirection, entry.isRightToLeft ? .rightToLeft : .leftToRight)
-            .modifier(TintedWidget(tint: entry.tint))
+        ZStack {
+            if entry.isArriving {
+                ArrivalScene(country: entry.countryName)
+                    // Самолёт с облаками улетает вправо, курс проявляется.
+                    .transition(.asymmetric(insertion: .opacity, removal: .move(edge: .trailing).combined(with: .opacity)))
+            } else {
+                content
+                    .transition(.asymmetric(insertion: .scale(scale: 0.92).combined(with: .opacity), removal: .opacity))
+            }
+        }
+        .animation(.smooth(duration: 1.1), value: entry.isArriving)
+        .environment(\.layoutDirection, entry.isRightToLeft ? .rightToLeft : .leftToRight)
+        .modifier(TintedWidget(tint: entry.tint))
     }
 
     @ViewBuilder
@@ -670,28 +770,32 @@ struct TravelWidgetView: View {
                 Image(systemName: "airplane").font(.caption).foregroundStyle(.secondary)
             }
             Spacer(minLength: 4)
-            Text(verbatim: "1 \(local) =")
+            // В маленьком виджете списка нет — крупно выбранная кнопками сумма;
+            // в среднем слева курс за единицу, а суммы — в списке справа.
+            let amount = family == .systemSmall ? entry.amount(rate: rate) : 1
+            Text(verbatim: "\(AmountFormat.amount(amount, locale: entry.numberLocale, decimalPlaces: 0)) \(local) =")
                 .font(.subheadline.weight(.semibold))
                 .foregroundStyle(Color.primary.opacity(0.7))
-            Text(verbatim: "\(entry.format(rate)) \(entry.home)")
+                .lineLimit(1)
+            Text(verbatim: "\(amount == 1 ? entry.format(rate) : entry.formatAmount(amount * rate)) \(entry.home)")
                 .font(.title3.weight(.bold).monospacedDigit())
                 .lineLimit(1)
                 .minimumScaleFactor(0.45)
-            if rate > 0 {
-                Text(verbatim: "1 \(entry.home) = \(entry.format(1 / rate)) \(local)")
-                    .font(.caption.monospacedDigit())
-                    .foregroundStyle(.secondary)
-                    .lineLimit(1)
-                    .minimumScaleFactor(0.6)
-            }
+            Spacer(minLength: 4)
+            // Сколько считать: шаг валюты, ×10, ×100 — как кнопки у «Курса».
+            AmountChips(
+                pairKey: TravelEntry.stateKey(local: local),
+                selected: entry.amount(rate: rate),
+                locale: entry.numberLocale,
+                amounts: TravelEntry.choices(rate: rate)
+            )
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .leading)
     }
 
-    /// Ходовые суммы в местной валюте — сколько это дома. Шаг подобран под валюту:
-    /// у иены — 100, 1 000, 10 000…, у евро — 1, 10, 100…
+    /// Суммы в местной валюте от выбранной кнопкой — сколько это дома.
     private func amounts(local: String, rate: Double) -> some View {
-        let base = rate > 0 ? pow(10, max(0, floor(log10(1 / rate)))) : 1
+        let base = entry.amount(rate: rate)
         return VStack(alignment: .leading, spacing: 0) {
             ForEach([1.0, 10, 100, 1000], id: \.self) { step in
                 let amount = step * base
@@ -744,4 +848,41 @@ struct TravelWidgetView: View {
     TravelWidget()
 } timeline: {
     TravelEntry.make(TravelIntent(), snapshot: nil, rates: .preview)
+}
+
+/// Кадр прилёта в новую страну: самолёт среди облаков и название страны.
+private struct ArrivalScene: View {
+    let country: String?
+
+    var body: some View {
+        ZStack {
+            cloud(size: 34, x: -0.32, y: -0.22, opacity: 0.55)
+            cloud(size: 22, x: 0.30, y: -0.30, opacity: 0.4)
+            cloud(size: 28, x: 0.36, y: 0.24, opacity: 0.5)
+            cloud(size: 18, x: -0.38, y: 0.30, opacity: 0.35)
+            VStack(spacing: 6) {
+                Image(systemName: "airplane")
+                    .font(.system(size: 30, weight: .semibold))
+                    .foregroundStyle(WidgetColor.accent)
+                    .rotationEffect(.degrees(-12))
+                if let country {
+                    Text(verbatim: country)
+                        .font(.caption.weight(.bold))
+                        .lineLimit(1)
+                        .minimumScaleFactor(0.7)
+                }
+            }
+        }
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+    }
+
+    /// Облако на доле ширины и высоты от центра.
+    private func cloud(size: CGFloat, x: CGFloat, y: CGFloat, opacity: Double) -> some View {
+        GeometryReader { proxy in
+            Image(systemName: "cloud.fill")
+                .font(.system(size: size))
+                .foregroundStyle(Color.primary.opacity(opacity * 0.5))
+                .position(x: proxy.size.width * (0.5 + x), y: proxy.size.height * (0.5 + y))
+        }
+    }
 }

@@ -189,13 +189,14 @@ struct AmountChips: View {
     let pairKey: String
     let selected: Double
     let locale: Locale
+    var amounts: [Double] = PairState.amounts
 
     var body: some View {
         HStack(spacing: 4) {
-            ForEach(PairState.amounts, id: \.self) { amount in
+            ForEach(amounts, id: \.self) { amount in
                 let isSelected = amount == selected
                 Button(intent: PairAmountIntent(pair: pairKey, amount: amount)) {
-                    Text(verbatim: amount >= 1000 ? "1K" : AmountFormat.amount(amount, locale: locale, decimalPlaces: 0))
+                    Text(verbatim: Self.label(amount, locale: locale))
                         .font(.caption2.weight(.bold).monospacedDigit())
                         // Выбранная — насыщенный фиолетовый с белым текстом: светлый акцент тёмной темы
                         // с белыми цифрами не читался. Остальные — заметная подложка.
@@ -207,6 +208,12 @@ struct AmountChips: View {
                 .buttonStyle(.plain)
             }
         }
+    }
+
+    /// Короткая подпись: 1, 10, 100, 1K, 10K, 1M — чтобы помещалась в кнопку.
+    static func label(_ amount: Double, locale: Locale) -> String {
+        let (value, suffix) = amount >= 1_000_000 ? (amount / 1_000_000, "M") : amount >= 1000 ? (amount / 1000, "K") : (amount, "")
+        return AmountFormat.amount(value, locale: locale, decimalPlaces: 0) + suffix
     }
 }
 
