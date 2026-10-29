@@ -2,11 +2,13 @@ import SwiftUI
 
 /// Экран подписки Pro: тёмный фон в цвете акцента со звёздами, выбор тарифа,
 /// что входит в Pro, большая кнопка и ссылки внизу.
-/// Покупки (StoreKit) ещё не подключены: цены — заглушки, кнопка включает тестовый Pro.
+/// Цены и покупка — через StoreKit (`Purchases`).
 struct PaywallView: View {
     @Environment(RatesStore.self) private var store
     @Environment(\.dismiss) private var dismiss
     @State private var plan: Plan = .yearly
+    @State private var message: String?
+    private let purchases = Purchases.shared
 
     typealias Plan = ProPlan
 
@@ -52,6 +54,36 @@ struct PaywallView: View {
         // Светлый статус-бар на тёмном фоне.
         .preferredColorScheme(.dark)
         .environment(\.layoutDirection, store.language.isRightToLeft ? .rightToLeft : .leftToRight)
+        .task { if purchases.products.isEmpty { await purchases.loadProducts() } }
+        .alert(message ?? "", isPresented: Binding(get: { message != nil }, set: { if !$0 { message = nil } })) {
+            Button("OK", role: .cancel) {}
+        }
+    }
+
+    private var isBusy: Bool { purchases.state != .idle }
+
+    private func buy() async {
+        UIImpactFeedbackGenerator(style: .light).impactOccurred()
+        switch await purchases.purchase(plan) {
+        case .success:
+            UINotificationFeedbackGenerator().notificationOccurred(.success)
+            dismiss()
+        case .cancelled:
+            break
+        case .pending:
+            message = L(.purchasePending)
+        case .failed:
+            message = purchases.products.isEmpty ? L(.pricesUnavailable) : L(.purchaseFailed)
+        }
+    }
+
+    private func restore() async {
+        if await purchases.restore() {
+            UINotificationFeedbackGenerator().notificationOccurred(.success)
+            dismiss()
+        } else {
+            message = L(.nothingToRestore)
+        }
     }
 
     /// Что входит в Pro — иконка и подпись.
@@ -110,7 +142,7 @@ struct PaywallView: View {
                             Text(item.title)
                                 .font(.body.weight(.medium))
                                 .foregroundStyle(.white)
-                            Text(item.price)
+                            Text(purchases.priceText(for: item))
                                 .font(.subheadline)
                                 .foregroundStyle(.white.opacity(0.6))
                         }
@@ -157,32 +189,36 @@ struct PaywallView: View {
             Label(L(.trialNote), systemImage: "gift")
                 .font(.subheadline.weight(.medium))
                 .foregroundStyle(.white.opacity(0.85))
-                .opacity(plan.hasTrial ? 1 : 0)
+                .opacity(purchases.hasTrial(plan) ? 1 : 0)
                 .animation(.snappy, value: plan)
             Button {
-                // Пока нет StoreKit — включает тестовый Pro, как переключатель в настройках.
-                UINotificationFeedbackGenerator().notificationOccurred(.success)
-                store.isPro = true
-                store.proPlan = plan
-                dismiss()
+                Task { await buy() }
             } label: {
-                Text(plan.hasTrial ? L(.startTrial) : L(.getFullAccess))
-                    .contentTransition(.opacity)
-                    .font(.headline)
-                    .foregroundStyle(Color.onAccent)
-                    .frame(maxWidth: .infinity)
-                    .frame(height: 56)
-                    .background(Capsule().fill(Color.accentColor))
-                    .shadow(color: Color.accentColor.opacity(0.5), radius: 16, y: 6)
+                ZStack {
+                    Text(purchases.hasTrial(plan) ? L(.startTrial) : L(.getFullAccess))
+                        .contentTransition(.opacity)
+                        .opacity(purchases.state == .purchasing ? 0 : 1)
+                    if purchases.state == .purchasing {
+                        ProgressView().tint(Color.onAccent)
+                    }
+                }
+                .font(.headline)
+                .foregroundStyle(Color.onAccent)
+                .frame(maxWidth: .infinity)
+                .frame(height: 56)
+                .background(Capsule().fill(Color.accentColor))
+                .shadow(color: Color.accentColor.opacity(0.5), radius: 16, y: 6)
             }
             .buttonStyle(PressScaleStyle())
+            .disabled(isBusy)
 
             HStack(spacing: 10) {
                 Link(L(.terms), destination: AppLinks.terms)
                 Text(verbatim: "·")
                 Link(L(.privacy), destination: AppLinks.privacy)
                 Text(verbatim: "·")
-                Button(L(.restore)) {}
+                Button(L(.restore)) { Task { await restore() } }
+                    .disabled(isBusy)
             }
             .font(.footnote.weight(.medium))
             .foregroundStyle(.white.opacity(0.85))

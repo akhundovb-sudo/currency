@@ -259,7 +259,7 @@ final class RatesStore {
         }
     }
 
-    /// Какой тариф Pro куплен — показывается в настройках. `nil` — Pro включён переключателем для проверки.
+    /// Какой тариф Pro куплен — показывается в настройках.
     var proPlan: ProPlan? {
         didSet { defaults?.set(proPlan?.rawValue, forKey: Keys.proPlan) }
     }
@@ -546,26 +546,17 @@ enum ProPlan: String, CaseIterable, Identifiable {
 
     var isSubscription: Bool { self != .lifetime }
 
-    /// Цены-заглушки, пока не подключён StoreKit: реальные придут из App Store.
-    /// Год — почти в 2,5 раза дешевле помесячной оплаты, навсегда — как два года.
-    var price: String {
-        switch self {
-        case .monthly: L(.perMonth, "$1.99")
-        case .yearly: L(.perYear, "$9.99")
-        case .lifetime: L(.oneTime, "$19.99")
-        }
-    }
+    /// Цена тарифа — из App Store, см. `Purchases.priceText(for:)`.
 }
 
 /// Внешние ссылки приложения.
 enum AppLinks {
     /// Стандартное лицензионное соглашение Apple — подходит, пока нет своих условий.
     static let terms = URL(string: "https://www.apple.com/legal/internet-services/itunes/dev/stdeula/")!
-    /// TODO: заменить на страницу своей политики конфиденциальности.
-    static let privacy = URL(string: "https://www.apple.com/legal/privacy/")!
+    /// Политика конфиденциальности — GitHub Pages (папка docs); тот же адрес указан в App Store Connect.
+    static let privacy = URL(string: "https://akhundovb-sudo.github.io/currency/privacy.html")!
     /// Одна страница с условиями и политикой конфиденциальности (строка в настройках).
-    /// TODO: заменить на свою страницу, где есть оба документа.
-    static let legal = URL(string: "https://www.apple.com/legal/privacy/")!
+    static let legal = URL(string: "https://akhundovb-sudo.github.io/currency/privacy.html")!
     /// Управление подписками в App Store.
     static let manageSubscriptions = URL(string: "https://apps.apple.com/account/subscriptions")!
 }

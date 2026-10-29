@@ -168,10 +168,11 @@ struct ProStatusCard: View {
         .accessibilityElement(children: .combine)
     }
 
-    /// «Pro активен · Год · $9.99 / год»; без тарифа (тестовый Pro) — просто «Pro активен».
+    /// «Pro активен · Год · $9.99 / год»; пока цена не загрузилась — без неё.
     private var subtitle: String {
         guard let plan else { return L(.proActive) }
-        return "\(L(.proActive)) · \(plan.title) · \(plan.price)"
+        let price = Purchases.shared.priceText(for: plan)
+        return price == "…" ? "\(L(.proActive)) · \(plan.title)" : "\(L(.proActive)) · \(plan.title) · \(price)"
     }
 }
 
