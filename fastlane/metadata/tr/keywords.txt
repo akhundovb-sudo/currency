@@ -1,1 +1,1 @@
-döviz,çevirici,kur,bitcoin,kripto,hesap makinesi,para,seyahat,dolar,euro,altın
+kur,para,donusum,bitcoin,ethereum,dolar,euro,sterlin,forex,btc,eth,usd,eur,try,usdt,sol

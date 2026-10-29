@@ -1,14 +1,17 @@
-Cento, herhangi bir tutarı tüm para birimlerinize aynı anda çevirir.
+Döviz ve kripto paralarınız tek ekranda.
 
-Bir sayı yazın, istediğiniz para birimlerini ekleyin ve tüm çevirileri anında görün. Dolar, euro, yuan, ruble, bitcoin, Ethereum ve daha fazlasını tek listede karşılaştırın.
+Cento’ya bir tutar girin ve farklı para birimlerindeki karşılığını aynı anda görün. Kendi listenizi oluşturun, ekranlar arasında geçiş yapmadan sonuçları karşılaştırın.
 
-• Döviz kurları ve 60'tan fazla kripto para yan yana
-• Yerleşik hesap makinesi tuş takımı: 100 + 25 × 2 yazın, sonucu her para biriminde görün
-• Yerel para biriminiz ilk açılışta otomatik eklenir
-• Sürükleyerek sıralayın, kaydırarak silin
-• Güncel kurlar; internet yokken son değerler saklanır
-• Açık ve koyu tema, sayı biçimi seçenekleri
-• iPhone ve iPad'de çalışır
-• Türkçe, İngilizce, Rusça, Fransızca, İspanyolca, Almanca, Çince ve Arapça
+• Aynı anda birden fazla para birimi
+İhtiyacınız olan para birimlerini ekleyin. Siz yazarken listedeki tutarlar yeniden hesaplanır.
 
-Cento Pro; sınırsız para birimi, tüm kripto paralar ve özel uygulama simgeleri sunar.
+• Döviz ve kripto bir arada
+Geleneksel para birimlerini Bitcoin, Ethereum ve diğer kripto paralarla aynı listede görüntüleyin.
+
+• Dahili hesap makinesi
+Toplama, çıkarma, çarpma ve bölme işlemlerini doğrudan çeviricide yapın.
+
+• Tarzınıza göre
+Sevdiğiniz uygulama simgesini seçin ve açık veya koyu temayı kullanın.
+
+Seyahat öncesinde fiyatları karşılaştırırken, farklı para birimlerinde hesap yaparken veya kripto para çevirirken tüm sonuçlarınız Cento ile tek yerde.

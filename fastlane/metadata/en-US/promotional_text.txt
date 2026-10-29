@@ -1,1 +1,1 @@
-Type an amount and see it in every currency at once. Dollars, euros, bitcoin and 60+ cryptocurrencies, side by side.
+Enter an amount and see it converted across multiple currencies and cryptocurrencies at once. Compare results in one view with a built-in calculator.

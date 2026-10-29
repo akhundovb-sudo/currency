@@ -1,14 +1,17 @@
-Cento converts any amount into all your currencies at once.
+Your currencies and crypto, together on one screen.
 
-Type a number, add a few currencies, and see every conversion instantly. Compare the dollar, euro, yuan, ruble, bitcoin, Ethereum and more in a single list.
+Enter an amount in Cento and see its value across multiple currencies at once. Build your own list and compare results without switching between screens.
 
-• Fiat currencies and 60+ cryptocurrencies side by side
-• Built-in calculator keypad: type 100 + 25 × 2 and see the result in every currency
-• Your local currency is added automatically on first launch
-• Reorder currencies by dragging, swipe to delete
-• Live rates with the last known values saved for when you're offline
-• Light and dark themes, number formats of your choice
-• Works on iPhone and iPad
-• Available in English, Russian, Turkish, French, Spanish, German, Chinese and Arabic
+• Convert multiple currencies
+Add the currencies you need. Converted amounts update as you type.
 
-Cento Pro unlocks unlimited currencies, all cryptocurrencies and exclusive app icons.
+• Currencies and crypto together
+View traditional currencies alongside Bitcoin, Ethereum, and other cryptocurrencies in the same list.
+
+• Built-in calculator
+Add, subtract, multiply, and divide directly in the converter.
+
+• Make it yours
+Choose your favorite app icon and use a light or dark theme.
+
+Whether you’re comparing prices for a trip, checking an amount in another currency, or converting crypto, Cento keeps your conversions in one place.

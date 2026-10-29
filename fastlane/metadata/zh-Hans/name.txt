@@ -1,1 +1,1 @@
-Cento：汇率与加密货币换算
+Cento: Currency Converter

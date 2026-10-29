@@ -1,1 +1,1 @@
-Cento: Döviz ve Kripto Kurları
+Cento: Currency Converter

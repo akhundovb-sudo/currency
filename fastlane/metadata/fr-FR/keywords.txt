@@ -1,1 +1,1 @@
-devises,convertisseur,taux de change,bitcoin,crypto,calculatrice,argent,voyage,dollar,euro
+convertisseur,devises,change,conversion,monnaie,bitcoin,ethereum,dollar,euro,forex,btc,eth,usd,eur
