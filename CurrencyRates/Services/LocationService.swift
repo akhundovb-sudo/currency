@@ -1,12 +1,13 @@
 import CoreLocation
 import Foundation
 
-/// Определяет страну по геолокации и отдаёт её валюту. Запрашивает разрешение
+/// Определяет страну по геолокации и отдаёт её код и валюту. Запрашивает разрешение
 /// «при использовании» при первом запуске; точность — до города, этого хватает.
+/// Вызывается при каждом открытии приложения: виджет «Путешествие» показывает валюту страны, где вы сейчас.
 @MainActor
 final class LocationService: NSObject, CLLocationManagerDelegate {
     private let manager = CLLocationManager()
-    private var onCurrency: (@MainActor (String) -> Void)?
+    private var onCurrency: (@MainActor (_ currency: String, _ country: String) -> Void)?
 
     override init() {
         super.init()
@@ -14,8 +15,8 @@ final class LocationService: NSObject, CLLocationManagerDelegate {
         manager.desiredAccuracy = kCLLocationAccuracyReduced
     }
 
-    /// Запрашивает разрешение (если ещё не спрашивали) и один раз определяет валюту страны.
-    func requestLocalCurrency(_ completion: @escaping @MainActor (String) -> Void) {
+    /// Запрашивает разрешение (если ещё не спрашивали) и определяет страну и её валюту.
+    func requestLocalCurrency(_ completion: @escaping @MainActor (_ currency: String, _ country: String) -> Void) {
         onCurrency = completion
         switch manager.authorizationStatus {
         case .notDetermined:
@@ -52,7 +53,7 @@ final class LocationService: NSObject, CLLocationManagerDelegate {
               let country = placemark.isoCountryCode,
               let currency = Locale(identifier: "en_\(country)").currency?.identifier
         else { return }
-        onCurrency?(currency)
+        onCurrency?(currency, country)
         onCurrency = nil
     }
 }

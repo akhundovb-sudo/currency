@@ -97,6 +97,8 @@ final class RatesStore {
 
         let local = defaults?.string(forKey: Keys.localCurrency)
         self.localCurrency = local
+        self.currentCountry = defaults?.string(forKey: Keys.currentCountry)
+        self.currentCountryCurrency = defaults?.string(forKey: Keys.currentCountryCurrency)
         let starting = Self.startingCodes(local: local)
         self.sourceCode = sourceCode ?? defaults?.string(forKey: Keys.sourceCode) ?? starting[0]
         self.selectedCodes = selectedCodes
@@ -438,6 +440,8 @@ final class RatesStore {
         static let numberStyle = "numberStyle"
         static let decimalPlaces = "decimalPlaces"
         static let localCurrency = "localCurrency"
+        static let currentCountry = "currentCountry"
+        static let currentCountryCurrency = "currentCountryCurrency"
     }
 
     /// Стартовые валюты: местная (по геолокации) и доллар; если местную не определили
@@ -450,6 +454,22 @@ final class RatesStore {
     /// Местная валюта, определённая по геолокации; входит в бесплатные.
     private(set) var localCurrency: String? {
         didSet { defaults?.set(localCurrency, forKey: Keys.localCurrency) }
+    }
+
+    /// Страна, где пользователь сейчас (по последнему определению геолокации), и её валюта —
+    /// для виджета «Путешествие».
+    private(set) var currentCountry: String? {
+        didSet { defaults?.set(currentCountry, forKey: Keys.currentCountry) }
+    }
+
+    private(set) var currentCountryCurrency: String? {
+        didSet { defaults?.set(currentCountryCurrency, forKey: Keys.currentCountryCurrency) }
+    }
+
+    func updateCurrentCountry(_ country: String, currency: String) {
+        guard CryptoAsset.byCode[currency] == nil else { return }
+        currentCountry = country
+        currentCountryCurrency = currency
     }
 
     /// Местная валюта определена (один раз). Если список ещё стартовый (USD и EUR) —

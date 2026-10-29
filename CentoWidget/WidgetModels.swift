@@ -18,7 +18,7 @@ enum WidgetRates {
         let (fiat, crypto) = await (fiatResult, cryptoResult)
         guard fiat != nil || crypto != nil else { return rates }
 
-        rates.record(fiat: fiat?.rates, fiatAt: fiat?.fetchedAt, crypto: crypto?.rates, cryptoAt: crypto?.fetchedAt, now: now)
+        rates.record(fiat: fiat?.rates, fiatAt: fiat?.fetchedAt, crypto: crypto?.rates, cryptoAt: crypto?.fetchedAt, cryptoChanges: crypto?.changes, now: now)
         rates.save()
         return rates
     }
@@ -170,6 +170,10 @@ struct PairEntry: TimelineEntry {
     let isLocked: Bool
     /// Цвет фона (RGB) по настройке «Цвет»; nil — обычный фон.
     let tint: UInt32?
+    /// Ключ пары для кнопок на виджете (поменять местами, сумма) — по исходной паре из настроек.
+    let pairKey: String
+    /// Сумма, выбранная кнопками «1 / 10 / 100 / 1K».
+    let amount: Double
 
     func format(_ value: Double) -> String {
         CompactZeros.apply(AmountFormat.rate(value, locale: numberLocale), locale: numberLocale)
@@ -184,7 +188,7 @@ struct PairEntry: TimelineEntry {
         let requested = [config.source?.code, config.target?.code].compactMap { $0 }
         let isLocked = !requested.allSatisfy(app.allows)
         // Без подписки платная валюта в паре заменяется парой из приложения.
-        let source = isLocked ? app.sourceCode : config.source?.code ?? app.sourceCode
+        var source = isLocked ? app.sourceCode : config.source?.code ?? app.sourceCode
         var target = (isLocked ? nil : config.target?.code) ?? app.codes.first(where: { $0 != source }) ?? "EUR"
         if target == source { target = source == "USD" ? "EUR" : "USD" }
         let tintCode: String? = switch config.tint {
@@ -192,6 +196,10 @@ struct PairEntry: TimelineEntry {
         case .main: source
         case .second: target
         }
+        // Кнопки на виджете: «⇄» меняет валюты местами, суммы — сколько считать.
+        let pairKey = PairState.key(source, target)
+        let state = PairState.load(pairKey)
+        if state.isSwapped { swap(&source, &target) }
         let hasRates = !rates.fiat.isEmpty || !rates.crypto.isEmpty
         return PairEntry(
             date: date,
@@ -203,8 +211,37 @@ struct PairEntry: TimelineEntry {
             numberLocale: app.numberLocale,
             isRightToLeft: app.isRightToLeft,
             isLocked: isLocked,
-            tint: tintCode.map { CurrencyCatalog.color(for: $0) ?? WidgetTintFallback.color }
+            tint: tintCode.map { CurrencyCatalog.color(for: $0) ?? WidgetTintFallback.color },
+            pairKey: pairKey,
+            amount: state.amount
         )
+    }
+}
+
+/// Состояние кнопок виджета «Курс» для каждой пары: поменяны ли валюты и выбранная сумма.
+/// Хранится в контейнере App Group по ключу пары из настроек.
+enum PairState {
+    struct Value: Codable {
+        var isSwapped = false
+        var amount: Double = 1
+    }
+
+    static let amounts: [Double] = [1, 10, 100, 1000]
+
+    static func key(_ source: String, _ target: String) -> String {
+        "pairState.\(source)-\(target)"
+    }
+
+    static func load(_ key: String) -> Value {
+        guard let data = WidgetSnapshot.defaults?.data(forKey: key),
+              let value = try? JSONDecoder().decode(Value.self, from: data)
+        else { return Value() }
+        return value
+    }
+
+    static func save(_ value: Value, for key: String) {
+        guard let data = try? JSONEncoder().encode(value) else { return }
+        WidgetSnapshot.defaults?.set(data, forKey: key)
     }
 }
 

@@ -7,6 +7,9 @@ struct CentoWidgetBundle: WidgetBundle {
     var body: some Widget {
         PairWidget()
         CurrencyWidget()
+        ChartWidget()
+        CryptoWidget()
+        TravelWidget()
     }
 }
 
@@ -77,44 +80,58 @@ struct PairWidgetView: View {
         }
     }
 
-    /// Флаги пары, «1 EUR =», курс и изменение за сутки — как карточка курса в банке.
+    /// Флаги пары с кнопкой «⇄», «100 EUR =», сумма; внизу — изменение за сутки (средний)
+    /// или кнопки сумм (маленький).
     private func main(_ rate: Double) -> some View {
-        VStack(alignment: .leading, spacing: 0) {
-            HStack(alignment: .top, spacing: 0) {
-                PairBadges(source: entry.source, target: entry.target, size: 38)
-                Spacer(minLength: 4)
+        let isSmall = family == .systemSmall
+        return VStack(alignment: .leading, spacing: 0) {
+            HStack(alignment: .top, spacing: 6) {
+                PairBadges(source: entry.source, target: entry.target, size: isSmall ? 30 : 38)
+                Spacer(minLength: 0)
                 if entry.isLocked { ProMark() }
+                SwapButton(pairKey: entry.pairKey)
             }
-            Spacer(minLength: 8)
-            Text(verbatim: "1 \(entry.source) =")
-                .font(.headline)
+            Spacer(minLength: 4)
+            Text(verbatim: "\(entry.formatAmount(entry.amount)) \(entry.source) =")
+                .font(isSmall ? .subheadline.weight(.semibold) : .headline)
                 .foregroundStyle(.secondary)
-            Text(verbatim: "\(entry.format(rate)) \(entry.target)")
-                .font(.title2.weight(.bold).monospacedDigit())
+                .lineLimit(1)
+                .minimumScaleFactor(0.6)
+            Text(verbatim: "\(entry.formatAmount(rate * entry.amount)) \(entry.target)")
+                .font((isSmall ? Font.title3 : .title2).weight(.bold).monospacedDigit())
                 .lineLimit(1)
                 .minimumScaleFactor(0.45)
-            Spacer(minLength: 6)
-            ChangeLabel(change: entry.change, updatedAt: entry.updatedAt, locale: entry.numberLocale)
+            Spacer(minLength: 4)
+            if isSmall {
+                AmountChips(pairKey: entry.pairKey, selected: entry.amount, locale: entry.numberLocale)
+            } else {
+                ChangeLabel(change: entry.change, updatedAt: entry.updatedAt, locale: entry.numberLocale)
+            }
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .leading)
     }
 
-    /// Справа в среднем виджете: сколько будет 1, 10, 100 и 1000.
+    /// Справа в среднем виджете: 1, 10, 100 и 1000 — нажатие показывает эту сумму слева.
     private func multiples(_ rate: Double) -> some View {
         VStack(alignment: .leading, spacing: 0) {
-            ForEach([1.0, 10, 100, 1000], id: \.self) { amount in
+            ForEach(PairState.amounts, id: \.self) { amount in
                 if amount > 1 { Divider().opacity(0.5) }
-                HStack(spacing: 4) {
-                    Text(verbatim: "\(AmountFormat.amount(amount, locale: entry.numberLocale, decimalPlaces: 0)) \(entry.source)")
-                        .foregroundStyle(.secondary)
-                    Spacer(minLength: 4)
-                    Text(verbatim: "\(entry.formatAmount(amount * rate)) \(entry.target)")
-                        .fontWeight(.semibold)
+                Button(intent: PairAmountIntent(pair: entry.pairKey, amount: amount)) {
+                    HStack(spacing: 4) {
+                        Text(verbatim: "\(AmountFormat.amount(amount, locale: entry.numberLocale, decimalPlaces: 0)) \(entry.source)")
+                            .foregroundStyle(.secondary)
+                        Spacer(minLength: 4)
+                        Text(verbatim: "\(entry.formatAmount(amount * rate)) \(entry.target)")
+                            .fontWeight(.semibold)
+                            .foregroundStyle(amount == entry.amount ? WidgetColor.accent : Color.primary)
+                    }
+                    .font(.footnote.monospacedDigit())
+                    .lineLimit(1)
+                    .minimumScaleFactor(0.6)
+                    .frame(maxHeight: .infinity)
+                    .contentShape(Rectangle())
                 }
-                .font(.footnote.monospacedDigit())
-                .lineLimit(1)
-                .minimumScaleFactor(0.6)
-                .frame(maxHeight: .infinity)
+                .buttonStyle(.plain)
             }
         }
         .frame(maxWidth: .infinity)
@@ -151,8 +168,48 @@ struct PairWidgetView: View {
     }
 }
 
+/// «⇄» — поменять валюты пары местами прямо на виджете.
+struct SwapButton: View {
+    let pairKey: String
+
+    var body: some View {
+        Button(intent: SwapPairIntent(pair: pairKey)) {
+            Image(systemName: "arrow.left.arrow.right")
+                .font(.system(size: 12, weight: .bold))
+                .foregroundStyle(.primary)
+                .frame(width: 28, height: 28)
+                .background(Circle().fill(Color.primary.opacity(0.1)))
+        }
+        .buttonStyle(.plain)
+    }
+}
+
+/// Кнопки сумм «1 · 10 · 100 · 1K» в маленьком виджете «Курс».
+struct AmountChips: View {
+    let pairKey: String
+    let selected: Double
+    let locale: Locale
+
+    var body: some View {
+        HStack(spacing: 4) {
+            ForEach(PairState.amounts, id: \.self) { amount in
+                let isSelected = amount == selected
+                Button(intent: PairAmountIntent(pair: pairKey, amount: amount)) {
+                    Text(verbatim: amount >= 1000 ? "1K" : AmountFormat.amount(amount, locale: locale, decimalPlaces: 0))
+                        .font(.caption2.weight(.bold).monospacedDigit())
+                        .foregroundStyle(isSelected ? Color.white : Color.primary)
+                        .frame(maxWidth: .infinity)
+                        .frame(height: 20)
+                        .background(Capsule().fill(isSelected ? AnyShapeStyle(WidgetColor.accent) : AnyShapeStyle(Color.primary.opacity(0.1))))
+                }
+                .buttonStyle(.plain)
+            }
+        }
+    }
+}
+
 /// Две круглые иконки внахлёст: исходная валюта сзади, целевая спереди.
-private struct PairBadges: View {
+struct PairBadges: View {
     let source: String
     let target: String
     let size: CGFloat
@@ -182,7 +239,7 @@ private struct PairBadges: View {
 }
 
 /// Изменение за сутки со стрелкой; пока истории нет — время обновления.
-private struct ChangeLabel: View {
+struct ChangeLabel: View {
     let change: Double?
     let updatedAt: Date?
     let locale: Locale
@@ -407,7 +464,7 @@ struct CurrencyWidgetView: View {
 
 /// Фон виджета по настройке «Цвет»: обычный или «цветная карточка» валюты —
 /// тёмная с оттенком цвета, свечением снизу и тонким цветным ободком. В светлой теме — то же мягче на белом.
-private struct TintedWidget: ViewModifier {
+struct TintedWidget: ViewModifier {
     let tint: UInt32?
 
     @Environment(\.colorScheme) private var colorScheme
@@ -474,7 +531,7 @@ private struct GlowCard: View {
 }
 
 /// Пока курсов нет (приложение ни разу не открывали и сети не было).
-private struct EmptyWidgetView: View {
+struct EmptyWidgetView: View {
     let family: WidgetFamily
 
     var body: some View {
@@ -493,7 +550,7 @@ private struct EmptyWidgetView: View {
 
 /// Тег «PRO», как у платных валют в приложении: акцентный текст на стеклянной капсуле
 /// с лёгким свечением акцента, светлым ободком и тонкой цветной обводкой.
-private struct ProMark: View {
+struct ProMark: View {
     @Environment(\.colorScheme) private var colorScheme
 
     var body: some View {

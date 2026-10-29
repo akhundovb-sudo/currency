@@ -61,23 +61,28 @@ struct RatesService: Sendable {
             URLQueryItem(name: "ids", value: CryptoAsset.all.map(\.id).joined(separator: ",")),
             URLQueryItem(name: "vs_currencies", value: "usd"),
             URLQueryItem(name: "include_last_updated_at", value: "true"),
+            URLQueryItem(name: "include_24hr_change", value: "true"),
         ]
-        // Ответ: { "bitcoin": { "usd": 79773, "last_updated_at": 1793088915 }, ... }
-        let decoded = try await get([String: [String: Double]].self, from: components.url!)
+        // Ответ: { "bitcoin": { "usd": 79773, "usd_24h_change": -1.2, "last_updated_at": 1793088915 }, ... }
+        // Поле может прийти как null — тогда весь ответ не должен ломаться.
+        let decoded = try await get([String: [String: Double?]].self, from: components.url!)
 
         var rates: [String: Double] = [:]
+        var changes: [String: Double] = [:]
         var latestUpdate: TimeInterval = 0
         for asset in CryptoAsset.all {
-            guard let entry = decoded[asset.id], let priceUSD = entry["usd"], priceUSD > 0 else { continue }
+            guard let entry = decoded[asset.id], let priceUSD = entry["usd"] ?? nil, priceUSD > 0 else { continue }
             rates[asset.code] = 1 / priceUSD
-            latestUpdate = max(latestUpdate, entry["last_updated_at"] ?? 0)
+            changes[asset.code] = entry["usd_24h_change"] ?? nil
+            latestUpdate = max(latestUpdate, (entry["last_updated_at"] ?? nil) ?? 0)
         }
         guard !rates.isEmpty else { throw RatesServiceError.badResponse }
 
         return RateSet(
             rates: rates,
             updatedAt: latestUpdate > 0 ? Date(timeIntervalSince1970: latestUpdate) : .now,
-            fetchedAt: .now
+            fetchedAt: .now,
+            changes: changes
         )
     }
 

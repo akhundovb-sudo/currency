@@ -270,3 +270,53 @@ struct ListIntent: WidgetConfigurationIntent {
             .filter { $0 != source?.code && seen.insert($0).inserted }
     }
 }
+
+// MARK: - Кнопки на виджете «Курс»
+
+/// «⇄» — поменять валюты пары местами.
+struct SwapPairIntent: AppIntent {
+    static let title: LocalizedStringResource = "Swap currencies"
+    static let isDiscoverable = false
+
+    @Parameter(title: "Pair")
+    var pair: String
+
+    init() {}
+
+    init(pair: String) {
+        self.pair = pair
+    }
+
+    func perform() async throws -> some IntentResult {
+        var state = PairState.load(pair)
+        state.isSwapped.toggle()
+        PairState.save(state, for: pair)
+        return .result()
+    }
+}
+
+/// «1 / 10 / 100 / 1K» — сколько считать.
+struct PairAmountIntent: AppIntent {
+    static let title: LocalizedStringResource = "Amount"
+    static let isDiscoverable = false
+
+    @Parameter(title: "Pair")
+    var pair: String
+
+    @Parameter(title: "Amount")
+    var amount: Double
+
+    init() {}
+
+    init(pair: String, amount: Double) {
+        self.pair = pair
+        self.amount = amount
+    }
+
+    func perform() async throws -> some IntentResult {
+        var state = PairState.load(pair)
+        state.amount = amount
+        PairState.save(state, for: pair)
+        return .result()
+    }
+}
