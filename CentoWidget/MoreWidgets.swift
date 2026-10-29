@@ -605,10 +605,10 @@ struct TravelEntry: TimelineEntry {
         rate > 0 ? pow(10, max(0, floor(log10(1 / rate)))) : 1
     }
 
-    /// Варианты на кнопках: шаг, ×10, ×100.
+    /// Варианты сумм: шаг, ×10, ×100, ×1000 — как 1 / 10 / 100 / 1K у «Курса».
     static func choices(rate: Double) -> [Double] {
         let base = baseStep(rate: rate)
-        return [base, base * 10, base * 100]
+        return [base, base * 10, base * 100, base * 1000]
     }
 
     /// Выбранная сумма, если она из текущих вариантов, иначе — шаг по умолчанию.
@@ -738,7 +738,7 @@ struct TravelWidgetView: View {
         switch entry.state {
         case .abroad(let local, let rate?) where !entry.isLocked:
             if family == .systemMedium {
-                // Обе колонки одной высоты: верх списка — вровень с флагом, низ — с обратным курсом.
+                // Обе колонки одной высоты: верх списка — вровень с флагом.
                 HStack(alignment: .top, spacing: 14) {
                     abroad(local: local, rate: rate)
                     Divider()
@@ -767,52 +767,85 @@ struct TravelWidgetView: View {
                     .lineLimit(1)
                     .minimumScaleFactor(0.7)
                 Spacer(minLength: 0)
-                Image(systemName: "airplane").font(.caption).foregroundStyle(.secondary)
+                // При смене суммы самолёт улетает вправо, а новый прилетает слева.
+                Image(systemName: "airplane")
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+                    .id(entry.amount(rate: rate))
+                    .transition(.push(from: .leading))
             }
             Spacer(minLength: 4)
-            // В маленьком виджете списка нет — крупно выбранная кнопками сумма;
-            // в среднем слева курс за единицу, а суммы — в списке справа.
-            let amount = family == .systemSmall ? entry.amount(rate: rate) : 1
+            // Выбранная сумма — как у «Курса»: кнопками в маленьком, строкой списка в среднем.
+            let amount = entry.amount(rate: rate)
             Text(verbatim: "\(AmountFormat.amount(amount, locale: entry.numberLocale, decimalPlaces: 0)) \(local) =")
                 .font(.subheadline.weight(.semibold))
                 .foregroundStyle(Color.primary.opacity(0.7))
                 .lineLimit(1)
+                .contentTransition(.numericText())
             Text(verbatim: "\(amount == 1 ? entry.format(rate) : entry.formatAmount(amount * rate)) \(entry.home)")
                 .font(.title3.weight(.bold).monospacedDigit())
                 .lineLimit(1)
                 .minimumScaleFactor(0.45)
+                .contentTransition(.numericText())
             Spacer(minLength: 4)
-            // Сколько считать: шаг валюты, ×10, ×100 — как кнопки у «Курса».
-            AmountChips(
-                pairKey: TravelEntry.stateKey(local: local),
-                selected: entry.amount(rate: rate),
-                locale: entry.numberLocale,
-                amounts: TravelEntry.choices(rate: rate)
-            )
+            if family == .systemSmall {
+                AmountChips(
+                    pairKey: TravelEntry.stateKey(local: local),
+                    selected: amount,
+                    locale: entry.numberLocale,
+                    amounts: TravelEntry.choices(rate: rate)
+                )
+            } else if rate > 0 {
+                Text(verbatim: "1 \(entry.home) = \(entry.format(1 / rate)) \(local)")
+                    .font(.caption.monospacedDigit())
+                    .foregroundStyle(.secondary)
+                    .lineLimit(1)
+                    .minimumScaleFactor(0.6)
+            }
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .leading)
     }
 
-    /// Суммы в местной валюте от выбранной кнопкой — сколько это дома.
+    /// Ходовые суммы в местной валюте — сколько это дома. Как у «Курса»: нажатие на строку
+    /// показывает эту сумму слева, а самолётик перелетает к выбранной строке.
     private func amounts(local: String, rate: Double) -> some View {
-        let base = entry.amount(rate: rate)
+        let options = TravelEntry.choices(rate: rate)
+        let selected = entry.amount(rate: rate)
+        let index = options.firstIndex(of: selected) ?? 0
         return VStack(alignment: .leading, spacing: 0) {
-            ForEach([1.0, 10, 100, 1000], id: \.self) { step in
-                let amount = step * base
-                if step > 1 { Divider().opacity(0.5) }
-                HStack(spacing: 4) {
-                    Text(verbatim: "\(AmountFormat.amount(amount, locale: entry.numberLocale, decimalPlaces: 0)) \(local)")
-                        .foregroundStyle(.secondary)
-                    Spacer(minLength: 4)
-                    Text(verbatim: "\(entry.formatAmount(amount * rate)) \(entry.home)")
-                        .fontWeight(.semibold)
+            ForEach(options, id: \.self) { amount in
+                if amount != options[0] { Divider().opacity(0.5) }
+                Button(intent: PairAmountIntent(pair: TravelEntry.stateKey(local: local), amount: amount)) {
+                    HStack(spacing: 4) {
+                        Text(verbatim: "\(AmountFormat.amount(amount, locale: entry.numberLocale, decimalPlaces: 0)) \(local)")
+                            .foregroundStyle(.secondary)
+                        Spacer(minLength: 4)
+                        Text(verbatim: "\(entry.formatAmount(amount * rate)) \(entry.home)")
+                            .fontWeight(.semibold)
+                            .foregroundStyle(amount == selected ? WidgetColor.accent : Color.primary)
+                    }
+                    // Один размер шрифта у всех строк — без поштучного сжатия.
+                    .font(.caption.monospacedDigit())
+                    .lineLimit(1)
+                    .padding(.leading, 16)
+                    .frame(maxHeight: .infinity)
+                    .contentShape(Rectangle())
                 }
-                // Один размер шрифта у всех строк — без поштучного сжатия.
-                .font(.caption.monospacedDigit())
-                .lineLimit(1)
-                .frame(maxHeight: .infinity)
+                .buttonStyle(.plain)
             }
         }
+        // Самолётик у выбранной строки: при смене суммы он перелетает к новой строке.
+        .overlay(alignment: .topLeading) {
+            GeometryReader { proxy in
+                let row = proxy.size.height / CGFloat(options.count)
+                Image(systemName: "airplane")
+                    .font(.system(size: 10, weight: .bold))
+                    .foregroundStyle(WidgetColor.accent)
+                    .position(x: 6, y: row * (CGFloat(index) + 0.5))
+            }
+            .allowsHitTesting(false)
+        }
+        .animation(.spring(response: 0.6, dampingFraction: 0.8), value: index)
         .frame(maxWidth: .infinity)
     }
 
