@@ -158,12 +158,24 @@ private struct PairBadges: View {
     let size: CGFloat
 
     var body: some View {
+        let offset = CGSize(width: size * 0.6, height: size * 0.55)
+        let gap: CGFloat = 2.5
         ZStack(alignment: .topLeading) {
             CurrencyBadge(code: source, size: size)
+                // Прозрачное кольцо между иконками: вырез в задней иконке, а не круг цвета фона —
+                // фон виджета бывает разным (тёмный, тонированный), и кольцо выделялось.
+                .mask {
+                    Rectangle()
+                        .overlay(alignment: .topLeading) {
+                            Circle()
+                                .frame(width: size + gap * 2, height: size + gap * 2)
+                                .offset(x: offset.width - gap, y: offset.height - gap)
+                                .blendMode(.destinationOut)
+                        }
+                        .compositingGroup()
+                }
             CurrencyBadge(code: target, size: size)
-                // Кольцо цвета фона отделяет иконки друг от друга.
-                .background(Circle().fill(Color(.systemBackground)).padding(-2.5))
-                .offset(x: size * 0.6, y: size * 0.55)
+                .offset(offset)
         }
         .frame(width: size * 1.6, height: size * 1.55, alignment: .topLeading)
     }
