@@ -17,12 +17,18 @@ struct AddCurrencyView: View {
         }
     }
 
-    /// Выбранные валюты всегда первыми — в порядке списка; отмеченная валюта сразу поднимается наверх.
+    /// Валюты, выбранные на момент открытия окна, — они идут первыми. Порядок фиксируется
+    /// при открытии: отмеченная сейчас валюта остаётся на месте и поднимется наверх при следующем открытии.
+    private let pinned: [String]
+
+    init(pinned: [String] = []) {
+        self.pinned = pinned
+    }
+
     private var results: [Currency] {
         let all = currencies.filter { $0.matches(query) }
-        let selected = store.selectedCodes
-        let top = selected.compactMap { code in all.first { $0.code == code } }
-        return top + all.filter { !selected.contains($0.code) }
+        let top = pinned.compactMap { code in all.first { $0.code == code } }
+        return top + all.filter { !pinned.contains($0.code) }
     }
 
     @State private var isPaywallPresented = false
