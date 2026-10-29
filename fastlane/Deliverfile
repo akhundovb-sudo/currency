@@ -1,0 +1,8 @@
+# Загружает тексты и скриншоты в App Store Connect. Сборку и отправку на проверку не трогает.
+skip_binary_upload(true)
+skip_app_version_update(true)
+overwrite_screenshots(true)
+submit_for_review(false)
+automatic_release(false)
+force(true) # без окна предпросмотра HTML
+precheck_include_in_app_purchases(false)

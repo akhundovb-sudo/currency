@@ -8,3 +8,4 @@ build-device/
 .DS_Store
 # Секреты (ключи API), если появятся
 Secrets.xcconfig
+fastlane/screenshots/

@@ -1,0 +1,1 @@
+divisas,conversor,tipo de cambio,bitcoin,cripto,calculadora,dinero,viaje,dólar,euro,moneda
