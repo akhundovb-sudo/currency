@@ -196,7 +196,12 @@ enum WidgetColor {
 /// Подписи виджета на языке системы (язык приложения виджету недоступен, пока нет данных).
 enum WidgetText {
     private static var language: String {
-        String(Locale.preferredLanguages.first?.prefix(2) ?? "en")
+        let preferred = Locale.preferredLanguages.first ?? "en"
+        // Китайский с традиционным письмом — отдельный набор подписей.
+        if preferred.hasPrefix("zh"), preferred.contains("Hant") || preferred.contains("TW") || preferred.contains("HK") || preferred.contains("MO") {
+            return "zh-Hant"
+        }
+        return String(preferred.prefix(2))
     }
 
     static var description: String {
@@ -208,6 +213,12 @@ enum WidgetText {
             "de": "Kurse deiner Währungen",
             "zh": "所选货币的汇率",
             "ar": "أسعار العملات التي اخترتها",
+            "ja": "選んだ通貨のレート",
+            "pt": "Cotações das suas moedas",
+            "ko": "선택한 통화의 환율",
+            "zh-Hant": "所選貨幣的匯率",
+            "it": "I tassi delle tue valute",
+            "pl": "Kursy wybranych walut",
         ][language] ?? "Rates for your currencies"
     }
 
@@ -220,6 +231,12 @@ enum WidgetText {
             "de": "Öffne Cento, um Währungen zu wählen",
             "zh": "打开 Cento 选择货币",
             "ar": "افتح Cento لاختيار العملات",
+            "ja": "Cento を開いて通貨を選択",
+            "pt": "Abra o Cento para escolher as moedas",
+            "ko": "Cento를 열어 통화를 선택하세요",
+            "zh-Hant": "開啟 Cento 選擇貨幣",
+            "it": "Apri Cento per scegliere le valute",
+            "pl": "Otwórz Cento, aby wybrać waluty",
         ][language] ?? "Open Cento to choose currencies"
     }
 }
