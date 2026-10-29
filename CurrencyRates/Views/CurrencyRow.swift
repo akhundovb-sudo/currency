@@ -51,7 +51,7 @@ struct CurrencyRow: View {
                         HStack(alignment: .firstTextBaseline, spacing: 8) {
                             codeText
                             Spacer(minLength: 8)
-                            amountSlot
+                            amountSlot.layoutPriority(1)
                         }
                         HStack(alignment: .firstTextBaseline, spacing: 8) {
                             nameText
@@ -115,6 +115,9 @@ struct CurrencyRow: View {
             Text(value)
                 .font(isEditing ? .amountEditing : .amount)
                 .monospacedDigit()
+                // Жирные цифры шире — чуть сжимаем межбуквенное расстояние, чтобы сумма
+                // строки ввода не уменьшалась раньше остальных и оставалась того же размера.
+                .tracking(isEditing ? -0.4 : 0)
                 .foregroundStyle(valueColor)
                 .lineLimit(1)
                 // Обычно размер суммы не меняется; уменьшается, только если не помещается
