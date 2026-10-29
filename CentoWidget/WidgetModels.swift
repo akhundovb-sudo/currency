@@ -179,8 +179,9 @@ struct PairEntry: TimelineEntry {
         CompactZeros.apply(AmountFormat.rate(value, locale: numberLocale), locale: numberLocale)
     }
 
-    func formatAmount(_ value: Double) -> String {
-        CompactZeros.apply(AmountFormat.amount(value, locale: numberLocale, decimalPlaces: nil), locale: numberLocale)
+    /// `whole` — без дробной части, для крупных сумм в узком списке.
+    func formatAmount(_ value: Double, whole: Bool = false) -> String {
+        CompactZeros.apply(AmountFormat.amount(value, locale: numberLocale, decimalPlaces: whole ? 0 : nil), locale: numberLocale)
     }
 
     static func make(_ config: PairIntent, snapshot: WidgetSnapshot?, rates: SharedRates, date: Date = .now) -> PairEntry {
