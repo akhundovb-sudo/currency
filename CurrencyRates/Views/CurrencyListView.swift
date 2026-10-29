@@ -91,7 +91,8 @@ struct CurrencyListView: View {
                             isReordering: editMode.isEditing
                         )
                         .card(selected: code == store.sourceCode && isKeypadVisible)
-                        // Фокус: выбранная карточка выделяется тенью и жирной суммой, но не увеличивается.
+                        // Фокус: выбранная карточка приподнимается — чуть крупнее, с мягкой тенью.
+                        .scaleEffect(isKeypadVisible && code == store.sourceCode ? 1.025 : 1)
                         .animation(.spring(response: 0.35, dampingFraction: 0.8), value: isKeypadVisible)
                         .animation(.spring(response: 0.35, dampingFraction: 0.8), value: store.sourceCode)
                         // Курсы обновились: карточки по очереди сверху вниз коротко увеличиваются
@@ -213,10 +214,10 @@ struct CurrencyListView: View {
             .background {
                 EmptySpaceTapCatcher { if isKeypadVisible { hideKeypad() } }
             }
-            // Подписка закончилась — валюты Pro отключены; объясняем, куда они делись.
-            .onChange(of: store.suspendedCodes.count) { old, new in
-                if new > old { showToast(Toast(kind: .info, message: L(.proSuspended))) }
-            }
+            // Валюты отключены (подписка закончилась или сменился набор бесплатных) —
+            // объясняем, куда они делись: при входе и сразу, если это случилось во время работы.
+            .onAppear(perform: showSuspensionNotice)
+            .onChange(of: store.suspensionNotice) { _, _ in showSuspensionNotice() }
             // Смахивание списка вниз прячет клавиатуру. Прокрутка вверх её не трогает:
             // иначе клавиатура исчезала посреди жеста и список прыгал под пальцем.
             // Жест включён только при открытой клавиатуре: иначе он перехватывает
@@ -296,12 +297,22 @@ struct CurrencyListView: View {
         showToast(Toast(kind: .warning, message: L(.minTwoCurrencies)))
     }
 
-    /// Показывает сообщение снизу; оно само скрывается через 3 с.
-    private func showToast(_ newToast: Toast) {
+    private func showSuspensionNotice() {
+        guard let notice = store.suspensionNotice else { return }
+        store.suspensionNotice = nil
+        let message = switch notice.reason {
+        case .proEnded: L(.proSuspended)
+        case .freeSetChanged: L(.freeSetChanged, notice.codes.joined(separator: ", "))
+        }
+        showToast(Toast(kind: .info, message: message), duration: 6)
+    }
+
+    /// Показывает сообщение снизу; оно само скрывается через `duration` секунд.
+    private func showToast(_ newToast: Toast, duration: Double = 3) {
         toastTask?.cancel()
         withAnimation(.spring(response: 0.4, dampingFraction: 0.8)) { toast = newToast }
         toastTask = Task {
-            try? await Task.sleep(for: .seconds(3))
+            try? await Task.sleep(for: .seconds(duration))
             guard !Task.isCancelled else { return }
             dismissToast()
         }
@@ -1052,7 +1063,7 @@ struct Toast: Equatable {
 
         var tint: Color {
             switch self {
-            case .info: .accentColor
+            case .info: .dynamic(light: 0x2563EB, dark: 0x60A5FA)
             case .warning: .dynamic(light: 0xD97706, dark: 0xFBBF24)
             case .error: .dynamic(light: 0xDC2626, dark: 0xF87171)
             case .success: .dynamic(light: 0x16A34A, dark: 0x4ADE80)

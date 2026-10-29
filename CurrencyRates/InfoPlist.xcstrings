@@ -1,0 +1,95 @@
+{
+  "sourceLanguage": "ru",
+  "strings": {
+    "NSLocationWhenInUseUsageDescription": {
+      "extractionState": "manual",
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "يحدد Cento بلدك لإضافة عملتك المحلية وعرضها في أداة «السفر»."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Cento ermittelt dein Land, um deine lokale Währung hinzuzufügen und im Reise-Widget anzuzeigen."
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Cento detects your country to add your local currency and show it in the Travel widget."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Cento detecta tu país para añadir tu divisa local y mostrarla en el widget Viaje."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Cento détecte votre pays pour ajouter votre devise locale et l’afficher dans le widget Voyage."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Cento rileva il tuo Paese per aggiungere la valuta locale e mostrarla nel widget Viaggio."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Cento は国を判別して、現地の通貨を追加し「旅行」ウィジェットに表示します。"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Cento는 국가를 확인해 현지 통화를 추가하고 ‘여행’ 위젯에 표시합니다."
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Cento ustala Twój kraj, aby dodać walutę lokalną i pokazać ją w widżecie Podróż."
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "O Cento identifica seu país para adicionar sua moeda local e mostrá-la no widget Viagem."
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Cento определяет страну, чтобы добавить вашу местную валюту и показать её в виджете «Путешествие»."
+          }
+        },
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Cento, yerel para biriminizi eklemek ve Seyahat widget’ında göstermek için ülkenizi belirler."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Cento 会确定你所在的国家/地区，以添加当地货币并在“旅行”小组件中显示。"
+          }
+        },
+        "zh-Hant": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Cento 會判斷你所在的國家/地區，以新增當地貨幣並在「旅行」小工具中顯示。"
+          }
+        }
+      }
+    }
+  },
+  "version": "1.0"
+}

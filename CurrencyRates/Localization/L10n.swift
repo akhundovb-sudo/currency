@@ -85,7 +85,7 @@ enum AppLanguage: String, CaseIterable, Identifiable, Sendable {
     var isRightToLeft: Bool { self == .ar
     }
 
-    /// Язык системы, если он поддерживается, иначе русский.
+    /// Язык системы, если он поддерживается, иначе английский.
     static var systemDefault: AppLanguage {
         for identifier in Locale.preferredLanguages {
             let language = Locale(identifier: identifier).language
@@ -98,7 +98,7 @@ enum AppLanguage: String, CaseIterable, Identifiable, Sendable {
             }
             if let match = AppLanguage(rawValue: code) { return match }
         }
-        return .ru
+        return .en
     }
 }
 
@@ -115,7 +115,7 @@ enum L10n {
         case appearance, theme, language, source, updated, fiatCurrencies, fiatFooter
         case cryptoCurrencies, cryptoFooter, refreshRates, offlineFooter, version, noData, demoShort
         case themeSystem, themeLight, themeDark
-        case minTwoCurrencies, proOnly, proDiscover, seeDetails, proTest, proSuspended
+        case minTwoCurrencies, proOnly, proDiscover, seeDetails, proTest, proSuspended, freeSetChanged
         case numbers, numberFormat, decimalPlaces, auto, formatFooter
         case example, rates, about, dataFooter
         case proBecome, proSubscription, upgrade
@@ -183,6 +183,7 @@ enum L10n {
         .themeLight: ["Светлая", "Light", "Açık", "Clair", "Claro", "Hell", "浅色", "فاتح", "ライト", "Claro", "라이트", "淺色", "Chiaro", "Jasny"],
         .themeDark: ["Тёмная", "Dark", "Koyu", "Sombre", "Oscuro", "Dunkel", "深色", "داكن", "ダーク", "Escuro", "다크", "深色", "Scuro", "Ciemny"],
         .proSuspended: ["Pro закончился: валюты Pro отключены и вернутся с подпиской", "Pro has ended: Pro currencies are off until you renew", "Pro sona erdi: Pro para birimleri yenileyene kadar kapalı", "Pro a expiré : les devises Pro reviendront au renouvellement", "Pro ha terminado: las divisas Pro volverán al renovar", "Pro ist abgelaufen: Pro-Währungen kehren nach Verlängerung zurück", "Pro 已到期：Pro 货币已停用，续订后恢复", "انتهى Pro: عملات Pro متوقفة حتى التجديد", "Pro が終了しました。更新するまで Pro の通貨は無効です", "O Pro terminou: as moedas Pro ficam desativadas até renovar", "Pro가 종료되었습니다. 갱신할 때까지 Pro 통화가 꺼져 있습니다", "Pro 已到期：Pro 貨幣已停用，續訂後恢復", "Pro è scaduto: le valute Pro restano disattivate fino al rinnovo", "Pro wygasło: waluty Pro są wyłączone do odnowienia"],
+        .freeSetChanged: ["Без подписки бесплатно 3 валюты. Отключено: %@ — вернётся с Pro", "Without Pro, 3 currencies are free. Turned off: %@ — back with Pro", "Pro olmadan 3 para birimi ücretsiz: %@ Pro ile geri gelir", "Sans Pro, 3 devises sont gratuites : %@ reviendra avec Pro", "Sin Pro, 3 divisas son gratis: %@ volverá con Pro", "Ohne Pro sind 3 Währungen kostenlos: %@ kehrt mit Pro zurück", "未订阅 Pro 时可免费使用 3 种货币：%@ 已停用，订阅 Pro 后恢复", "بدون Pro تتوفر 3 عملات مجانًا: %@ متوقفة حتى الاشتراك في Pro", "Pro なしで無料の通貨は3つです。%@ は Pro で再び使えます", "Sem o Pro, 3 moedas são grátis: %@ volta com o Pro", "Pro 없이 무료 통화는 3개입니다. %@은(는) Pro로 다시 사용할 수 있습니다", "未訂閱 Pro 時可免費使用 3 種貨幣：%@ 已停用，訂閱 Pro 後恢復", "Senza Pro, 3 valute sono gratuite: %@ torna con Pro", "Bez Pro darmowe są 3 waluty: %@ wróci z Pro"],
         .minTwoCurrencies: ["Нельзя удалить: нужно минимум две валюты", "Can’t delete: at least two currencies are required", "Silinemez: en az iki para birimi gerekli", "Suppression impossible : au moins deux devises sont requises", "No se puede eliminar: se necesitan al menos dos divisas", "Löschen nicht möglich: mindestens zwei Währungen nötig", "无法删除：至少需要两种货币", "لا يمكن الحذف: يلزم عملتان على الأقل", "削除できません。通貨は2つ以上必要です", "Não é possível excluir: são necessárias ao menos duas moedas", "삭제할 수 없습니다. 통화가 최소 2개 필요합니다", "無法刪除：至少需要兩種貨幣", "Impossibile eliminare: servono almeno due valute", "Nie można usunąć: potrzebne są co najmniej dwie waluty"],
         .proOnly: ["Доступно с подпиской Pro", "Available with Pro subscription", "Pro abonelikle kullanılabilir", "Disponible avec l’abonnement Pro", "Disponible con la suscripción Pro", "Mit Pro-Abo verfügbar", "Pro 订阅可用", "متاح مع اشتراك Pro", "Pro サブスクリプションで利用可能", "Disponível com a assinatura Pro", "Pro 구독으로 이용 가능", "Pro 訂閱可用", "Disponibile con l’abbonamento Pro", "Dostępne z subskrypcją Pro"],
         .proDiscover: ["Откройте %@ — валюты без ограничений", "Discover %@ for unlimited currencies", "Sınırsız para birimi için %@’yu keşfedin", "Découvrez %@ pour des devises illimitées", "Descubre %@ para divisas ilimitadas", "Entdecke %@ für unbegrenzte Währungen", "探索 %@，解锁无限货币", "اكتشف %@ لعملات غير محدودة", "%@ で通貨を無制限に", "Descubra o %@ e tenha moedas ilimitadas", "무제한 통화를 위해 %@ 알아보기", "探索 %@，解鎖無限貨幣", "Scopri %@ per valute illimitate", "Poznaj %@ i korzystaj z nieograniczonej liczby walut"],

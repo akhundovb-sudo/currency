@@ -163,10 +163,11 @@ enum RateFormat {
     static func editable(_ value: Double) -> String {
         // Огромные значения длиннее лимита ввода: стирать их можно, добавлять цифры — нет.
         let style = FloatingPointFormatStyle<Double>.number.locale(locale).grouping(.never)
-        if value >= 1 || value == 0 {
-            return value.formatted(style.precision(.fractionLength(0...2)))
-        }
-        return value.formatted(style.precision(.significantDigits(1...4)))
+        let text = value >= 1 || value == 0
+            ? value.formatted(style.precision(.fractionLength(0...2)))
+            : value.formatted(style.precision(.significantDigits(1...4)))
+        // В поле ввода — без невидимых знаков направления (арабский ставит их перед минусом).
+        return String(text.filter { !Calculator.directionMarks.contains($0) })
     }
 
     /// Вводимое выражение с разделителями разрядов, как у остальных сумм:
@@ -227,8 +228,12 @@ enum Calculator {
     /// Разделитель дробной части выбранного языка: «,» или «.».
     static var decimalSeparator: String { RateFormat.locale.decimalSeparator ?? "," }
 
+    /// Невидимые знаки направления текста: арабский формат ставит их перед минусом
+    /// («؜-5»), и без очистки отрицательное число не читалось — сумма сбрасывалась на 1.
+    static let directionMarks: Set<Character> = ["\u{200E}", "\u{200F}", "\u{061C}", "\u{202A}", "\u{202B}", "\u{202C}", "\u{202D}", "\u{202E}", "\u{2066}", "\u{2067}", "\u{2068}", "\u{2069}"]
+
     static func number(_ text: String) -> Double? {
-        Double(text.replacingOccurrences(of: ",", with: "."))
+        Double(String(text.filter { !directionMarks.contains($0) }).replacingOccurrences(of: ",", with: "."))
     }
 
     /// Число, которое вводится сейчас (после последнего знака действия).

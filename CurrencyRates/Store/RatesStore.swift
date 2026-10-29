@@ -21,6 +21,22 @@ final class RatesStore {
         didSet { defaults?.set(suspendedCodes, forKey: Keys.suspendedCodes) }
     }
 
+    /// Почему валюты только что отключились — список показывает объяснение один раз.
+    enum SuspensionReason: Equatable {
+        /// Подписка закончилась.
+        case proEnded
+        /// Сменился набор бесплатных валют или их лимит (например, определилась местная валюта).
+        case freeSetChanged
+    }
+
+    struct SuspensionNotice: Equatable {
+        let reason: SuspensionReason
+        let codes: [String]
+    }
+
+    /// Непоказанное сообщение об отключённых валютах; список сбрасывает его после показа.
+    var suspensionNotice: SuspensionNotice?
+
     /// Сумма в том виде, как её ввёл пользователь.
     var amountText: String {
         didSet { defaults?.set(amountText, forKey: Keys.amountText) }
@@ -127,7 +143,7 @@ final class RatesStore {
         for code in starting where self.selectedCodes.count < Self.minimumCount {
             if !self.selectedCodes.contains(code) { self.selectedCodes.append(code) }
         }
-        applyPlanLimits()
+        applyPlanLimits(reason: .freeSetChanged)
         // Валюта ввода всегда одна из строк списка.
         if !self.selectedCodes.contains(self.sourceCode), let first = self.selectedCodes.first {
             self.sourceCode = first
@@ -227,8 +243,8 @@ final class RatesStore {
         selectedCodes.contains(code)
     }
 
-    /// Сколько валют можно держать в списке без подписки: USD и EUR плюс ещё две.
-    static let freeLimit = 4
+    /// Сколько валют можно держать в списке без подписки: две стартовые и ещё одна.
+    static let freeLimit = 3
 
     /// Сколько валют по алфавиту (кроме стартовых) доступны без подписки.
     static let freeChoiceCount = 1
@@ -239,7 +255,7 @@ final class RatesStore {
         didSet {
             defaults?.set(isPro, forKey: Keys.isPro)
             if !isPro { proPlan = nil } else if proPlan == nil { proPlan = .yearly }
-            applyPlanLimits()
+            applyPlanLimits(reason: .proEnded)
         }
     }
 
@@ -292,7 +308,7 @@ final class RatesStore {
     /// Приводит список к текущему плану.
     /// Без Pro: валюты, недоступные бесплатно, и всё сверх лимита отключаются —
     /// уходят из списка в `suspendedCodes`. С Pro: отключённые возвращаются на место.
-    private func applyPlanLimits() {
+    private func applyPlanLimits(reason: SuspensionReason) {
         if isPro {
             guard !suspendedCodes.isEmpty else { return }
             selectedCodes += suspendedCodes.filter { !selectedCodes.contains($0) }
@@ -320,6 +336,7 @@ final class RatesStore {
         }
         suspendedCodes += dropped.filter { !suspendedCodes.contains($0) }
         selectedCodes = kept
+        suspensionNotice = SuspensionNotice(reason: reason, codes: dropped)
     }
 
     func remove(_ code: String) {
@@ -479,10 +496,14 @@ final class RatesStore {
               Locale.commonISOCurrencyCodes.contains(code) else { return }
         localCurrency = code
         let fallback = Self.startingCodes(local: nil)
-        guard code != "USD", selectedCodes == fallback else { return }
-        selectedCodes = Self.startingCodes(local: code)
-        sourceCode = code
-        amountText = ""
+        if code != "USD", selectedCodes == fallback {
+            selectedCodes = Self.startingCodes(local: code)
+            sourceCode = code
+            amountText = ""
+        }
+        // Бесплатные валюты зависят от местной: то, что перестало быть бесплатным,
+        // отключается сразу и с объяснением, а не молча при следующем запуске.
+        applyPlanLimits(reason: .freeSetChanged)
     }
 
     private static func isCancellation(_ error: Error) -> Bool {

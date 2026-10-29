@@ -24,7 +24,7 @@ struct WidgetSnapshot: Codable, Equatable, Sendable {
     var countryCurrency: String? = nil
 
     /// Сколько валют можно выбрать в виджете без подписки — как в списке приложения.
-    static let freeLimit = 4
+    static let freeLimit = 3
 
     static let appGroup = "group.com.akhundov.CurrencyRates"
     private static let key = "widgetSnapshot.v2"
