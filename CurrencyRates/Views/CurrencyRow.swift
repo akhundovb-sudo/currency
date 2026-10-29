@@ -48,10 +48,13 @@ struct CurrencyRow: View {
                     // Две строки: код и сумма, затем название и курс — каждая пара на одной базовой линии,
                     // поэтому отступ от кода до названия равен отступу от суммы до курса.
                     VStack(spacing: 2) {
+                        // Без Spacer: он делил свободное место с суммой, и та получала лишь часть —
+                        // короткая сумма строки ввода (с курсором) уменьшалась. Теперь сумма
+                        // занимает всё место справа от кода и уменьшается, только если и так не влезает.
                         HStack(alignment: .firstTextBaseline, spacing: 8) {
                             codeText
-                            Spacer(minLength: 8)
-                            amountSlot.layoutPriority(1)
+                            amountSlot
+                                .frame(maxWidth: .infinity, alignment: .trailing)
                         }
                         HStack(alignment: .firstTextBaseline, spacing: 8) {
                             nameText
