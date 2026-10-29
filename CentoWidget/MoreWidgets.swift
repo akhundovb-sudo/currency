@@ -767,12 +767,12 @@ struct TravelWidgetView: View {
                     .lineLimit(1)
                     .minimumScaleFactor(0.7)
                 Spacer(minLength: 0)
-                // При смене суммы самолёт улетает вправо, а новый прилетает слева.
+                // При смене суммы самолёт улетает через весь виджет вправо, а новый прилетает слева.
                 Image(systemName: "airplane")
-                    .font(.caption)
-                    .foregroundStyle(.secondary)
+                    .font(.subheadline.weight(.semibold))
+                    .foregroundStyle(WidgetColor.accent)
                     .id(entry.amount(rate: rate))
-                    .transition(.push(from: .leading))
+                    .transition(.flight)
             }
             Spacer(minLength: 4)
             // Выбранная сумма — как у «Курса»: кнопками в маленьком, строкой списка в среднем.
@@ -839,7 +839,7 @@ struct TravelWidgetView: View {
             GeometryReader { proxy in
                 let row = proxy.size.height / CGFloat(options.count)
                 Image(systemName: "airplane")
-                    .font(.system(size: 10, weight: .bold))
+                    .font(.system(size: 12, weight: .bold))
                     .foregroundStyle(WidgetColor.accent)
                     .position(x: 6, y: row * (CGFloat(index) + 0.5))
             }
@@ -917,5 +917,27 @@ private struct ArrivalScene: View {
                 .foregroundStyle(Color.primary.opacity(opacity * 0.5))
                 .position(x: proxy.size.width * (0.5 + x), y: proxy.size.height * (0.5 + y))
         }
+    }
+}
+
+extension AnyTransition {
+    /// Полёт самолёта: уходит далеко вправо, новый влетает слева. Обычный `.push` сдвигает
+    /// значок лишь на его ширину — в виджете движение было незаметно.
+    static var flight: AnyTransition {
+        .asymmetric(
+            insertion: .modifier(active: FlightOffset(x: -220, y: 18), identity: FlightOffset(x: 0, y: 0)),
+            removal: .modifier(active: FlightOffset(x: 260, y: -24), identity: FlightOffset(x: 0, y: 0))
+        )
+    }
+}
+
+private struct FlightOffset: ViewModifier {
+    let x: CGFloat
+    let y: CGFloat
+
+    func body(content: Content) -> some View {
+        content
+            .offset(x: x, y: y)
+            .opacity(x == 0 ? 1 : 0.2)
     }
 }
