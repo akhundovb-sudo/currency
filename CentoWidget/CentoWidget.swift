@@ -460,19 +460,42 @@ private struct EmptyWidgetView: View {
     }
 }
 
-/// Пометка «Pro» с замком: выбранные валюты доступны только с подпиской.
+/// Тег «PRO», как у платных валют в приложении: акцентный текст на стеклянной капсуле
+/// с лёгким свечением акцента, светлым ободком и тонкой цветной обводкой.
 private struct ProMark: View {
+    @Environment(\.colorScheme) private var colorScheme
+
     var body: some View {
-        HStack(spacing: 2) {
-            Image(systemName: "lock.fill")
-            Text(verbatim: "Pro")
-        }
-        .font(.caption2.weight(.bold))
-        .foregroundStyle(.white)
-        .padding(.horizontal, 6)
-        .padding(.vertical, 3)
-        // Насыщенный фиолетовый в любой теме: светлый акцент тёмной темы с белым текстом не читался.
-        .background(Capsule().fill(WidgetColor.proTag.gradient))
+        Text(verbatim: "PRO")
+            .font(.system(size: 11, weight: .heavy, design: .rounded))
+            .tracking(0.5)
+            .foregroundStyle(WidgetColor.accent)
+            .padding(.horizontal, 8)
+            .frame(height: 22)
+            .background {
+                ZStack {
+                    Capsule().fill(colorScheme == .dark ? Color.white.opacity(0.08) : Color.white.opacity(0.85))
+                    Capsule().fill(
+                        RadialGradient(
+                            colors: [WidgetColor.accent.opacity(0.24), WidgetColor.accent.opacity(0.06)],
+                            center: .center,
+                            startRadius: 0,
+                            endRadius: 30
+                        )
+                    )
+                    Capsule().strokeBorder(
+                        LinearGradient(
+                            colors: colorScheme == .dark
+                                ? [.white.opacity(0.35), .white.opacity(0.05)]
+                                : [.white, .white.opacity(0.7)],
+                            startPoint: .top,
+                            endPoint: .bottom
+                        ),
+                        lineWidth: 1.5
+                    )
+                    Capsule().strokeBorder(WidgetColor.accent.opacity(0.55), lineWidth: 1)
+                }
+            }
     }
 }
 
@@ -525,8 +548,6 @@ struct CurrencyBadge: View {
 }
 
 enum WidgetColor {
-    /// Фон тега «Pro» — акцент светлой темы, одинаковый в обеих темах.
-    static let proTag = Color(red: 0xA2 / 255, green: 0x4F / 255, blue: 0xCF / 255)
 
     /// Акцентный цвет приложения.
     static let accent = Color(UIColor { traits in

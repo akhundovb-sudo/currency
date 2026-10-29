@@ -21,7 +21,7 @@ struct CurrencyEntity: AppEntity, Identifiable {
         var name = CurrencyCatalog.name(for: code, locale: .current)
         if CurrencyCatalog.isCrypto(code) { name = "₿ " + name }
         // Без подписки платные валюты помечены — в виджете вместо них останутся валюты из приложения.
-        if let app = WidgetSnapshot.load(), !app.allows(code) { name += " · 🔒 Pro" }
+        if let app = WidgetSnapshot.load(), !app.allows(code) { name += " · PRO" }
         // Флаг — эмодзи в заголовке: картинки из каталога окно настроек виджета загружает ненадёжно.
         let flag = CurrencyCatalog.flagRegion(for: code).map(Self.flagEmoji(region:)) ?? ""
         return DisplayRepresentation(title: "\(flag.isEmpty ? code : flag + " " + code)", subtitle: "\(name)")
