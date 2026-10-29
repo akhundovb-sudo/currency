@@ -265,8 +265,60 @@ struct CurrencyWidgetView: View {
     }
 
     /// Карточки валют, как в приложении: круглая иконка, код (и название), сумма справа.
+    @ViewBuilder
     private func list(_ rows: [RateRow], limit: Int, showsNames: Bool) -> some View {
         let shown = Array(rows.prefix(limit))
+        if shown.count <= 2 {
+            duo(shown)
+        } else {
+            rowsList(shown, showsNames: showsNames)
+        }
+    }
+
+    /// Две валюты — крупно, как карточка обмена: иконка, код с названием и сумма, по центру по высоте.
+    /// Растянутые на весь виджет две строки выглядели пусто.
+    private func duo(_ rows: [RateRow]) -> some View {
+        let isSmall = family == .systemSmall
+        return VStack(spacing: isSmall ? 8 : 12) {
+            ForEach(Array(rows.enumerated()), id: \.element.id) { index, row in
+                if index > 0 { Divider().opacity(0.5) }
+                if isSmall {
+                    // В маленьком виджете сумма — под кодом, чтобы поместилась крупно.
+                    VStack(alignment: .leading, spacing: 4) {
+                        HStack(spacing: 6) {
+                            CurrencyBadge(code: row.code, size: 24)
+                            Text(verbatim: row.code).font(.subheadline.weight(.semibold)).lineLimit(1).fixedSize()
+                        }
+                        amount(row, font: .title3)
+                    }
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                } else {
+                    HStack(spacing: 10) {
+                        CurrencyBadge(code: row.code, size: 36)
+                        VStack(alignment: .leading, spacing: 1) {
+                            Text(verbatim: row.code).font(.headline).lineLimit(1).fixedSize()
+                            Text(verbatim: row.name).font(.caption).foregroundStyle(.secondary).lineLimit(1)
+                        }
+                        Spacer(minLength: 4)
+                        amount(row, font: .title2)
+                    }
+                }
+            }
+        }
+        .frame(maxHeight: .infinity)
+    }
+
+    /// Сумма валюты: у исходной — цветом акцента; длинная сначала уменьшается, потом обрезается «…».
+    private func amount(_ row: RateRow, font: Font) -> some View {
+        Text(verbatim: row.value)
+            .font(font.weight(.bold).monospacedDigit())
+            .foregroundStyle(row.isSource ? WidgetColor.accent : Color.primary)
+            .lineLimit(1)
+            .minimumScaleFactor(0.4)
+            .layoutPriority(1)
+    }
+
+    private func rowsList(_ shown: [RateRow], showsNames: Bool) -> some View {
         let iconSize: CGFloat = family == .systemLarge ? 32 : 24
         return VStack(spacing: 0) {
             ForEach(Array(shown.enumerated()), id: \.element.id) { index, row in
@@ -300,8 +352,11 @@ struct CurrencyWidgetView: View {
                         .minimumScaleFactor(0.5)
                         .layoutPriority(1)
                 }
-                .frame(maxHeight: .infinity)
+                // Строки делят высоту поровну, но не растягиваются слишком: при трёх валютах
+                // в большом виджете остаток уходит вниз.
+                .frame(maxHeight: family == .systemLarge ? CGFloat(52) : CGFloat.infinity)
             }
+            if family == .systemLarge { Spacer(minLength: 0) }
         }
     }
 
@@ -379,7 +434,8 @@ private struct ProMark: View {
         .foregroundStyle(.white)
         .padding(.horizontal, 6)
         .padding(.vertical, 3)
-        .background(Capsule().fill(WidgetColor.accent.gradient))
+        // Насыщенный фиолетовый в любой теме: светлый акцент тёмной темы с белым текстом не читался.
+        .background(Capsule().fill(WidgetColor.proTag.gradient))
     }
 }
 
@@ -432,6 +488,9 @@ struct CurrencyBadge: View {
 }
 
 enum WidgetColor {
+    /// Фон тега «Pro» — акцент светлой темы, одинаковый в обеих темах.
+    static let proTag = Color(red: 0xA2 / 255, green: 0x4F / 255, blue: 0xCF / 255)
+
     /// Акцентный цвет приложения.
     static let accent = Color(UIColor { traits in
         traits.userInterfaceStyle == .dark
