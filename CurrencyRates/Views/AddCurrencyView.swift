@@ -28,8 +28,19 @@ struct AddCurrencyView: View {
 
     private var results: [Currency] {
         let all = currencies.filter { $0.matches(query) }
-        let top = pinned.compactMap { code in all.first { $0.code == code } }
-        return top + all.filter { !pinned.contains($0.code) }
+        // Без подписки бесплатные валюты всегда сверху, доллар первым; с подпиской — выбранные при открытии.
+        let top: [String]
+        if store.isPro || kind == .crypto {
+            top = pinned
+        } else {
+            top = store.freeCodes.sorted { a, b in
+                if a == "USD" { return b != "USD" }
+                if b == "USD" { return false }
+                return a < b
+            }
+        }
+        let head = top.compactMap { code in all.first { $0.code == code } }
+        return head + all.filter { !top.contains($0.code) }
     }
 
     @State private var isPaywallPresented = false
