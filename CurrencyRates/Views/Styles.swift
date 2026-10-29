@@ -3,8 +3,9 @@ import UIKit
 import CoreText
 
 extension Font {
-    /// Шрифт сумм — SF Pro (не округлый), полужирный; масштабируется с Dynamic Type.
-    static let amount = Font.system(.title2).weight(.semibold)
+    /// Шрифт сумм — SF Pro Rounded, полужирный, заметно крупнее кода валюты;
+    /// масштабируется с Dynamic Type.
+    static let amount = Font.system(.title, design: .rounded).weight(.semibold)
 }
 
 /// Иконка из Assets/Icons (Iconoir, MIT; толщина линий 2) нужного размера.
