@@ -172,7 +172,7 @@ struct CurrencyRow: View {
 /// Мигающий курсор ввода, как у текстового поля.
 private struct BlinkingCursor: View {
     @State private var isVisible = true
-    @ScaledMetric(relativeTo: .title) private var height = 28
+    @ScaledMetric(relativeTo: .title2) private var height = 24
 
     var body: some View {
         Capsule()
