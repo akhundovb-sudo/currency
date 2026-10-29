@@ -192,15 +192,16 @@ struct PairEntry: TimelineEntry {
         var source = isLocked ? app.sourceCode : config.source?.code ?? app.sourceCode
         var target = (isLocked ? nil : config.target?.code) ?? app.codes.first(where: { $0 != source }) ?? "EUR"
         if target == source { target = source == "USD" ? "EUR" : "USD" }
+        // Кнопки на виджете: «⇄» меняет валюты местами, суммы — сколько считать.
+        let pairKey = PairState.key(source, target)
+        let state = PairState.load(pairKey)
+        if state.isSwapped { swap(&source, &target) }
+        // Цвет — по валюте на её текущем месте: после «⇄» цвет первой иконки переходит к новой первой.
         let tintCode: String? = switch config.tint {
         case .standard: nil
         case .main: source
         case .second: target
         }
-        // Кнопки на виджете: «⇄» меняет валюты местами, суммы — сколько считать.
-        let pairKey = PairState.key(source, target)
-        let state = PairState.load(pairKey)
-        if state.isSwapped { swap(&source, &target) }
         let hasRates = !rates.fiat.isEmpty || !rates.crypto.isEmpty
         return PairEntry(
             date: date,
