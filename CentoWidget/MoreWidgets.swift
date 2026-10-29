@@ -695,7 +695,8 @@ struct TravelProvider: AppIntentTimelineProvider {
             var flight = entry
             flight.isArriving = true
             var landed = entry
-            landed.date = entry.date.addingTimeInterval(2.5)
+            // Самолёт задерживается в кадре, чтобы прилёт успел «осесть» перед улётом.
+            landed.date = entry.date.addingTimeInterval(3.5)
             return Timeline(entries: [flight, landed], policy: .after(WidgetRates.nextUpdate))
         }
         return Timeline(entries: [entry], policy: .after(WidgetRates.nextUpdate))
@@ -735,15 +736,16 @@ struct TravelWidgetView: View {
                         insertion: .offset(x: -320, y: 46)
                             .combined(with: .scale(scale: 0.6))
                             .animation(.spring(response: 1.1, dampingFraction: 0.72)),
-                        // Улёт вверх вправо с разгоном (ease-in) и уменьшением — уходит вдаль.
+                        // Улёт вверх вправо с мягким разгоном (ease-in) и уменьшением — уходит вдаль;
+                        // почти две секунды — дольше виджет анимировать не даёт.
                         removal: .offset(x: 340, y: -56)
                             .combined(with: .scale(scale: 0.7))
                             .combined(with: .opacity)
-                            .animation(.timingCurve(0.5, 0, 0.9, 0.6, duration: 1.2))
+                            .animation(.timingCurve(0.45, 0, 0.75, 0.85, duration: 1.9))
                     ))
             } else {
                 content
-                    .transition(.opacity.animation(.easeInOut(duration: 0.8).delay(0.4)))
+                    .transition(.opacity.animation(.easeInOut(duration: 1.0).delay(0.8)))
             }
         }
         .environment(\.layoutDirection, entry.isRightToLeft ? .rightToLeft : .leftToRight)
