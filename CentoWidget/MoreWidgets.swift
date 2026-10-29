@@ -657,9 +657,22 @@ struct TravelEntry: TimelineEntry {
     }
 }
 
-/// Последняя страна, которую показал виджет «Путешествие», — чтобы заметить прилёт в новую.
+/// Когда показать полёт: прилёт в новую страну или смена суммы кнопкой.
 enum TravelArrival {
     private static func key(home: String) -> String { "travel.lastLocal.\(home)" }
+    private static let flightKey = "travel.flightAt"
+
+    /// Сумму сменили кнопкой — следующее обновление покажет полёт.
+    static func requestFlight() {
+        WidgetSnapshot.defaults?.set(Date.now.timeIntervalSince1970, forKey: flightKey)
+    }
+
+    /// Просили ли полёт только что; запрос срабатывает один раз.
+    static func takeFlightRequest(now: Date = .now) -> Bool {
+        guard let defaults = WidgetSnapshot.defaults, let at = defaults.object(forKey: flightKey) as? Double else { return false }
+        defaults.removeObject(forKey: flightKey)
+        return now.timeIntervalSince1970 - at < 15
+    }
 
     /// Сменилась ли местная валюта с прошлого показа; запоминает текущую.
     static func isNew(_ entry: TravelEntry) -> Bool {
@@ -688,14 +701,17 @@ struct TravelProvider: AppIntentTimelineProvider {
     func timeline(for configuration: TravelIntent, in context: Context) async -> Timeline<TravelEntry> {
         let rates = await WidgetRates.current()
         let entry = TravelEntry.make(configuration, snapshot: WidgetSnapshot.load(), rates: rates)
-        // Новая страна: сначала кадр с облаками и самолётом, через пару секунд — курс.
-        // Смена кадров анимируется: самолёт улетает, курс проявляется.
-        if TravelArrival.isNew(entry) {
-            var arrival = entry
-            arrival.isArriving = true
+        // Новая страна или новая сумма: сначала кадр с облаками и самолётом, через пару секунд — курс.
+        // В виджете анимируется только смена кадров: появляются облака, самолёт влетает слева,
+        // затем улетает вправо, и курс проявляется.
+        let isNewCountry = TravelArrival.isNew(entry)
+        let isAmountChanged = TravelArrival.takeFlightRequest()
+        if isNewCountry || isAmountChanged, case .abroad(_, _?) = entry.state, !entry.isLocked {
+            var flight = entry
+            flight.isArriving = true
             var landed = entry
-            landed.date = entry.date.addingTimeInterval(2.5)
-            return Timeline(entries: [arrival, landed], policy: .after(WidgetRates.nextUpdate))
+            landed.date = entry.date.addingTimeInterval(isNewCountry ? 2.5 : 1.6)
+            return Timeline(entries: [flight, landed], policy: .after(WidgetRates.nextUpdate))
         }
         return Timeline(entries: [entry], policy: .after(WidgetRates.nextUpdate))
     }
@@ -718,17 +734,20 @@ struct TravelWidgetView: View {
     @Environment(\.widgetFamily) private var family
 
     var body: some View {
+        // Только встроенные переходы: свои модификаторы-переходы виджет не анимирует.
+        // Облака и самолёт — во весь виджет, поэтому `.move` проводит самолёт через весь виджет.
         ZStack {
             if entry.isArriving {
-                ArrivalScene(country: entry.countryName)
-                    // Самолёт с облаками улетает вправо, курс проявляется.
-                    .transition(.asymmetric(insertion: .opacity, removal: .move(edge: .trailing).combined(with: .opacity)))
+                SkyClouds()
+                    .transition(.opacity.combined(with: .scale(scale: 1.15)))
+                FlyingPlane(country: entry.countryName)
+                    .transition(.asymmetric(insertion: .move(edge: .leading), removal: .move(edge: .trailing)))
             } else {
                 content
                     .transition(.asymmetric(insertion: .scale(scale: 0.92).combined(with: .opacity), removal: .opacity))
             }
         }
-        .animation(.smooth(duration: 1.1), value: entry.isArriving)
+        .animation(.smooth(duration: 1.0), value: entry.isArriving)
         .environment(\.layoutDirection, entry.isRightToLeft ? .rightToLeft : .leftToRight)
         .modifier(TintedWidget(tint: entry.tint))
     }
@@ -767,12 +786,9 @@ struct TravelWidgetView: View {
                     .lineLimit(1)
                     .minimumScaleFactor(0.7)
                 Spacer(minLength: 0)
-                // При смене суммы самолёт улетает через весь виджет вправо, а новый прилетает слева.
                 Image(systemName: "airplane")
                     .font(.subheadline.weight(.semibold))
                     .foregroundStyle(WidgetColor.accent)
-                    .id(entry.amount(rate: rate))
-                    .transition(.flight)
             }
             Spacer(minLength: 4)
             // Выбранная сумма — как у «Курса»: кнопками в маленьком, строкой списка в среднем.
@@ -883,61 +899,46 @@ struct TravelWidgetView: View {
     TravelEntry.make(TravelIntent(), snapshot: nil, rates: .preview)
 }
 
-/// Кадр прилёта в новую страну: самолёт среди облаков и название страны.
-private struct ArrivalScene: View {
-    let country: String?
-
+/// Облака на весь виджет — фон полёта.
+private struct SkyClouds: View {
     var body: some View {
-        ZStack {
-            cloud(size: 34, x: -0.32, y: -0.22, opacity: 0.55)
-            cloud(size: 22, x: 0.30, y: -0.30, opacity: 0.4)
-            cloud(size: 28, x: 0.36, y: 0.24, opacity: 0.5)
-            cloud(size: 18, x: -0.38, y: 0.30, opacity: 0.35)
-            VStack(spacing: 6) {
-                Image(systemName: "airplane")
-                    .font(.system(size: 30, weight: .semibold))
-                    .foregroundStyle(WidgetColor.accent)
-                    .rotationEffect(.degrees(-12))
-                if let country {
-                    Text(verbatim: country)
-                        .font(.caption.weight(.bold))
-                        .lineLimit(1)
-                        .minimumScaleFactor(0.7)
-                }
+        GeometryReader { proxy in
+            ZStack {
+                cloud(34, x: -0.32, y: -0.22, opacity: 0.55, in: proxy.size)
+                cloud(22, x: 0.30, y: -0.30, opacity: 0.4, in: proxy.size)
+                cloud(28, x: 0.36, y: 0.26, opacity: 0.5, in: proxy.size)
+                cloud(18, x: -0.38, y: 0.30, opacity: 0.35, in: proxy.size)
+                cloud(24, x: 0.02, y: -0.36, opacity: 0.3, in: proxy.size)
             }
         }
-        .frame(maxWidth: .infinity, maxHeight: .infinity)
     }
 
     /// Облако на доле ширины и высоты от центра.
-    private func cloud(size: CGFloat, x: CGFloat, y: CGFloat, opacity: Double) -> some View {
-        GeometryReader { proxy in
-            Image(systemName: "cloud.fill")
-                .font(.system(size: size))
-                .foregroundStyle(Color.primary.opacity(opacity * 0.5))
-                .position(x: proxy.size.width * (0.5 + x), y: proxy.size.height * (0.5 + y))
+    private func cloud(_ size: CGFloat, x: CGFloat, y: CGFloat, opacity: Double, in area: CGSize) -> some View {
+        Image(systemName: "cloud.fill")
+            .font(.system(size: size))
+            .foregroundStyle(Color.primary.opacity(opacity * 0.5))
+            .position(x: area.width * (0.5 + x), y: area.height * (0.5 + y))
+    }
+}
+
+/// Самолёт с названием страны по центру; рамка на весь виджет — чтобы перелёт шёл от края до края.
+private struct FlyingPlane: View {
+    let country: String?
+
+    var body: some View {
+        VStack(spacing: 6) {
+            Image(systemName: "airplane")
+                .font(.system(size: 32, weight: .semibold))
+                .foregroundStyle(WidgetColor.accent)
+                .rotationEffect(.degrees(-12))
+            if let country {
+                Text(verbatim: country)
+                    .font(.caption.weight(.bold))
+                    .lineLimit(1)
+                    .minimumScaleFactor(0.7)
+            }
         }
-    }
-}
-
-extension AnyTransition {
-    /// Полёт самолёта: уходит далеко вправо, новый влетает слева. Обычный `.push` сдвигает
-    /// значок лишь на его ширину — в виджете движение было незаметно.
-    static var flight: AnyTransition {
-        .asymmetric(
-            insertion: .modifier(active: FlightOffset(x: -220, y: 18), identity: FlightOffset(x: 0, y: 0)),
-            removal: .modifier(active: FlightOffset(x: 260, y: -24), identity: FlightOffset(x: 0, y: 0))
-        )
-    }
-}
-
-private struct FlightOffset: ViewModifier {
-    let x: CGFloat
-    let y: CGFloat
-
-    func body(content: Content) -> some View {
-        content
-            .offset(x: x, y: y)
-            .opacity(x == 0 ? 1 : 0.2)
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
     }
 }
