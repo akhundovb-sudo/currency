@@ -90,6 +90,8 @@ struct RateSet: Codable, Equatable, Sendable {
     let updatedAt: Date
     /// Время, когда приложение получило эти данные.
     let fetchedAt: Date
+    /// Изменение цены за 24 часа в процентах (только у криптовалют, от CoinGecko).
+    var changes: [String: Double]? = nil
 }
 
 /// Сведения о валюте по коду — без настроек приложения, чтобы ими пользовались и виджеты.

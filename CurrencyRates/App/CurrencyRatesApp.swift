@@ -40,11 +40,13 @@ struct CurrencyRatesApp: App {
                 .onChange(of: store.isPro, initial: true) { _, isPro in resetProIconIfNeeded(isPro: isPro) }
                 .task { await store.refresh() }
                 // Первая валюта — местная, по геолокации; без неё — доллар и евро.
-                .task { location.requestLocalCurrency { store.applyLocalCurrency($0) } }
+                .task { requestCountry() }
                 .onChange(of: scenePhase) { _, phase in
                     if phase == .active {
                         applyTheme(store.theme)
                         Task { await store.refreshIfStale() }
+                        // Вернулись в приложение (может быть, уже в другой стране) — для «Путешествия».
+                        requestCountry()
                     } else {
                         // Уходим с экрана — виджеты получают последние валюты и суммы.
                         WidgetBridge.publish(store)
@@ -63,6 +65,16 @@ struct CurrencyRatesApp: App {
                     }
                 }
                 .statusBarHidden(showsSplash)
+        }
+    }
+
+    /// Страна по геолокации: в первый раз её валюта становится первой в списке,
+    /// а виджет «Путешествие» всегда показывает валюту страны, где вы сейчас.
+    private func requestCountry() {
+        location.requestLocalCurrency { currency, country in
+            store.applyLocalCurrency(currency)
+            store.updateCurrentCountry(country, currency: currency)
+            WidgetBridge.publish(store)
         }
     }
 

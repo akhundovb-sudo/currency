@@ -15,7 +15,9 @@ enum WidgetBridge {
             decimalPlaces: RateFormat.decimalPlaces,
             isRightToLeft: store.language.isRightToLeft,
             isPro: store.isPro,
-            freeCodes: store.freeCodes.sorted()
+            freeCodes: store.freeCodes.sorted(),
+            countryCode: store.currentCountry,
+            countryCurrency: store.currentCountryCurrency
         )
         var changed = false
         if WidgetSnapshot.load() != snapshot {
@@ -28,7 +30,8 @@ enum WidgetBridge {
             var new = old
             new.record(
                 fiat: rates.fiat?.rates, fiatAt: rates.fiat?.fetchedAt,
-                crypto: rates.crypto?.rates, cryptoAt: rates.crypto?.fetchedAt
+                crypto: rates.crypto?.rates, cryptoAt: rates.crypto?.fetchedAt,
+                cryptoChanges: rates.crypto?.changes
             )
             if new != old {
                 new.save()
