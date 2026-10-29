@@ -456,13 +456,26 @@ struct CryptoWidgetView: View {
         }
     }
 
-    /// «Крипта · USD» и PRO, если подписки нет.
+    /// «₿ Крипто-рынок» и плашка «в USD» — в какой валюте цены; PRO, если подписки нет.
     private var header: some View {
-        HStack(spacing: 4) {
+        HStack(spacing: 5) {
             Image(systemName: "bitcoinsign.circle.fill").foregroundStyle(WidgetColor.accent)
-            Text(verbatim: entry.quote).font(.caption.weight(.bold)).foregroundStyle(.secondary)
-            Spacer(minLength: 0)
-            if entry.isLocked { ProMark() }
+            // В маленьком виджете места мало — только значок и валюта цен.
+            if family != .systemSmall {
+                Text("Crypto market").font(.caption.weight(.bold)).lineLimit(1)
+            }
+            Spacer(minLength: 2)
+            if entry.isLocked {
+                ProMark()
+            } else {
+                // Цены — в этой валюте.
+                (Text("Price in") + Text(verbatim: " \(entry.quote)"))
+                    .font(.caption2.weight(.semibold))
+                    .lineLimit(1)
+                    .padding(.horizontal, 7)
+                    .frame(height: 20)
+                    .background(Capsule().fill(Color.primary.opacity(0.12)))
+            }
         }
         .font(.caption)
     }
@@ -632,11 +645,13 @@ struct TravelWidgetView: View {
         switch entry.state {
         case .abroad(let local, let rate?) where !entry.isLocked:
             if family == .systemMedium {
-                HStack(spacing: 14) {
+                // Обе колонки одной высоты: верх списка — вровень с флагом, низ — с обратным курсом.
+                HStack(alignment: .top, spacing: 14) {
                     abroad(local: local, rate: rate)
                     Divider()
                     amounts(local: local, rate: rate)
                 }
+                .padding(.vertical, 2)
             } else {
                 abroad(local: local, rate: rate)
             }
@@ -653,7 +668,7 @@ struct TravelWidgetView: View {
     private func abroad(local: String, rate: Double) -> some View {
         VStack(alignment: .leading, spacing: 2) {
             HStack(spacing: 6) {
-                CurrencyBadge(code: local, size: 28)
+                CurrencyBadge(code: local, size: 26)
                 Text(verbatim: entry.countryName ?? local)
                     .font(.caption.weight(.semibold))
                     .lineLimit(1)
@@ -664,7 +679,7 @@ struct TravelWidgetView: View {
             Spacer(minLength: 4)
             Text(verbatim: "1 \(local) =")
                 .font(.subheadline.weight(.semibold))
-                .foregroundStyle(.secondary)
+                .foregroundStyle(Color.primary.opacity(0.7))
             Text(verbatim: "\(entry.format(rate)) \(entry.home)")
                 .font(.title3.weight(.bold).monospacedDigit())
                 .lineLimit(1)
@@ -695,9 +710,9 @@ struct TravelWidgetView: View {
                     Text(verbatim: "\(entry.formatAmount(amount * rate)) \(entry.home)")
                         .fontWeight(.semibold)
                 }
-                .font(.footnote.monospacedDigit())
+                // Один размер шрифта у всех строк — без поштучного сжатия.
+                .font(.caption.monospacedDigit())
                 .lineLimit(1)
-                .minimumScaleFactor(0.6)
                 .frame(maxHeight: .infinity)
             }
         }
