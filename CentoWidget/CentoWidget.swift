@@ -94,7 +94,7 @@ struct PairWidgetView: View {
             Spacer(minLength: 4)
             Text(verbatim: "\(entry.formatAmount(entry.amount)) \(entry.source) =")
                 .font(isSmall ? .subheadline.weight(.semibold) : .headline)
-                .foregroundStyle(.secondary)
+                .foregroundStyle(Color.primary.opacity(0.7))
                 .lineLimit(1)
                 .minimumScaleFactor(0.6)
             Text(verbatim: "\(entry.formatAmount(rate * entry.amount)) \(entry.target)")
@@ -125,9 +125,9 @@ struct PairWidgetView: View {
                             .fontWeight(.semibold)
                             .foregroundStyle(amount == entry.amount ? WidgetColor.accent : Color.primary)
                     }
-                    .font(.footnote.monospacedDigit())
+                    // Один размер шрифта у всех строк — без поштучного сжатия.
+                    .font(.caption.monospacedDigit())
                     .lineLimit(1)
-                    .minimumScaleFactor(0.6)
                     .frame(maxHeight: .infinity)
                     .contentShape(Rectangle())
                 }
@@ -178,7 +178,7 @@ struct SwapButton: View {
                 .font(.system(size: 12, weight: .bold))
                 .foregroundStyle(.primary)
                 .frame(width: 28, height: 28)
-                .background(Circle().fill(Color.primary.opacity(0.1)))
+                .background(Circle().fill(Color.primary.opacity(0.16)))
         }
         .buttonStyle(.plain)
     }
@@ -197,10 +197,12 @@ struct AmountChips: View {
                 Button(intent: PairAmountIntent(pair: pairKey, amount: amount)) {
                     Text(verbatim: amount >= 1000 ? "1K" : AmountFormat.amount(amount, locale: locale, decimalPlaces: 0))
                         .font(.caption2.weight(.bold).monospacedDigit())
+                        // Выбранная — насыщенный фиолетовый с белым текстом: светлый акцент тёмной темы
+                        // с белыми цифрами не читался. Остальные — заметная подложка.
                         .foregroundStyle(isSelected ? Color.white : Color.primary)
                         .frame(maxWidth: .infinity)
-                        .frame(height: 20)
-                        .background(Capsule().fill(isSelected ? AnyShapeStyle(WidgetColor.accent) : AnyShapeStyle(Color.primary.opacity(0.1))))
+                        .frame(height: 22)
+                        .background(Capsule().fill(isSelected ? AnyShapeStyle(WidgetColor.strongAccent) : AnyShapeStyle(Color.primary.opacity(0.16))))
                 }
                 .buttonStyle(.plain)
             }
@@ -562,7 +564,9 @@ struct ProMark: View {
             .frame(height: 22)
             .background {
                 ZStack {
-                    Capsule().fill(colorScheme == .dark ? Color.white.opacity(0.08) : Color.white.opacity(0.85))
+                    // В тёмной теме — плотная тёмная подложка: на цветном фоне виджета
+                    // полупрозрачное стекло сливалось и тег не читался.
+                    Capsule().fill(colorScheme == .dark ? Color.black.opacity(0.55) : Color.white.opacity(0.9))
                     Capsule().fill(
                         RadialGradient(
                             colors: [WidgetColor.accent.opacity(0.24), WidgetColor.accent.opacity(0.06)],
@@ -581,7 +585,7 @@ struct ProMark: View {
                         ),
                         lineWidth: 1.5
                     )
-                    Capsule().strokeBorder(WidgetColor.accent.opacity(0.55), lineWidth: 1)
+                    Capsule().strokeBorder(WidgetColor.accent.opacity(colorScheme == .dark ? 0.8 : 0.55), lineWidth: 1)
                 }
             }
     }
@@ -636,6 +640,9 @@ struct CurrencyBadge: View {
 }
 
 enum WidgetColor {
+    /// Насыщенный фиолетовый в обеих темах — фон выбранных кнопок с белым текстом.
+    static let strongAccent = Color(red: 0xA2 / 255, green: 0x4F / 255, blue: 0xCF / 255)
+
     /// Цвет из 0xRRGGBB.
     static func rgb(_ value: UInt32) -> Color {
         Color(

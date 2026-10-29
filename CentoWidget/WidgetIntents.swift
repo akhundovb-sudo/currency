@@ -50,28 +50,27 @@ final class CurrencyLabels: @unchecked Sendable {
     private let lock = NSLock()
 
     private init() {
+        // Быстро, без файла курсов и без подписей: окно выбора открывается сразу,
+        // а подписи считаются по мере того, как система их запрашивает.
         let app = WidgetSnapshot.load()
-        var fiat = SharedRates.load().map { Array($0.fiat.keys) } ?? []
-        if fiat.isEmpty { fiat = Locale.commonISOCurrencyCodes }
-        let rest = CryptoAsset.all.map(\.code) + fiat.filter { !CurrencyCatalog.isCrypto($0) }.sorted()
+        appSnapshot = app
+        let fiat = Locale.commonISOCurrencyCodes.filter { !CurrencyCatalog.isCrypto($0) }.sorted()
+        let rest = CryptoAsset.all.map(\.code) + fiat
         var seen = Set(app?.codes ?? [])
         codes = (app?.codes ?? []) + rest.filter { seen.insert($0).inserted }
         var seenSuggested = Set(app?.codes ?? [])
         let short = CryptoAsset.all.prefix(15).map(\.code) + Self.popularFiat
         suggested = (app?.codes ?? []) + short.filter { seenSuggested.insert($0).inserted }
-
-        let english = Locale(identifier: "en_US")
-        for code in codes {
-            labels[code] = Self.makeLabel(code, app: app, english: english)
-        }
     }
+
+    private let appSnapshot: WidgetSnapshot?
+    private let english = Locale(identifier: "en_US")
 
     func label(for code: String) -> Label {
         lock.lock()
         defer { lock.unlock() }
         if let label = labels[code] { return label }
-        // Валюта не из списка (например, сохранённая раньше) — считаем и запоминаем.
-        let label = Self.makeLabel(code, app: WidgetSnapshot.load(), english: Locale(identifier: "en_US"))
+        let label = Self.makeLabel(code, app: appSnapshot, english: english)
         labels[code] = label
         return label
     }
