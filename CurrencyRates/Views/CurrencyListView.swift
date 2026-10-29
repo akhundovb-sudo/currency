@@ -52,7 +52,8 @@ struct CurrencyListView: View {
             // Внешняя клавиатура (только iPad): суммы можно набирать с неё.
             .modifier(HardwareKeyboardInput(isFocused: $isKeyboardFocused, onKey: handleHardwareKey))
             .sheet(isPresented: $isAddPresented) {
-                AddCurrencyView()
+                // Выбранные на момент открытия — первыми; список берётся при каждом открытии окна.
+                AddCurrencyView(pinned: store.selectedCodes)
             }
             // Вместо системного индикатора — капли из Dynamic Island.
             .overlay { IslandRefreshIndicator(isActive: isRefreshing, pull: pullTracker.progress, failed: store.errorMessage != nil) }
