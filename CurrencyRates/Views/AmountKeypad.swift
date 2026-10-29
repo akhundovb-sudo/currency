@@ -25,6 +25,9 @@ struct AmountKeypad: View {
     let onClear: () -> Void
     let onDone: () -> Void
 
+    /// Широкий экран (iPad): клавиатура во всю колонку карточек, а не узкой полосой.
+    @Environment(\.horizontalSizeClass) private var sizeClass
+
     private let operators: [KeypadKey] = [.divide, .multiply, .subtract, .add, .equals]
 
     private let rows: [[KeypadKey]] = [
@@ -56,7 +59,9 @@ struct AmountKeypad: View {
         // Цифры и знаки как на калькуляторе — слева направо и в арабском: зеркальные «3 2 1» путают.
         .environment(\.layoutDirection, .leftToRight)
         // На iPad клавиши не растягиваются на всю ширину — блок по центру, панель во всю ширину.
-        .frame(maxWidth: 520)
+        // Ширина блока равна карточке (колонка 640 минус отступы по 16), чтобы края клавиш
+        // и карточек совпадали.
+        .frame(maxWidth: sizeClass == .regular ? 608 : 520)
         .padding(.horizontal, 16)
         .padding(.top, 20)
         .padding(.bottom, 8)
@@ -106,14 +111,19 @@ private struct KeypadButton: View {
     let onTap: () -> Void
     var onLongPress: (() -> Void)?
 
-    @ScaledMetric(relativeTo: .title) private var height = 56
+    @ScaledMetric(relativeTo: .title) private var scaledHeight = 56
+    @Environment(\.horizontalSizeClass) private var sizeClass
+
+    /// На iPad клавиши выше: широкая и низкая «таблетка» выглядела приплюснутой.
+    private var height: CGFloat { sizeClass == .regular ? 72 : scaledHeight }
+    private var maxHeight: CGFloat { sizeClass == .regular ? 96 : 80 }
     @State private var isBouncing = false
 
     var body: some View {
         Button(action: tap) {
             label
                 .frame(maxWidth: .infinity)
-                .frame(height: min(key.isOperator ? height * 0.8 : height, 80))
+                .frame(height: min(key.isOperator ? height * 0.8 : height, maxHeight))
         }
         .buttonStyle(GlassBubbleStyle(tint: tint))
         .scaleEffect(isBouncing ? 0.88 : 1)
