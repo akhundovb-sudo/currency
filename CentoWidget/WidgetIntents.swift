@@ -38,6 +38,14 @@ final class CurrencyLabels: @unchecked Sendable {
 
     /// Все валюты в порядке списка: свои из приложения, криптовалюты, остальной фиат.
     let codes: [String]
+    /// Валюты для списка без поиска: свои, 15 криптовалют и популярные фиатные.
+    let suggested: [String]
+
+    private static let popularFiat = [
+        "USD", "EUR", "GBP", "JPY", "CNY", "CHF", "CAD", "AUD", "TRY", "AED", "RUB", "KZT",
+        "AZN", "GEL", "UAH", "INR", "KRW", "HKD", "SGD", "THB", "BRL", "MXN", "PLN", "CZK",
+        "SEK", "NOK", "DKK", "ILS", "SAR", "EGP",
+    ]
     private var labels: [String: Label] = [:]
     private let lock = NSLock()
 
@@ -48,6 +56,9 @@ final class CurrencyLabels: @unchecked Sendable {
         let rest = CryptoAsset.all.map(\.code) + fiat.filter { !CurrencyCatalog.isCrypto($0) }.sorted()
         var seen = Set(app?.codes ?? [])
         codes = (app?.codes ?? []) + rest.filter { seen.insert($0).inserted }
+        var seenSuggested = Set(app?.codes ?? [])
+        let short = CryptoAsset.all.prefix(15).map(\.code) + Self.popularFiat
+        suggested = (app?.codes ?? []) + short.filter { seenSuggested.insert($0).inserted }
 
         let english = Locale(identifier: "en_US")
         for code in codes {
@@ -93,8 +104,11 @@ struct CurrencyQuery: EntityStringQuery {
         identifiers.map(CurrencyEntity.init(id:))
     }
 
+    /// Короткий список: свои валюты, топ криптовалют и самые ходовые валюты мира.
+    /// Все ~230 строк система при быстрой прокрутке не успевала подгрузить («Unable to Load»);
+    /// остальные валюты находятся поиском по коду или названию.
     func suggestedEntities() async throws -> [CurrencyEntity] {
-        ([CurrencyEntity.noneID] + CurrencyLabels.shared.codes).map(CurrencyEntity.init(id:))
+        ([CurrencyEntity.noneID] + CurrencyLabels.shared.suggested).map(CurrencyEntity.init(id:))
     }
 
     func entities(matching string: String) async throws -> [CurrencyEntity] {
