@@ -13,17 +13,21 @@
   h2 { font-size:20px; margin:32px 0 8px; }
   p, li { color:var(--fg); }
   .muted { color:var(--muted); font-size:14px; }
-  nav { margin:12px 0 28px; }
-  nav a { color:var(--accent); text-decoration:none; margin-right:16px; font-weight:600; }
+  nav { margin:12px 0 28px; display:flex; flex-wrap:wrap; gap:6px 16px; }
+  nav a { color:var(--accent); text-decoration:none; font-weight:600; }
+  nav a.on { text-decoration:underline; }
   section { border-top:1px solid var(--line); margin-top:36px; padding-top:8px; }
   a { color:var(--accent); }
+  /* С JavaScript показывается один язык; без него — все подряд. */
+  body.js section { display:none; }
+  body.js section.on { display:block; border-top:0; margin-top:0; }
 </style>
 </head>
 <body>
 <main>
-<nav><a href="#en">English</a><a href="#ru">Русский</a></nav>
+<nav><a href="#en" lang="en">English</a><a href="#ru" lang="ru">Русский</a><a href="#tr" lang="tr">Türkçe</a><a href="#fr" lang="fr">Français</a><a href="#es" lang="es">Español</a><a href="#de" lang="de">Deutsch</a><a href="#zh" lang="zh-Hans">简体中文</a><a href="#zh-hant" lang="zh-Hant">繁體中文</a><a href="#ar" lang="ar">العربية</a><a href="#ja" lang="ja">日本語</a><a href="#pt" lang="pt">Português (Brasil)</a><a href="#ko" lang="ko">한국어</a><a href="#it" lang="it">Italiano</a><a href="#pl" lang="pl">Polski</a></nav>
 
-<section id="en">
+<section id="en" lang="en">
 <h1>Cento — Privacy Policy</h1>
 <p class="muted">Last updated: October 29, 2026</p>
 
@@ -86,6 +90,417 @@
 <h2>Контакты</h2>
 <p>Вопросы: <a href="https://akhundovb.com/">akhundovb.com</a></p>
 </section>
+
+<section id="tr" lang="tr">
+<h1>Cento — Gizlilik Politikası</h1>
+<p class="muted">Son güncelleme: 29 Ekim 2026</p>
+
+<p>Cento (“uygulama”), Bahruz Akhundov tarafından geliştirilen bir döviz ve kripto para çeviricisidir. Bu politika, uygulamanın hangi bilgileri kullandığını açıklar. Kısaca: <strong>kişisel verilerinizi toplamıyoruz; hesap, reklam veya analiz yok ve sizi takip etmiyoruz.</strong></p>
+
+<h2>Cihazınızda saklanan bilgiler</h2>
+<p>Seçtiğiniz para birimleri, girdiğiniz tutar, dil, tema, sayı biçimi ve uygulama simgesi, uygulama bunları hatırlasın diye yalnızca cihazınızda saklanır. Bu veriler bize veya başka birine gönderilmez.</p>
+
+<h2>Konum</h2>
+<p>İlk açılışta uygulama, kullandığınız sırada yaklaşık konumunuzu kullanma izni isteyebilir. Uygulamayı açtığınızda ülkenizi belirlemek için kullanılır: ilk seferde yerel para biriminizi listeye eklemek, sonrasında ise Seyahat widget’ında bulunduğunuz ülkenin para birimini göstermek için. Cihazınızda yalnızca ülke kodu ve para birimi saklanır. Uygulama azaltılmış (yaklaşık) doğruluk kullanır, konumun kendisini saklamaz ve bize göndermez. Konumu ülkeye çevirmek için iOS, Apple’ın gizlilik politikasına tabi olan Apple coğrafi kodlama hizmetini kullanır. İzni reddedebilir veya Ayarlar’dan kapatabilirsiniz; uygulama bu izin olmadan da çalışır.</p>
+
+<h2>Döviz kurları ve ağ istekleri</h2>
+<p>Güncel kurları göstermek için uygulama, üçüncü taraf kur sağlayıcılarından herkese açık veriler ister: dövizler için ExchangeRate-API (open.er-api.com), kripto paralar için CoinGecko (coingecko.com). Bu isteklerde kişisel bilgi bulunmaz, ancak her internet isteğinde olduğu gibi sağlayıcılar IP adresinizi görebilir. Bu veriler için kendi gizlilik politikaları geçerlidir. Alınan son kurlar, uygulama çevrimdışı çalışsın diye cihazınızda önbelleğe alınır.</p>
+
+<h2>Satın alımlar</h2>
+<p>Cento Pro satın alırsanız ödemeyi Apple işler. Ödeme bilgilerinizi veya Apple Kimliğinizi almayız.</p>
+
+<h2>Yapmadıklarımız</h2>
+<ul>
+<li>Kişisel verileri toplamaz, satmaz ve paylaşmayız.</li>
+<li>Reklam, analiz veya takip araçları kullanmayız.</li>
+<li>Uygulama çocuklara yönelik değildir ve onlardan bilerek bilgi toplamaz.</li>
+</ul>
+
+<h2>Değişiklikler</h2>
+<p>Bu politika değişirse güncel sürüm yeni bir tarihle bu sayfada yayımlanır.</p>
+
+<h2>İletişim</h2>
+<p>Sorularınız için: <a href="https://akhundovb.com/">akhundovb.com</a></p>
+</section>
+
+<section id="fr" lang="fr">
+<h1>Cento — Politique de confidentialité</h1>
+<p class="muted">Dernière mise à jour : 29 octobre 2026</p>
+
+<p>Cento (« l’app ») est un convertisseur de devises et de cryptomonnaies développé par Bahruz Akhundov. Cette politique explique quelles informations l’app utilise. En bref : <strong>nous ne collectons pas vos données personnelles, il n’y a ni compte, ni publicité, ni outil d’analyse, et nous ne vous suivons pas.</strong></p>
+
+<h2>Informations stockées sur votre appareil</h2>
+<p>Les devises choisies, le montant saisi, la langue, le thème, le format des nombres et l’icône de l’app sont enregistrés uniquement sur votre appareil, afin que l’app s’en souvienne. Ces données ne sont envoyées ni à nous ni à personne d’autre.</p>
+
+<h2>Localisation</h2>
+<p>Au premier lancement, l’app peut demander l’autorisation d’utiliser votre position approximative pendant que vous l’utilisez. Elle sert à déterminer votre pays à l’ouverture de l’app : la première fois, pour ajouter votre devise locale à la liste, puis pour afficher la devise du pays où vous vous trouvez dans le widget Voyage. Seuls le code du pays et sa devise sont conservés sur votre appareil. L’app utilise une précision réduite (approximative), ne conserve pas la position elle-même et ne nous l’envoie pas. Pour convertir une position en pays, iOS utilise le service de géocodage d’Apple, soumis à la politique de confidentialité d’Apple. Vous pouvez refuser l’autorisation ou la désactiver dans les Réglages ; l’app fonctionne sans elle.</p>
+
+<h2>Taux de change et requêtes réseau</h2>
+<p>Pour afficher les taux actuels, l’app demande des données publiques à des fournisseurs tiers : ExchangeRate-API (open.er-api.com) pour les devises et CoinGecko (coingecko.com) pour les cryptomonnaies. Ces requêtes ne contiennent aucune information personnelle, mais, comme pour toute requête Internet, les fournisseurs peuvent voir votre adresse IP. Leurs propres politiques de confidentialité s’appliquent à ces données. Les derniers taux reçus sont conservés en cache sur votre appareil pour que l’app fonctionne hors connexion.</p>
+
+<h2>Achats</h2>
+<p>Si vous achetez Cento Pro, le paiement est traité par Apple. Nous ne recevons ni vos données de paiement ni votre identifiant Apple.</p>
+
+<h2>Ce que nous ne faisons pas</h2>
+<ul>
+<li>Nous ne collectons, ne vendons ni ne partageons de données personnelles.</li>
+<li>Nous n’utilisons ni publicité, ni outils d’analyse, ni outils de suivi.</li>
+<li>L’app ne s’adresse pas aux enfants et ne collecte pas sciemment d’informations les concernant.</li>
+</ul>
+
+<h2>Modifications</h2>
+<p>Si cette politique change, la version mise à jour sera publiée sur cette page avec une nouvelle date.</p>
+
+<h2>Contact</h2>
+<p>Questions : <a href="https://akhundovb.com/">akhundovb.com</a></p>
+</section>
+
+<section id="es" lang="es">
+<h1>Cento — Política de privacidad</h1>
+<p class="muted">Última actualización: 29 de octubre de 2026</p>
+
+<p>Cento («la app») es un conversor de divisas y criptomonedas desarrollado por Bahruz Akhundov. Esta política explica qué información usa la app. En resumen: <strong>no recopilamos tus datos personales, no hay cuentas, anuncios ni analíticas, y no te rastreamos.</strong></p>
+
+<h2>Información guardada en tu dispositivo</h2>
+<p>Las divisas que eliges, el importe que introduces, el idioma, el tema, el formato de números y el icono de la app se guardan solo en tu dispositivo, para que la app los recuerde. Estos datos no se envían a nosotros ni a nadie más.</p>
+
+<h2>Ubicación</h2>
+<p>En el primer inicio, la app puede pedir permiso para usar tu ubicación aproximada mientras la usas. Se emplea para averiguar tu país al abrir la app: la primera vez, para añadir tu divisa local a la lista y, después, para mostrar en el widget Viaje la divisa del país en el que estás. En tu dispositivo solo se guardan el código del país y su divisa. La app usa una precisión reducida (aproximada), no guarda la ubicación en sí ni nos la envía. Para convertir una ubicación en un país, iOS usa el servicio de geocodificación de Apple, sujeto a la política de privacidad de Apple. Puedes denegar el permiso o desactivarlo en Ajustes; la app funciona sin él.</p>
+
+<h2>Tipos de cambio y solicitudes de red</h2>
+<p>Para mostrar los tipos de cambio actuales, la app solicita datos públicos a proveedores externos: ExchangeRate-API (open.er-api.com) para divisas y CoinGecko (coingecko.com) para criptomonedas. Estas solicitudes no contienen información personal, pero, como en cualquier petición a internet, los proveedores pueden ver tu dirección IP. A esos datos se aplican sus propias políticas de privacidad. Los últimos tipos recibidos se guardan en caché en tu dispositivo para que la app funcione sin conexión.</p>
+
+<h2>Compras</h2>
+<p>Si compras Cento Pro, el pago lo procesa Apple. No recibimos tus datos de pago ni tu ID de Apple.</p>
+
+<h2>Lo que no hacemos</h2>
+<ul>
+<li>No recopilamos, vendemos ni compartimos datos personales.</li>
+<li>No usamos publicidad, analíticas ni herramientas de seguimiento.</li>
+<li>La app no está dirigida a menores y no recopila a sabiendas información de ellos.</li>
+</ul>
+
+<h2>Cambios</h2>
+<p>Si esta política cambia, la versión actualizada se publicará en esta página con una nueva fecha.</p>
+
+<h2>Contacto</h2>
+<p>Preguntas: <a href="https://akhundovb.com/">akhundovb.com</a></p>
+</section>
+
+<section id="de" lang="de">
+<h1>Cento — Datenschutzerklärung</h1>
+<p class="muted">Zuletzt aktualisiert: 29. Oktober 2026</p>
+
+<p>Cento („die App“) ist ein Währungs- und Kryptowährungsrechner, entwickelt von Bahruz Akhundov. Diese Erklärung beschreibt, welche Informationen die App verwendet. Kurz gesagt: <strong>Wir erheben keine personenbezogenen Daten, es gibt keine Konten, Werbung oder Analysen, und wir verfolgen Sie nicht.</strong></p>
+
+<h2>Auf Ihrem Gerät gespeicherte Informationen</h2>
+<p>Die von Ihnen gewählten Währungen, der eingegebene Betrag, Ihre Sprache, das Design, das Zahlenformat und das App-Symbol werden nur auf Ihrem Gerät gespeichert, damit die App sie sich merkt. Diese Daten werden weder an uns noch an Dritte gesendet.</p>
+
+<h2>Standort</h2>
+<p>Beim ersten Start kann die App um Erlaubnis bitten, Ihren ungefähren Standort zu verwenden, solange Sie die App nutzen. Er dient dazu, beim Öffnen der App Ihr Land zu bestimmen: beim ersten Mal, um Ihre lokale Währung zur Liste hinzuzufügen, später, um im Reise-Widget die Währung des Landes anzuzeigen, in dem Sie sich befinden. Auf Ihrem Gerät werden nur der Ländercode und die Währung gespeichert. Die App verwendet eine reduzierte (ungefähre) Genauigkeit, speichert den Standort selbst nicht und sendet ihn nicht an uns. Um einen Standort in ein Land umzuwandeln, nutzt iOS den Geocoding-Dienst von Apple, für den die Datenschutzerklärung von Apple gilt. Sie können die Erlaubnis verweigern oder in den Einstellungen deaktivieren; die App funktioniert auch ohne sie.</p>
+
+<h2>Wechselkurse und Netzwerkanfragen</h2>
+<p>Um aktuelle Kurse anzuzeigen, ruft die App öffentliche Daten von Kursanbietern ab: ExchangeRate-API (open.er-api.com) für Währungen und CoinGecko (coingecko.com) für Kryptowährungen. Diese Anfragen enthalten keine personenbezogenen Informationen, doch wie bei jeder Internetanfrage können die Anbieter Ihre IP-Adresse sehen. Für diese Daten gelten deren eigene Datenschutzerklärungen. Die zuletzt erhaltenen Kurse werden auf Ihrem Gerät zwischengespeichert, damit die App offline funktioniert.</p>
+
+<h2>Käufe</h2>
+<p>Wenn Sie Cento Pro kaufen, wickelt Apple die Zahlung ab. Wir erhalten weder Ihre Zahlungsdaten noch Ihre Apple-ID.</p>
+
+<h2>Was wir nicht tun</h2>
+<ul>
+<li>Wir erheben, verkaufen oder teilen keine personenbezogenen Daten.</li>
+<li>Wir verwenden keine Werbe-, Analyse- oder Tracking-Tools.</li>
+<li>Die App richtet sich nicht an Kinder und erhebt wissentlich keine Informationen von ihnen.</li>
+</ul>
+
+<h2>Änderungen</h2>
+<p>Wenn sich diese Erklärung ändert, wird die aktualisierte Fassung mit neuem Datum auf dieser Seite veröffentlicht.</p>
+
+<h2>Kontakt</h2>
+<p>Fragen: <a href="https://akhundovb.com/">akhundovb.com</a></p>
+</section>
+
+<section id="zh" lang="zh-Hans">
+<h1>Cento — 隐私政策</h1>
+<p class="muted">最后更新：2026 年 10 月 29 日</p>
+
+<p>Cento（“本应用”）是由 Bahruz Akhundov 开发的货币与加密货币换算工具。本政策说明本应用会使用哪些信息。简而言之：<strong>我们不收集您的个人数据，没有账户、广告或分析工具，也不会追踪您。</strong></p>
+
+<h2>存储在您设备上的信息</h2>
+<p>您选择的货币、输入的金额、语言、主题、数字格式和应用图标只保存在您的设备上，以便应用记住它们。这些数据不会发送给我们或任何其他方。</p>
+
+<h2>位置</h2>
+<p>首次启动时，应用可能会请求在您使用应用期间使用您的大致位置。它用于在您打开应用时确定所在国家/地区：首次用于把您当地的货币加入列表，之后用于在“旅行”小组件中显示您所在国家/地区的货币。您的设备上只保存国家/地区代码及其货币。应用使用降低的（大致）精度，不会保存位置本身，也不会发送给我们。将位置转换为国家/地区时，iOS 会使用 Apple 的地理编码服务，该服务适用 Apple 的隐私政策。您可以拒绝授权，或在“设置”中关闭；没有该权限应用也能正常使用。</p>
+
+<h2>汇率与网络请求</h2>
+<p>为显示最新汇率，应用会向第三方汇率提供方请求公开数据：货币使用 ExchangeRate-API（open.er-api.com），加密货币使用 CoinGecko（coingecko.com）。这些请求不包含个人信息，但与任何互联网请求一样，提供方可以看到您的 IP 地址。这些数据适用其各自的隐私政策。最近获取的汇率会缓存在您的设备上，使应用可离线使用。</p>
+
+<h2>购买</h2>
+<p>如果您购买 Cento Pro，付款由 Apple 处理。我们不会收到您的付款信息或 Apple ID。</p>
+
+<h2>我们不会做的事</h2>
+<ul>
+<li>不会收集、出售或分享个人数据。</li>
+<li>不使用广告、分析或追踪工具。</li>
+<li>本应用不面向儿童，也不会有意收集儿童的信息。</li>
+</ul>
+
+<h2>变更</h2>
+<p>如本政策有变更，更新后的版本将连同新的日期发布在此页面上。</p>
+
+<h2>联系方式</h2>
+<p>如有疑问：<a href="https://akhundovb.com/">akhundovb.com</a></p>
+</section>
+
+<section id="zh-hant" lang="zh-Hant">
+<h1>Cento — 隱私權政策</h1>
+<p class="muted">最後更新：2026 年 10 月 29 日</p>
+
+<p>Cento（「本 App」）是由 Bahruz Akhundov 開發的貨幣與加密貨幣換算工具。本政策說明本 App 會使用哪些資訊。簡單來說：<strong>我們不會收集你的個人資料，沒有帳號、廣告或分析工具，也不會追蹤你。</strong></p>
+
+<h2>儲存在你裝置上的資訊</h2>
+<p>你選擇的貨幣、輸入的金額、語言、外觀主題、數字格式與 App 圖像只會儲存在你的裝置上，讓 App 能記住這些設定。這些資料不會傳送給我們或任何其他人。</p>
+
+<h2>位置</h2>
+<p>首次啟動時，App 可能會請求在你使用期間使用你的大概位置。位置用於在你開啟 App 時判斷所在國家或地區：第一次是為了把你當地的貨幣加入清單，之後是為了在「旅行」小工具中顯示你所在國家或地區的貨幣。你的裝置上只會儲存國家或地區代碼及其貨幣。App 使用降低的（大概）精確度，不會儲存位置本身，也不會傳送給我們。將位置轉換為國家或地區時，iOS 會使用 Apple 的地理編碼服務，該服務適用 Apple 的隱私權政策。你可以拒絕授權，或在「設定」中關閉；沒有此權限 App 仍可正常使用。</p>
+
+<h2>匯率與網路請求</h2>
+<p>為了顯示最新匯率，App 會向第三方匯率供應商請求公開資料：貨幣使用 ExchangeRate-API（open.er-api.com），加密貨幣使用 CoinGecko（coingecko.com）。這些請求不包含個人資訊，但與任何網際網路請求一樣，供應商可以看到你的 IP 位址。這些資料適用其各自的隱私權政策。最近取得的匯率會快取在你的裝置上，讓 App 能離線使用。</p>
+
+<h2>購買</h2>
+<p>如果你購買 Cento Pro，付款由 Apple 處理。我們不會收到你的付款資訊或 Apple ID。</p>
+
+<h2>我們不會做的事</h2>
+<ul>
+<li>不會收集、販售或分享個人資料。</li>
+<li>不使用廣告、分析或追蹤工具。</li>
+<li>本 App 並非以兒童為對象，也不會刻意收集兒童的資訊。</li>
+</ul>
+
+<h2>變更</h2>
+<p>若本政策有所變更，更新後的版本會連同新日期發布在此頁面。</p>
+
+<h2>聯絡方式</h2>
+<p>如有問題：<a href="https://akhundovb.com/">akhundovb.com</a></p>
+</section>
+
+<section id="ar" lang="ar" dir="rtl">
+<h1>Cento — سياسة الخصوصية</h1>
+<p class="muted">آخر تحديث: 29 أكتوبر 2026</p>
+
+<p>Cento («التطبيق») محوّل عملات وعملات رقمية من تطوير بهروز أخوندوف. توضّح هذه السياسة المعلومات التي يستخدمها التطبيق. باختصار: <strong>نحن لا نجمع بياناتك الشخصية، ولا توجد حسابات أو إعلانات أو تحليلات، ولا نتتبّعك.</strong></p>
+
+<h2>المعلومات المخزّنة على جهازك</h2>
+<p>تُحفظ العملات التي تختارها والمبلغ الذي تدخله ولغتك والمظهر وتنسيق الأرقام وأيقونة التطبيق على جهازك فقط، ليتذكّرها التطبيق. لا تُرسل هذه البيانات إلينا ولا إلى أي جهة أخرى.</p>
+
+<h2>الموقع</h2>
+<p>عند أول تشغيل قد يطلب التطبيق إذنًا لاستخدام موقعك التقريبي أثناء استخدامك له. يُستخدم لتحديد بلدك عند فتح التطبيق: في المرة الأولى لإضافة عملتك المحلية إلى القائمة، ولاحقًا لعرض عملة البلد الذي تتواجد فيه في أداة «السفر». لا يُحفظ على جهازك سوى رمز البلد وعملته. يستخدم التطبيق دقة منخفضة (تقريبية)، ولا يحفظ الموقع نفسه ولا يرسله إلينا. لتحويل الموقع إلى بلد، يستخدم iOS خدمة الترميز الجغرافي من Apple، وتخضع لسياسة الخصوصية الخاصة بـ Apple. يمكنك رفض الإذن أو إيقافه من الإعدادات؛ ويعمل التطبيق من دونه.</p>
+
+<h2>أسعار الصرف وطلبات الشبكة</h2>
+<p>لعرض الأسعار الحالية، يطلب التطبيق بيانات عامة من مزوّدي أسعار خارجيين: ExchangeRate-API (open.er-api.com) للعملات وCoinGecko (coingecko.com) للعملات الرقمية. لا تحتوي هذه الطلبات على معلومات شخصية، لكن كما في أي طلب عبر الإنترنت، يمكن للمزوّدين رؤية عنوان IP الخاص بك. وتنطبق عليهم سياسات الخصوصية الخاصة بهم. تُخزَّن آخر الأسعار المستلمة مؤقتًا على جهازك ليعمل التطبيق دون اتصال.</p>
+
+<h2>المشتريات</h2>
+<p>إذا اشتريت Cento Pro، تتم معالجة الدفع بواسطة Apple. لا نتلقى بيانات الدفع الخاصة بك ولا معرّف Apple.</p>
+
+<h2>ما لا نفعله</h2>
+<ul>
+<li>لا نجمع البيانات الشخصية ولا نبيعها ولا نشاركها.</li>
+<li>لا نستخدم أدوات الإعلانات أو التحليلات أو التتبّع.</li>
+<li>التطبيق غير موجّه للأطفال ولا يجمع معلومات عنهم عن علم.</li>
+</ul>
+
+<h2>التغييرات</h2>
+<p>إذا تغيّرت هذه السياسة، فسيُنشر الإصدار المحدّث في هذه الصفحة بتاريخ جديد.</p>
+
+<h2>التواصل</h2>
+<p>للاستفسارات: <a href="https://akhundovb.com/">akhundovb.com</a></p>
+</section>
+
+<section id="ja" lang="ja">
+<h1>Cento — プライバシーポリシー</h1>
+<p class="muted">最終更新日：2026年10月29日</p>
+
+<p>Cento（「本アプリ」）は、Bahruz Akhundov が開発した通貨・暗号資産の換算アプリです。本ポリシーは、本アプリが使用する情報について説明します。要点：<strong>個人データは収集しません。アカウント、広告、分析はなく、お客様を追跡することもありません。</strong></p>
+
+<h2>お使いのデバイスに保存される情報</h2>
+<p>選択した通貨、入力した金額、言語、テーマ、数字の形式、アプリアイコンは、アプリが記憶できるよう、お使いのデバイスにのみ保存されます。これらのデータが当方や第三者に送信されることはありません。</p>
+
+<h2>位置情報</h2>
+<p>初回起動時に、アプリの使用中に大まかな位置情報を利用する許可を求めることがあります。位置情報は、アプリを開いたときに国を判定するために使われます。初回は現地通貨をリストに追加するため、その後は「旅行」ウィジェットで現在いる国の通貨を表示するためです。デバイスに保存されるのは国コードとその通貨のみです。アプリは精度を下げた（おおよその）位置情報を使用し、位置情報そのものは保存せず、当方にも送信しません。位置情報を国に変換するために、iOS は Apple のジオコーディングサービスを使用し、これには Apple のプライバシーポリシーが適用されます。許可を拒否することも、「設定」でオフにすることもでき、許可がなくてもアプリは動作します。</p>
+
+<h2>為替レートとネットワークリクエスト</h2>
+<p>最新のレートを表示するため、アプリは第三者のレート提供元から公開データを取得します。通貨には ExchangeRate-API（open.er-api.com）、暗号資産には CoinGecko（coingecko.com）を使用します。これらのリクエストに個人情報は含まれませんが、一般的なインターネット通信と同様、提供元はお客様の IP アドレスを確認できます。これらのデータには各社のプライバシーポリシーが適用されます。最後に取得したレートは、オフラインでも動作するようデバイスにキャッシュされます。</p>
+
+<h2>購入</h2>
+<p>Cento Pro を購入する場合、支払いは Apple が処理します。当方がお客様の支払い情報や Apple ID を受け取ることはありません。</p>
+
+<h2>当方が行わないこと</h2>
+<ul>
+<li>個人データの収集、販売、共有は行いません。</li>
+<li>広告、分析、トラッキングツールは使用しません。</li>
+<li>本アプリは子どもを対象としておらず、子どもの情報を意図的に収集することはありません。</li>
+</ul>
+
+<h2>変更</h2>
+<p>本ポリシーが変更された場合は、更新版を新しい日付とともにこのページで公開します。</p>
+
+<h2>お問い合わせ</h2>
+<p>ご質問：<a href="https://akhundovb.com/">akhundovb.com</a></p>
+</section>
+
+<section id="pt" lang="pt">
+<h1>Cento — Política de Privacidade</h1>
+<p class="muted">Última atualização: 29 de outubro de 2026</p>
+
+<p>O Cento (“o app”) é um conversor de moedas e criptomoedas desenvolvido por Bahruz Akhundov. Esta política explica quais informações o app usa. Em resumo: <strong>não coletamos seus dados pessoais, não há contas, anúncios nem análises, e não rastreamos você.</strong></p>
+
+<h2>Informações armazenadas no seu dispositivo</h2>
+<p>As moedas que você escolhe, o valor digitado, o idioma, o tema, o formato dos números e o ícone do app são salvos apenas no seu dispositivo, para que o app se lembre deles. Esses dados não são enviados a nós nem a mais ninguém.</p>
+
+<h2>Localização</h2>
+<p>No primeiro uso, o app pode pedir permissão para usar sua localização aproximada enquanto você o utiliza. Ela serve para descobrir seu país ao abrir o app: na primeira vez, para adicionar sua moeda local à lista e, depois, para mostrar no widget Viagem a moeda do país em que você está. Somente o código do país e sua moeda ficam no seu dispositivo. O app usa precisão reduzida (aproximada), não armazena a localização em si e não a envia para nós. Para converter uma localização em país, o iOS usa o serviço de geocodificação da Apple, sujeito à política de privacidade da Apple. Você pode negar a permissão ou desativá-la em Ajustes; o app funciona sem ela.</p>
+
+<h2>Cotações e solicitações de rede</h2>
+<p>Para mostrar as cotações atuais, o app solicita dados públicos a provedores externos: ExchangeRate-API (open.er-api.com) para moedas e CoinGecko (coingecko.com) para criptomoedas. Essas solicitações não contêm informações pessoais, mas, como em qualquer requisição à internet, os provedores podem ver seu endereço IP. Aplicam-se a esses dados as políticas de privacidade deles. As últimas cotações recebidas ficam em cache no seu dispositivo para que o app funcione offline.</p>
+
+<h2>Compras</h2>
+<p>Se você comprar o Cento Pro, o pagamento é processado pela Apple. Não recebemos seus dados de pagamento nem seu ID Apple.</p>
+
+<h2>O que não fazemos</h2>
+<ul>
+<li>Não coletamos, vendemos nem compartilhamos dados pessoais.</li>
+<li>Não usamos anúncios, análises nem ferramentas de rastreamento.</li>
+<li>O app não é direcionado a crianças e não coleta intencionalmente informações delas.</li>
+</ul>
+
+<h2>Alterações</h2>
+<p>Se esta política mudar, a versão atualizada será publicada nesta página com uma nova data.</p>
+
+<h2>Contato</h2>
+<p>Dúvidas: <a href="https://akhundovb.com/">akhundovb.com</a></p>
+</section>
+
+<section id="ko" lang="ko">
+<h1>Cento — 개인정보 처리방침</h1>
+<p class="muted">최종 업데이트: 2026년 10월 29일</p>
+
+<p>Cento(“앱”)는 Bahruz Akhundov가 개발한 통화 및 암호화폐 환산 앱입니다. 이 방침은 앱이 어떤 정보를 사용하는지 설명합니다. 요약하면 <strong>개인 정보를 수집하지 않으며, 계정·광고·분석이 없고, 사용자를 추적하지 않습니다.</strong></p>
+
+<h2>기기에 저장되는 정보</h2>
+<p>선택한 통화, 입력한 금액, 언어, 테마, 숫자 형식, 앱 아이콘은 앱이 기억할 수 있도록 기기에만 저장됩니다. 이 데이터는 저희나 다른 누구에게도 전송되지 않습니다.</p>
+
+<h2>위치</h2>
+<p>처음 실행할 때 앱은 사용 중에 대략적인 위치를 사용할 수 있는 권한을 요청할 수 있습니다. 위치는 앱을 열 때 국가를 확인하는 데 쓰입니다. 처음에는 현지 통화를 목록에 추가하기 위해, 이후에는 ‘여행’ 위젯에 현재 있는 국가의 통화를 표시하기 위해서입니다. 기기에는 국가 코드와 해당 통화만 저장됩니다. 앱은 낮은(대략적인) 정확도를 사용하며, 위치 자체를 저장하거나 저희에게 전송하지 않습니다. 위치를 국가로 변환하기 위해 iOS는 Apple의 지오코딩 서비스를 사용하며, 이는 Apple의 개인정보 처리방침의 적용을 받습니다. 권한을 거부하거나 설정에서 끌 수 있으며, 권한이 없어도 앱은 작동합니다.</p>
+
+<h2>환율 및 네트워크 요청</h2>
+<p>최신 환율을 표시하기 위해 앱은 타사 환율 제공업체에서 공개 데이터를 요청합니다. 통화는 ExchangeRate-API(open.er-api.com), 암호화폐는 CoinGecko(coingecko.com)를 사용합니다. 이 요청에는 개인 정보가 포함되지 않지만, 모든 인터넷 요청과 마찬가지로 제공업체는 사용자의 IP 주소를 볼 수 있습니다. 해당 데이터에는 각 업체의 개인정보 처리방침이 적용됩니다. 마지막으로 받은 환율은 앱이 오프라인에서도 작동하도록 기기에 캐시됩니다.</p>
+
+<h2>구매</h2>
+<p>Cento Pro를 구매하면 결제는 Apple이 처리합니다. 저희는 결제 정보나 Apple ID를 받지 않습니다.</p>
+
+<h2>저희가 하지 않는 일</h2>
+<ul>
+<li>개인 정보를 수집, 판매 또는 공유하지 않습니다.</li>
+<li>광고, 분석, 추적 도구를 사용하지 않습니다.</li>
+<li>앱은 어린이를 대상으로 하지 않으며 어린이의 정보를 의도적으로 수집하지 않습니다.</li>
+</ul>
+
+<h2>변경 사항</h2>
+<p>이 방침이 변경되면 업데이트된 내용이 새 날짜와 함께 이 페이지에 게시됩니다.</p>
+
+<h2>문의</h2>
+<p>문의: <a href="https://akhundovb.com/">akhundovb.com</a></p>
+</section>
+
+<section id="it" lang="it">
+<h1>Cento — Informativa sulla privacy</h1>
+<p class="muted">Ultimo aggiornamento: 29 ottobre 2026</p>
+
+<p>Cento («l’app») è un convertitore di valute e criptovalute sviluppato da Bahruz Akhundov. Questa informativa spiega quali informazioni usa l’app. In breve: <strong>non raccogliamo i tuoi dati personali, non ci sono account, pubblicità o analisi, e non ti tracciamo.</strong></p>
+
+<h2>Informazioni memorizzate sul dispositivo</h2>
+<p>Le valute scelte, l’importo inserito, la lingua, il tema, il formato dei numeri e l’icona dell’app vengono salvati solo sul tuo dispositivo, così l’app li ricorda. Questi dati non vengono inviati a noi né ad altri.</p>
+
+<h2>Posizione</h2>
+<p>Al primo avvio l’app può chiedere il permesso di usare la tua posizione approssimativa mentre la usi. Serve a individuare il tuo Paese quando apri l’app: la prima volta, per aggiungere la tua valuta locale all’elenco e, in seguito, per mostrare nel widget Viaggio la valuta del Paese in cui ti trovi. Sul dispositivo vengono conservati solo il codice del Paese e la sua valuta. L’app usa una precisione ridotta (approssimativa), non memorizza la posizione in sé e non la invia a noi. Per trasformare una posizione in un Paese, iOS usa il servizio di geocodifica di Apple, soggetto all’informativa sulla privacy di Apple. Puoi negare il permesso o disattivarlo in Impostazioni; l’app funziona anche senza.</p>
+
+<h2>Tassi di cambio e richieste di rete</h2>
+<p>Per mostrare i tassi aggiornati, l’app richiede dati pubblici a fornitori esterni: ExchangeRate-API (open.er-api.com) per le valute e CoinGecko (coingecko.com) per le criptovalute. Queste richieste non contengono informazioni personali ma, come ogni richiesta Internet, i fornitori possono vedere il tuo indirizzo IP. A tali dati si applicano le loro informative sulla privacy. Gli ultimi tassi ricevuti vengono salvati nella cache del dispositivo per permettere all’app di funzionare offline.</p>
+
+<h2>Acquisti</h2>
+<p>Se acquisti Cento Pro, il pagamento è gestito da Apple. Non riceviamo i tuoi dati di pagamento né il tuo ID Apple.</p>
+
+<h2>Cosa non facciamo</h2>
+<ul>
+<li>Non raccogliamo, vendiamo né condividiamo dati personali.</li>
+<li>Non usiamo pubblicità, strumenti di analisi o di tracciamento.</li>
+<li>L’app non è rivolta ai minori e non raccoglie consapevolmente informazioni su di loro.</li>
+</ul>
+
+<h2>Modifiche</h2>
+<p>Se questa informativa cambia, la versione aggiornata sarà pubblicata in questa pagina con una nuova data.</p>
+
+<h2>Contatti</h2>
+<p>Domande: <a href="https://akhundovb.com/">akhundovb.com</a></p>
+</section>
+
+<section id="pl" lang="pl">
+<h1>Cento — Polityka prywatności</h1>
+<p class="muted">Ostatnia aktualizacja: 29 października 2026</p>
+
+<p>Cento („aplikacja”) to przelicznik walut i kryptowalut stworzony przez Bahruza Akhundova. Ta polityka wyjaśnia, jakich informacji używa aplikacja. W skrócie: <strong>nie zbieramy Twoich danych osobowych, nie ma kont, reklam ani analityki, i nie śledzimy Cię.</strong></p>
+
+<h2>Informacje przechowywane na urządzeniu</h2>
+<p>Wybrane waluty, wpisana kwota, język, motyw, format liczb i ikona aplikacji są zapisywane wyłącznie na Twoim urządzeniu, aby aplikacja je pamiętała. Dane te nie są wysyłane do nas ani do nikogo innego.</p>
+
+<h2>Lokalizacja</h2>
+<p>Przy pierwszym uruchomieniu aplikacja może poprosić o zgodę na użycie Twojej przybliżonej lokalizacji, gdy z niej korzystasz. Służy ona do ustalenia kraju po otwarciu aplikacji: za pierwszym razem, aby dodać Twoją lokalną walutę do listy, a później, aby w widżecie Podróż pokazać walutę kraju, w którym jesteś. Na urządzeniu przechowywane są tylko kod kraju i jego waluta. Aplikacja używa obniżonej (przybliżonej) dokładności, nie zapisuje samej lokalizacji i nie wysyła jej do nas. Aby zamienić lokalizację na kraj, iOS korzysta z usługi geokodowania Apple, do której stosuje się polityka prywatności Apple. Możesz odmówić zgody lub wyłączyć ją w Ustawieniach; aplikacja działa bez niej.</p>
+
+<h2>Kursy walut i żądania sieciowe</h2>
+<p>Aby pokazywać aktualne kursy, aplikacja pobiera publiczne dane od zewnętrznych dostawców: ExchangeRate-API (open.er-api.com) dla walut oraz CoinGecko (coingecko.com) dla kryptowalut. Te żądania nie zawierają informacji osobistych, ale — jak przy każdym zapytaniu internetowym — dostawcy mogą widzieć Twój adres IP. Do tych danych stosuje się ich własne polityki prywatności. Ostatnio pobrane kursy są zapisywane w pamięci podręcznej urządzenia, aby aplikacja działała offline.</p>
+
+<h2>Zakupy</h2>
+<p>Jeśli kupisz Cento Pro, płatność przetwarza Apple. Nie otrzymujemy Twoich danych płatniczych ani Apple ID.</p>
+
+<h2>Czego nie robimy</h2>
+<ul>
+<li>Nie zbieramy, nie sprzedajemy ani nie udostępniamy danych osobowych.</li>
+<li>Nie używamy reklam, analityki ani narzędzi śledzących.</li>
+<li>Aplikacja nie jest kierowana do dzieci i świadomie nie zbiera informacji o nich.</li>
+</ul>
+
+<h2>Zmiany</h2>
+<p>Jeśli ta polityka ulegnie zmianie, zaktualizowana wersja zostanie opublikowana na tej stronie z nową datą.</p>
+
+<h2>Kontakt</h2>
+<p>Pytania: <a href="https://akhundovb.com/">akhundovb.com</a></p>
+</section>
 </main>
+<script>
+(function () {
+  var ids = ["en", "ru", "tr", "fr", "es", "de", "zh", "zh-hant", "ar", "ja", "pt", "ko", "it", "pl"];
+  function fromBrowser() {
+    var langs = navigator.languages && navigator.languages.length ? navigator.languages : [navigator.language || "en"];
+    for (var i = 0; i < langs.length; i++) {
+      var l = String(langs[i]).toLowerCase(), base = l.split("-")[0];
+      if (base === "zh") return /hant|-tw|-hk|-mo/.test(l) ? "zh-hant" : "zh";
+      if (ids.indexOf(base) >= 0) return base;
+    }
+    return "en";
+  }
+  function show() {
+    var id = decodeURIComponent(location.hash.slice(1)).toLowerCase();
+    if (ids.indexOf(id) < 0) id = fromBrowser();
+    document.body.classList.add("js");
+    var all = document.querySelectorAll("section, nav a");
+    for (var i = 0; i < all.length; i++) {
+      var key = all[i].tagName === "A" ? all[i].getAttribute("href").slice(1) : all[i].id;
+      all[i].classList.toggle("on", key === id);
+    }
+    document.documentElement.lang = id === "zh" ? "zh-Hans" : id === "zh-hant" ? "zh-Hant" : id;
+  }
+  window.addEventListener("hashchange", show);
+  show();
+})();
+</script>
 </body>
 </html>
