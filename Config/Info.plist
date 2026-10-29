@@ -6,6 +6,13 @@
 	     а картинка экрана запуска одна на все иконки. Выбранную иконку показывает SplashView.
 	     Остальные ключи Info.plist генерирует Xcode. -->
 	<!-- Статус-бар скрыт на экране запуска и во время сплэша, появляется вместе со списком. -->
+	<key>CFBundleLocalizations</key>
+	<array>
+		<string>ru</string><string>en</string><string>tr</string><string>fr</string>
+		<string>es</string><string>de</string><string>zh-Hans</string><string>zh-Hant</string>
+		<string>ar</string><string>ja</string><string>pt-BR</string><string>ko</string>
+		<string>it</string><string>pl</string>
+	</array>
 	<key>UIStatusBarHidden</key>
 	<true/>
 	<key>UILaunchScreen</key>

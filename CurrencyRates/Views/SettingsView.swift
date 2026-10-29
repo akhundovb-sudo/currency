@@ -28,8 +28,8 @@ struct SettingsView: View {
 
                 Section(L(.appearance)) {
                     Picker(L(.language), selection: $store.language) {
-                        // Английский первым, дальше в обычном порядке.
-                        ForEach([AppLanguage.en] + AppLanguage.allCases.filter { $0 != .en }) { language in
+                        // По алфавиту (по английскому названию языка).
+                        ForEach(AppLanguage.sortedByName) { language in
                             Text(verbatim: language.nativeName).tag(language)
                         }
                     }
