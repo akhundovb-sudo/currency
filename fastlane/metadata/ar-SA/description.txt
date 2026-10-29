@@ -15,3 +15,6 @@
 اختر أيقونة التطبيق المفضلة لديك واستخدم المظهر الفاتح أو الداكن.
 
 سواء كنت تقارن الأسعار قبل السفر، أو تتحقق من مبلغ بعملة أجنبية، أو تحسب قيمة العملات المشفرة، يجمع Cento نتائج التحويل في مكان واحد.
+
+شروط الاستخدام: https://www.apple.com/legal/internet-services/itunes/dev/stdeula/
+سياسة الخصوصية: https://akhundovb-sudo.github.io/currency/privacy.html

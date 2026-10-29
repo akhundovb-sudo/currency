@@ -15,3 +15,6 @@ Dodawaj, odejmuj, mnóż i dziel bezpośrednio w przeliczniku.
 Wybierz ulubioną ikonę aplikacji oraz jasny lub ciemny motyw.
 
 Porównuj ceny przed podróżą, sprawdzaj kwoty w obcych walutach i przeliczaj kryptowaluty. Cento gromadzi wyniki w jednym miejscu.
+
+Warunki użytkowania: https://www.apple.com/legal/internet-services/itunes/dev/stdeula/
+Polityka prywatności: https://akhundovb-sudo.github.io/currency/privacy.html

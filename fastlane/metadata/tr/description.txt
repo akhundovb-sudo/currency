@@ -15,3 +15,6 @@ Toplama, çıkarma, çarpma ve bölme işlemlerini doğrudan çeviricide yapın.
 Sevdiğiniz uygulama simgesini seçin ve açık veya koyu temayı kullanın.
 
 Seyahat öncesinde fiyatları karşılaştırırken, farklı para birimlerinde hesap yaparken veya kripto para çevirirken tüm sonuçlarınız Cento ile tek yerde.
+
+Kullanım Koşulları: https://www.apple.com/legal/internet-services/itunes/dev/stdeula/
+Gizlilik Politikası: https://akhundovb-sudo.github.io/currency/privacy.html

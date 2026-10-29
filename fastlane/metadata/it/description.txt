@@ -15,3 +15,6 @@ Somma, sottrai, moltiplica e dividi direttamente nel convertitore.
 Scegli l’icona che preferisci e utilizza il tema chiaro o scuro.
 
 Che tu voglia confrontare i prezzi prima di un viaggio, controllare un importo in valuta estera o convertire criptovalute, Cento riunisce i risultati in un unico posto.
+
+Termini di utilizzo: https://www.apple.com/legal/internet-services/itunes/dev/stdeula/
+Informativa sulla privacy: https://akhundovb-sudo.github.io/currency/privacy.html

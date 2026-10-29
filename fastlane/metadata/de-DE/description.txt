@@ -15,3 +15,6 @@ Addiere, subtrahiere, multipliziere und dividiere direkt im Währungsrechner.
 Wähle dein Lieblings-App-Symbol und nutze das helle oder dunkle Design.
 
 Ob du Reisepreise vergleichst, einen Fremdwährungsbetrag prüfst oder Kryptowährungen umrechnest: Mit Cento behältst du deine Umrechnungen im Blick.
+
+Nutzungsbedingungen: https://www.apple.com/legal/internet-services/itunes/dev/stdeula/
+Datenschutzerklärung: https://akhundovb-sudo.github.io/currency/privacy.html

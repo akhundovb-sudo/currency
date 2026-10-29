@@ -15,3 +15,6 @@ Cộng, trừ, nhân và chia ngay trong ứng dụng.
 Chọn biểu tượng ứng dụng yêu thích và sử dụng giao diện sáng hoặc tối.
 
 Từ so sánh giá trước chuyến đi, kiểm tra số tiền bằng ngoại tệ đến quy đổi tiền mã hóa, Cento tập hợp các kết quả tại một nơi.
+
+Điều khoản sử dụng: https://www.apple.com/legal/internet-services/itunes/dev/stdeula/
+Chính sách quyền riêng tư: https://akhundovb-sudo.github.io/currency/privacy.html

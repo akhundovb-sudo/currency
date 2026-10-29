@@ -15,3 +15,6 @@ Some, subtraia, multiplique e divida diretamente no conversor.
 Escolha seu ícone favorito e use o tema claro ou escuro.
 
 Seja para comparar preços antes de uma viagem, conferir valores em outra moeda ou converter criptomoedas, o Cento reúne suas conversões em um só lugar.
+
+Termos de Uso: https://www.apple.com/legal/internet-services/itunes/dev/stdeula/
+Política de Privacidade: https://akhundovb-sudo.github.io/currency/privacy.html

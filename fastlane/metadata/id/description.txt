@@ -15,3 +15,6 @@ Lakukan penjumlahan, pengurangan, perkalian, dan pembagian langsung di konverter
 Pilih ikon aplikasi favorit dan gunakan tema terang atau gelap.
 
 Untuk membandingkan harga sebelum bepergian, memeriksa nominal dalam mata uang asing, atau mengonversi kripto, Cento menyatukan hasilnya di satu tempat.
+
+Ketentuan Penggunaan: https://www.apple.com/legal/internet-services/itunes/dev/stdeula/
+Kebijakan Privasi: https://akhundovb-sudo.github.io/currency/privacy.html
