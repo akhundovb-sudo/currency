@@ -7,7 +7,7 @@ AppStore/<Language>/iPhone/  01-Main · 02-Many-currencies · 03-Crypto · 04-Cu
 AppStore/<Language>/iPad/    01-Main · 02-Many-currencies · 03-Crypto · 04-Custom-icons   (2064 × 2752, 13")
 ```
 
-Languages: English, Русский, Türkçe, Français, Español, Deutsch, 中文, العربية.
+Languages (folder names match the localisation names in App Store Connect): English, Russian, Turkish, French, Spanish, German, Chinese (Simplified), Arabic.
 
 Notes:
 - PNG, RGB without alpha (App Store Connect rejects transparency).
