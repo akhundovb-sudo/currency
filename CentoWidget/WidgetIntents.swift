@@ -137,6 +137,36 @@ struct PairIntent: WidgetConfigurationIntent {
 
     @Parameter(title: "Color", default: .standard)
     var tint: WidgetTint
+
+    /// На экране блокировки цветного фона нет — там только две валюты.
+    static var parameterSummary: some ParameterSummary {
+        When(widgetFamily: .equalTo, .accessoryRectangular) {
+            Summary {
+                \.$source
+                \.$target
+            }
+        } otherwise: {
+            When(widgetFamily: .equalTo, .accessoryInline) {
+                Summary {
+                    \.$source
+                    \.$target
+                }
+            } otherwise: {
+                When(widgetFamily: .equalTo, .accessoryCircular) {
+                    Summary {
+                        \.$source
+                        \.$target
+                    }
+                } otherwise: {
+                    Summary {
+                        \.$source
+                        \.$target
+                        \.$tint
+                    }
+                }
+            }
+        }
+    }
 }
 
 /// Виджет «Мои валюты»: несколько валют с суммой. Если ничего не выбрано — как в приложении.
@@ -170,7 +200,8 @@ struct ListIntent: WidgetConfigurationIntent {
     var tint: WidgetTint
 
     /// В настройках столько полей валют, сколько помещается в выбранный размер:
-    /// маленький и средний — 4, большой — 6, на экране блокировки — 2 или 3.
+    /// маленький и средний — 4, большой — 6. На экране блокировки — только 2–3 валюты:
+    /// цветного фона там нет, а сумма берётся из приложения (или 1).
     static var parameterSummary: some ParameterSummary {
         When(widgetFamily: .equalTo, .systemLarge) {
             Summary {
@@ -189,21 +220,18 @@ struct ListIntent: WidgetConfigurationIntent {
                     \.$source
                     \.$second
                     \.$third
-                    \.$amount
                 }
             } otherwise: {
                 When(widgetFamily: .equalTo, .accessoryInline) {
                     Summary {
                         \.$source
                         \.$second
-                        \.$amount
                     }
                 } otherwise: {
                     When(widgetFamily: .equalTo, .accessoryCircular) {
                         Summary {
                             \.$source
                             \.$second
-                            \.$amount
                         }
                     } otherwise: {
                         Summary {
