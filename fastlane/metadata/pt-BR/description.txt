@@ -2,16 +2,16 @@ Suas moedas e criptomoedas, juntas em uma só tela.
 
 Digite um valor no Cento e veja quanto ele vale em várias moedas ao mesmo tempo. Monte sua própria lista e compare os resultados sem trocar de tela.
 
-• Converta várias moedas
-Adicione as moedas de que você precisa. Os valores são recalculados enquanto você digita.
+• Várias moedas ao mesmo tempo
+Adicione as moedas de que precisa. Os valores são recalculados enquanto você digita.
 
 • Moedas e criptomoedas juntas
 Veja moedas tradicionais ao lado de Bitcoin, Ethereum e outras criptomoedas na mesma lista.
 
 • Calculadora integrada
-Some, subtraia, multiplique e divida direto no conversor.
+Some, subtraia, multiplique e divida diretamente no conversor.
 
 • Do seu jeito
 Escolha seu ícone favorito e use o tema claro ou escuro.
 
-Seja para comparar preços antes de uma viagem, conferir um valor em outra moeda ou converter criptomoedas, o Cento mantém suas conversões em um só lugar.
+Seja para comparar preços antes de uma viagem, conferir valores em outra moeda ou converter criptomoedas, o Cento reúne suas conversões em um só lugar.

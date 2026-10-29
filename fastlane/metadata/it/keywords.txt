@@ -1,1 +1,1 @@
-cambio,valuta,convertitore,tassi,bitcoin,ethereum,dollaro,euro,forex,btc,eth,usd,eur,usdt,sterlina
+cambio,tasso,conversione,moneta,bitcoin,ethereum,dollaro,euro,forex,btc,eth,usd,eur,usdt

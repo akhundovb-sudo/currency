@@ -1,0 +1,1 @@
+Nhập số tiền và xem kết quả quy đổi sang nhiều loại tiền tệ và tiền mã hóa cùng lúc. So sánh trên một màn hình và tính toán bằng máy tính tích hợp.

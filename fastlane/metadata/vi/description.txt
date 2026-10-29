@@ -1,0 +1,17 @@
+Tiền tệ và tiền mã hóa của bạn trên cùng một màn hình.
+
+Nhập số tiền vào Cento và xem giá trị tương ứng bằng nhiều loại tiền tệ cùng lúc. Tạo danh sách riêng và so sánh kết quả mà không cần chuyển màn hình.
+
+• Quy đổi nhiều loại tiền tệ cùng lúc
+Thêm các loại tiền tệ bạn cần. Kết quả quy đổi được cập nhật ngay khi bạn nhập.
+
+• Tiền tệ và tiền mã hóa cùng nhau
+Xem các loại tiền tệ truyền thống bên cạnh Bitcoin, Ethereum và các loại tiền mã hóa khác trong cùng một danh sách.
+
+• Máy tính tích hợp
+Cộng, trừ, nhân và chia ngay trong ứng dụng.
+
+• Giao diện theo sở thích
+Chọn biểu tượng ứng dụng yêu thích và sử dụng giao diện sáng hoặc tối.
+
+Từ so sánh giá trước chuyến đi, kiểm tra số tiền bằng ngoại tệ đến quy đổi tiền mã hóa, Cento tập hợp các kết quả tại một nơi.

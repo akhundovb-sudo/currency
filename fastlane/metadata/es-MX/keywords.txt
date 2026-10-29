@@ -1,0 +1,1 @@
+cambio,moneda,conversion,bitcoin,ethereum,dolar,euro,peso,forex,btc,eth,usd,eur,mxn,usdt

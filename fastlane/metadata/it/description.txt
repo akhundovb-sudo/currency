@@ -1,17 +1,17 @@
 Le tue valute e criptovalute, insieme in una sola schermata.
 
-Inserisci un importo in Cento e scopri subito il suo valore in più valute. Crea la tua lista e confronta i risultati senza cambiare schermata.
+Inserisci un importo in Cento e visualizza il suo valore in più valute contemporaneamente. Crea il tuo elenco e confronta i risultati senza cambiare schermata.
 
-• Converti più valute
-Aggiungi le valute che ti servono. Gli importi si ricalcolano mentre scrivi.
+• Più valute contemporaneamente
+Aggiungi le valute che ti servono. Gli importi vengono ricalcolati mentre scrivi.
 
-• Valute e crypto insieme
-Vedi le valute tradizionali accanto a Bitcoin, Ethereum e altre criptovalute nella stessa lista.
+• Valute e criptovalute insieme
+Visualizza le valute tradizionali accanto a Bitcoin, Ethereum e altre criptovalute nello stesso elenco.
 
 • Calcolatrice integrata
 Somma, sottrai, moltiplica e dividi direttamente nel convertitore.
 
-• Come piace a te
-Scegli la tua icona preferita e usa il tema chiaro o scuro.
+• Il tuo stile
+Scegli l’icona che preferisci e utilizza il tema chiaro o scuro.
 
-Che tu stia confrontando i prezzi prima di un viaggio, controllando un importo in un’altra valuta o convertendo criptovalute, Cento tiene le tue conversioni in un unico posto.
+Che tu voglia confrontare i prezzi prima di un viaggio, controllare un importo in valuta estera o convertire criptovalute, Cento riunisce i risultati in un unico posto.
