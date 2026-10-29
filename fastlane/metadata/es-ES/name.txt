@@ -1,1 +1,1 @@
-Cento: Currency Converter
+Cento: Conversor de divisas
