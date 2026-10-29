@@ -46,6 +46,11 @@ enum CompactZeros {
     }
 }
 
+/// Цвет фона, если у значка валюты нет яркого цвета (чёрно-белые монеты).
+enum WidgetTintFallback {
+    static let color: UInt32 = 0x3B4A6B
+}
+
 // MARK: - «Мои валюты»
 
 struct RateRow: Identifiable, Equatable {
@@ -63,11 +68,13 @@ struct ListEntry: TimelineEntry {
     let isRightToLeft: Bool
     /// Выбраны валюты, недоступные без подписки: виджет показывает доступные и пометку Pro.
     let isLocked: Bool
+    /// Цвет фона (RGB) по настройке «Цвет»; nil — обычный фон.
+    let tint: UInt32?
 
     static func make(_ config: ListIntent, snapshot: WidgetSnapshot?, rates: SharedRates, date: Date = .now) -> ListEntry {
         let app = snapshot ?? .preview
         // Выбранное в настройках виджета — в своём порядке, без привязки к списку приложения.
-        let requestedSource = config.source?.id
+        let requestedSource = config.source?.code
         let requestedOthers = config.others
         let isConfigured = requestedSource != nil || !requestedOthers.isEmpty
         // Без подписки — только бесплатные валюты и не больше, чем в списке приложения.
@@ -102,7 +109,18 @@ struct ListEntry: TimelineEntry {
             )
         }
         let hasRates = !rates.fiat.isEmpty || !rates.crypto.isEmpty
-        return ListEntry(date: date, rows: hasRates ? rows : [], isRightToLeft: app.isRightToLeft, isLocked: isLocked)
+        let tintCode: String? = switch config.tint {
+        case .standard: nil
+        case .main: source
+        case .second: codes.first { $0 != source }
+        }
+        return ListEntry(
+            date: date,
+            rows: hasRates ? rows : [],
+            isRightToLeft: app.isRightToLeft,
+            isLocked: isLocked,
+            tint: tintCode.map { CurrencyCatalog.color(for: $0) ?? WidgetTintFallback.color }
+        )
     }
 }
 
@@ -141,6 +159,8 @@ struct PairEntry: TimelineEntry {
     let isRightToLeft: Bool
     /// Выбранная пара недоступна без подписки: показана пара из приложения и пометка Pro.
     let isLocked: Bool
+    /// Цвет фона (RGB) по настройке «Цвет»; nil — обычный фон.
+    let tint: UInt32?
 
     func format(_ value: Double) -> String {
         CompactZeros.apply(AmountFormat.rate(value, locale: numberLocale), locale: numberLocale)
@@ -152,12 +172,17 @@ struct PairEntry: TimelineEntry {
 
     static func make(_ config: PairIntent, snapshot: WidgetSnapshot?, rates: SharedRates, date: Date = .now) -> PairEntry {
         let app = snapshot ?? .preview
-        let requested = [config.source?.id, config.target?.id].compactMap { $0 }
+        let requested = [config.source?.code, config.target?.code].compactMap { $0 }
         let isLocked = !requested.allSatisfy(app.allows)
         // Без подписки платная валюта в паре заменяется парой из приложения.
-        let source = isLocked ? app.sourceCode : config.source?.id ?? app.sourceCode
-        var target = (isLocked ? nil : config.target?.id) ?? app.codes.first(where: { $0 != source }) ?? "EUR"
+        let source = isLocked ? app.sourceCode : config.source?.code ?? app.sourceCode
+        var target = (isLocked ? nil : config.target?.code) ?? app.codes.first(where: { $0 != source }) ?? "EUR"
         if target == source { target = source == "USD" ? "EUR" : "USD" }
+        let tintCode: String? = switch config.tint {
+        case .standard: nil
+        case .main: source
+        case .second: target
+        }
         let hasRates = !rates.fiat.isEmpty || !rates.crypto.isEmpty
         return PairEntry(
             date: date,
@@ -168,7 +193,8 @@ struct PairEntry: TimelineEntry {
             updatedAt: hasRates ? rates.fetchedAt : nil,
             numberLocale: app.numberLocale,
             isRightToLeft: app.isRightToLeft,
-            isLocked: isLocked
+            isLocked: isLocked,
+            tint: tintCode.map { CurrencyCatalog.color(for: $0) ?? WidgetTintFallback.color }
         )
     }
 }

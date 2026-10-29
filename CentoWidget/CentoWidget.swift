@@ -50,7 +50,7 @@ struct PairWidgetView: View {
     var body: some View {
         content
             .environment(\.layoutDirection, entry.isRightToLeft ? .rightToLeft : .leftToRight)
-            .containerBackground(for: .widget) { Color(.systemBackground) }
+            .modifier(TintedWidget(tint: entry.tint))
     }
 
     @ViewBuilder
@@ -217,7 +217,7 @@ struct CurrencyWidgetView: View {
     var body: some View {
         content
             .environment(\.layoutDirection, entry.isRightToLeft ? .rightToLeft : .leftToRight)
-            .containerBackground(for: .widget) { Color(.systemBackground) }
+            .modifier(TintedWidget(tint: entry.tint))
     }
 
     @ViewBuilder
@@ -404,6 +404,43 @@ struct CurrencyWidgetView: View {
 }
 
 // MARK: - Общее
+
+/// Фон виджета по настройке «Цвет»: обычный или градиент цвета валюты — от насыщенного
+/// в левом верхнем углу к почти чёрному. На цветном фоне текст светлый, как в тёмной теме.
+private struct TintedWidget: ViewModifier {
+    let tint: UInt32?
+
+    func body(content: Content) -> some View {
+        if let tint {
+            let color = Color(
+                red: Double((tint >> 16) & 0xFF) / 255,
+                green: Double((tint >> 8) & 0xFF) / 255,
+                blue: Double(tint & 0xFF) / 255
+            )
+            content
+                .environment(\.colorScheme, .dark)
+                .containerBackground(for: .widget) {
+                    ZStack {
+                        Color(red: 0.06, green: 0.06, blue: 0.08)
+                        LinearGradient(
+                            stops: [
+                                .init(color: color, location: 0),
+                                .init(color: color.opacity(0.45), location: 0.6),
+                                .init(color: color.opacity(0), location: 1),
+                            ],
+                            startPoint: .topLeading,
+                            endPoint: .bottomTrailing
+                        )
+                        // Мягкий блик сверху — как у стеклянных карточек приложения.
+                        LinearGradient(colors: [.white.opacity(0.12), .clear], startPoint: .top, endPoint: .center)
+                    }
+                }
+        } else {
+            content
+                .containerBackground(for: .widget) { Color(.systemBackground) }
+        }
+    }
+}
 
 /// Пока курсов нет (приложение ни разу не открывали и сети не было).
 private struct EmptyWidgetView: View {
