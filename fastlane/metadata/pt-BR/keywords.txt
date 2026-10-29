@@ -1,1 +1,1 @@
-câmbio,cotação,moeda,conversor,dólar,euro,real,bitcoin,ethereum,btc,eth,usd,eur,brl,usdt,cripto
+cambio,cotacao,conversao,dinheiro,bitcoin,ethereum,dolar,euro,real,btc,eth,usd,brl,usdt

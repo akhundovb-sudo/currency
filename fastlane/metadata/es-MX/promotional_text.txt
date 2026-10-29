@@ -1,0 +1,1 @@
+Ingresa un monto y consulta su valor en varias divisas y criptomonedas a la vez. Compara los resultados en una sola pantalla con una calculadora integrada.

@@ -1,1 +1,1 @@
-Digite um valor e veja a conversão em várias moedas e criptomoedas ao mesmo tempo. Compare os resultados em uma só tela, com calculadora integrada.
+Digite um valor e veja a conversão em várias moedas e criptomoedas ao mesmo tempo. Compare os resultados em uma só tela e use a calculadora integrada.
