@@ -52,6 +52,8 @@ struct CurrencyRatesApp: App {
                 }
                 // Новые курсы — сразу и в виджеты.
                 .onChange(of: store.snapshot) { _, _ in WidgetBridge.publish(store) }
+                // Подписка меняет, какие валюты доступны в виджетах.
+                .onChange(of: store.isPro) { _, _ in WidgetBridge.publish(store) }
                 .overlay {
                     if showsSplash {
                         SplashView(

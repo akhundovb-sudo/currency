@@ -1,37 +1,41 @@
 import Foundation
 import WidgetKit
 
-/// Передаёт виджетам выбранные валюты и суммы. Пишем, только когда снимок изменился:
+/// Передаёт виджетам выбранные валюты, сумму и курсы. Пишем, только когда что-то изменилось:
 /// перезагрузка виджетов ограничена системой, лишние обновления её расходуют.
 @MainActor
 enum WidgetBridge {
     static func publish(_ store: RatesStore) {
         let snapshot = WidgetSnapshot(
-            rows: store.selectedCodes.map { code in
-                let currency = Currency(code: code)
-                let value: String
-                if code == store.sourceCode {
-                    value = store.amountText.isEmpty ? "1" : RateFormat.groupedInput(store.amountText)
-                } else {
-                    value = store.convertedAmount(to: code).map(RateFormat.amount) ?? "—"
-                }
-                return WidgetSnapshot.Row(
-                    code: code,
-                    name: currency.name,
-                    value: value,
-                    isSource: code == store.sourceCode,
-                    flag: currency.flagRegion.map(WidgetSnapshot.flagEmoji(region:))
-                )
-            },
+            codes: store.selectedCodes,
+            sourceCode: store.sourceCode,
+            amount: store.amount,
+            languageIdentifier: Currency.locale.identifier,
+            numberLocaleIdentifier: RateFormat.locale.identifier,
+            decimalPlaces: RateFormat.decimalPlaces,
             isRightToLeft: store.language.isRightToLeft,
-            updatedAt: .now
+            isPro: store.isPro,
+            freeCodes: store.freeCodes.sorted()
         )
-        // Время обновления не сравниваем: иначе снимок «меняется» при каждом вызове.
-        if var old = WidgetSnapshot.load() {
-            old.updatedAt = snapshot.updatedAt
-            if old == snapshot { return }
+        var changed = false
+        if WidgetSnapshot.load() != snapshot {
+            snapshot.save()
+            changed = true
         }
-        snapshot.save()
-        WidgetCenter.shared.reloadAllTimelines()
+
+        if let rates = store.snapshot, !rates.isDemo {
+            let old = SharedRates.load() ?? .empty
+            var new = old
+            new.record(
+                fiat: rates.fiat?.rates, fiatAt: rates.fiat?.fetchedAt,
+                crypto: rates.crypto?.rates, cryptoAt: rates.crypto?.fetchedAt
+            )
+            if new != old {
+                new.save()
+                changed = true
+            }
+        }
+
+        if changed { WidgetCenter.shared.reloadAllTimelines() }
     }
 }
