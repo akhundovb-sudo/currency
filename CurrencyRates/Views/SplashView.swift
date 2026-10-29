@@ -22,6 +22,8 @@ struct SplashView: View {
 
     private struct Style {
         let image: String
+        /// Чистый силуэт знака для окна: у самого знака в альфе есть текстура, при росте в десятки раз она видна.
+        let mask: String
         let background: Color
         let glow: Color
         /// Самая толстая точка знака — от неё растёт окно.
@@ -49,7 +51,7 @@ struct SplashView: View {
             "Holo": (0x02000E, 0x8FE3FF, 0.263, 0.506),
         ]
         let v = table[name] ?? table["Chrome"]!
-        return Style(image: "SplashIcon-\(name)", background: Color(hex: v.0), glow: Color(hex: v.1), anchor: UnitPoint(x: v.2, y: v.3))
+        return Style(image: "SplashIcon-\(name)", mask: "SplashMask-\(name)", background: Color(hex: v.0), glow: Color(hex: v.1), anchor: UnitPoint(x: v.2, y: v.3))
     }
 
     var body: some View {
@@ -105,7 +107,7 @@ struct SplashView: View {
                 .mask {
                     Rectangle()
                         .overlay {
-                            mark(style, scale: scale)
+                            mark(style, scale: scale, image: style.mask)
                                 .blendMode(.destinationOut)
                                 .opacity(windowed)
                         }
@@ -138,8 +140,8 @@ struct SplashView: View {
         }
     }
 
-    private func mark(_ style: Style, scale: Double) -> some View {
-        Image(style.image)
+    private func mark(_ style: Style, scale: Double, image: String? = nil) -> some View {
+        Image(image ?? style.image)
             .resizable()
             .frame(width: artSize, height: artSize)
             .scaleEffect(scale, anchor: style.anchor)
