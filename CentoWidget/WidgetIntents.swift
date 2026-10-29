@@ -13,10 +13,17 @@ struct CurrencyEntity: AppEntity, Identifiable {
         var name = CurrencyCatalog.name(for: id, locale: .current)
         // Без подписки платные валюты помечены — в виджете вместо них останутся валюты из приложения.
         if let app = WidgetSnapshot.load(), !app.allows(id) { name += " · 🔒 Pro" }
-        if let image = CurrencyCatalog.imageName(for: id), UIImage(named: image) != nil {
-            return DisplayRepresentation(title: "\(id)", subtitle: "\(name)", image: .init(named: image))
-        }
-        return DisplayRepresentation(title: "\(id)", subtitle: "\(name)")
+        // Флаг — эмодзи в заголовке: картинки из каталога окно настроек виджета загружает ненадёжно.
+        let flag = CurrencyCatalog.flagRegion(for: id).map(Self.flagEmoji(region:)) ?? ""
+        return DisplayRepresentation(title: "\(flag.isEmpty ? id : flag + " " + id)", subtitle: "\(name)")
+    }
+
+    /// Флаг-эмодзи по коду страны («US» → 🇺🇸).
+    private static func flagEmoji(region: String) -> String {
+        region.uppercased().unicodeScalars
+            .compactMap { Unicode.Scalar(0x1F1E6 + $0.value - 0x41) }
+            .map(String.init)
+            .joined()
     }
 }
 
@@ -60,7 +67,8 @@ struct PairIntent: WidgetConfigurationIntent {
     var target: CurrencyEntity?
 }
 
-/// Виджет «Мои валюты»: несколько валют с суммой. Пустые поля — как в приложении.
+/// Виджет «Мои валюты»: несколько валют с суммой. Если ничего не выбрано — как в приложении.
+/// Валюты — отдельными полями, как «Из» и «В» у «Курса»: так окно настроек открывается надёжно.
 struct ListIntent: WidgetConfigurationIntent {
     static let title: LocalizedStringResource = "My currencies"
     static let description = IntentDescription("Several currencies at once — from your app list or chosen here")
@@ -68,9 +76,29 @@ struct ListIntent: WidgetConfigurationIntent {
     @Parameter(title: "Base currency")
     var source: CurrencyEntity?
 
-    @Parameter(title: "Currencies")
-    var currencies: [CurrencyEntity]?
+    @Parameter(title: "Currency 2")
+    var second: CurrencyEntity?
+
+    @Parameter(title: "Currency 3")
+    var third: CurrencyEntity?
+
+    @Parameter(title: "Currency 4")
+    var fourth: CurrencyEntity?
+
+    @Parameter(title: "Currency 5")
+    var fifth: CurrencyEntity?
+
+    @Parameter(title: "Currency 6")
+    var sixth: CurrencyEntity?
 
     @Parameter(title: "Amount")
     var amount: Double?
+
+    /// Выбранные валюты кроме основной — в порядке полей, без повторов.
+    var others: [String] {
+        var seen = Set<String>()
+        return [second, third, fourth, fifth, sixth]
+            .compactMap { $0?.id }
+            .filter { $0 != source?.id && seen.insert($0).inserted }
+    }
 }

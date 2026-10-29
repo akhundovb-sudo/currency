@@ -261,13 +261,18 @@ struct CurrencyWidgetView: View {
                 if index > 0 { Divider().opacity(0.5) }
                 HStack(spacing: 8) {
                     CurrencyBadge(code: row.code, size: iconSize)
-                    if showsNames {
+                    if showsNames && family == .systemLarge {
                         VStack(alignment: .leading, spacing: 1) {
                             Text(verbatim: row.code).font(.subheadline.weight(.medium))
                             Text(verbatim: row.name).font(.caption).foregroundStyle(.secondary).lineLimit(1)
                         }
                     } else {
+                        // В среднем виджете название — в той же строке: в две строки
+                        // четыре валюты не помещались по высоте и упирались в края.
                         Text(verbatim: row.code).font(.subheadline.weight(.medium))
+                        if showsNames {
+                            Text(verbatim: row.name).font(.caption).foregroundStyle(.secondary).lineLimit(1)
+                        }
                     }
                     Spacer(minLength: 4)
                     Text(verbatim: row.value)

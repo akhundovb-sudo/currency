@@ -66,17 +66,28 @@ struct ListEntry: TimelineEntry {
 
     static func make(_ config: ListIntent, snapshot: WidgetSnapshot?, rates: SharedRates, date: Date = .now) -> ListEntry {
         let app = snapshot ?? .preview
-        // Без подписки — только бесплатные валюты и не больше, чем в списке приложения.
-        let requested = config.currencies?.map(\.id) ?? []
-        var chosen = requested.filter(app.allows)
-        if !app.isPro { chosen = Array(chosen.prefix(WidgetSnapshot.freeLimit)) }
+        // Выбранное в настройках виджета — в своём порядке, без привязки к списку приложения.
         let requestedSource = config.source?.id
+        let requestedOthers = config.others
+        let isConfigured = requestedSource != nil || !requestedOthers.isEmpty
+        // Без подписки — только бесплатные валюты и не больше, чем в списке приложения.
         let allowedSource = requestedSource.flatMap { app.allows($0) ? $0 : nil }
-        let isLocked = chosen.count < requested.count || (requestedSource != nil && allowedSource == nil)
+        let allowedOthers = requestedOthers.filter(app.allows)
+        let isLocked = allowedOthers.count < requestedOthers.count || (requestedSource != nil && allowedSource == nil)
 
-        let source = allowedSource ?? chosen.first ?? app.sourceCode
-        var codes = chosen.isEmpty ? app.codes : chosen
-        if !codes.contains(source) { codes.insert(source, at: 0) }
+        let source: String
+        var codes: [String]
+        if isConfigured, let base = allowedSource ?? allowedOthers.first {
+            source = base
+            // Выбрана только основная валюта — остальные берём из приложения.
+            let others = allowedOthers.isEmpty ? app.codes : allowedOthers
+            codes = [base] + others.filter { $0 != base }
+        } else {
+            source = app.sourceCode
+            codes = app.codes
+            if !codes.contains(source) { codes.insert(source, at: 0) }
+        }
+        if !app.isPro { codes = Array(codes.prefix(WidgetSnapshot.freeLimit)) }
         // Сумма из приложения подходит, только если и валюта ввода та же.
         let amount = config.amount ?? (source == app.sourceCode ? app.amount : 1)
 
