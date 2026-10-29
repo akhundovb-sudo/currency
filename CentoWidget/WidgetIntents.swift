@@ -8,6 +8,9 @@ struct CurrencyEntity: AppEntity, Identifiable {
     static let typeDisplayRepresentation: TypeDisplayRepresentation = "Currency"
     static let defaultQuery = CurrencyQuery()
 
+    /// Настройки приложения — один раз на запуск расширения, а не для каждой из сотен строк списка.
+    private static let snapshot = WidgetSnapshot.load()
+
     /// Код строки «Не выбрано».
     static let noneID = "-"
 
@@ -21,7 +24,7 @@ struct CurrencyEntity: AppEntity, Identifiable {
         var name = CurrencyCatalog.name(for: code, locale: .current)
         if CurrencyCatalog.isCrypto(code) { name = "₿ " + name }
         // Без подписки платные валюты помечены — в виджете вместо них останутся валюты из приложения.
-        if let app = WidgetSnapshot.load(), !app.allows(code) { name += " · 🔒 Pro" }
+        if let app = Self.snapshot, !app.allows(code) { name += " · PRO" }
         // Флаг — эмодзи в заголовке: картинки из каталога окно настроек виджета загружает ненадёжно.
         let flag = CurrencyCatalog.flagRegion(for: code).map(Self.flagEmoji(region:)) ?? ""
         return DisplayRepresentation(title: "\(flag.isEmpty ? code : flag + " " + code)", subtitle: "\(name)")
