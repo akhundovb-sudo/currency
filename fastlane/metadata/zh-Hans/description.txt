@@ -15,3 +15,6 @@
 选择喜欢的应用图标，并使用浅色或深色主题。
 
 无论是旅行前比较价格、查看外币金额，还是进行加密货币换算，Cento 都能让多个换算结果一目了然。
+
+使用条款: https://www.apple.com/legal/internet-services/itunes/dev/stdeula/
+隐私政策: https://akhundovb-sudo.github.io/currency/privacy.html

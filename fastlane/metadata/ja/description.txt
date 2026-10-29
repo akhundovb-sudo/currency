@@ -15,3 +15,6 @@ Centoで金額を入力すると、リストに追加した複数の通貨への
 お気に入りのアプリアイコンを選び、ライトモードやダークモードを使えます。
 
 旅行前の価格比較から外貨や暗号資産の換算まで。Centoなら、必要な換算結果をひと目で確認できます。
+
+利用規約: https://www.apple.com/legal/internet-services/itunes/dev/stdeula/
+プライバシーポリシー: https://akhundovb-sudo.github.io/currency/privacy.html

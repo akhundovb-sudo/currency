@@ -15,3 +15,6 @@ Cento에 금액을 입력하면 여러 통화로 환산된 결과를 동시에 �
 마음에 드는 앱 아이콘을 선택하고 라이트 모드 또는 다크 모드를 사용하세요.
 
 여행 전 가격 비교부터 외화 금액 확인과 암호화폐 환산까지, Cento에서 한 번에 확인하세요.
+
+이용약관: https://www.apple.com/legal/internet-services/itunes/dev/stdeula/
+개인정보 처리방침: https://akhundovb-sudo.github.io/currency/privacy.html

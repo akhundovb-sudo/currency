@@ -15,3 +15,6 @@ Add, subtract, multiply, and divide directly in the converter.
 Choose your favorite app icon and use a light or dark theme.
 
 Whether you’re comparing prices for a trip, checking an amount in another currency, or converting crypto, Cento keeps your conversions in one place.
+
+Terms of Use: https://www.apple.com/legal/internet-services/itunes/dev/stdeula/
+Privacy Policy: https://akhundovb-sudo.github.io/currency/privacy.html
