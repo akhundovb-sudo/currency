@@ -29,6 +29,17 @@ final class Purchases {
 
     private init() {}
 
+    #if DEBUG
+    /// Только в сборке из Xcode: делать вид, что ничего не куплено, — чтобы проверить
+    /// бесплатную версию, не создавая новый тестовый аккаунт. В App Store этого нет.
+    var ignoresPurchases = UserDefaults.standard.bool(forKey: "debugIgnoresPurchases") {
+        didSet {
+            UserDefaults.standard.set(ignoresPurchases, forKey: "debugIgnoresPurchases")
+            Task { await refreshEntitlements() }
+        }
+    }
+    #endif
+
     /// Запуск при старте приложения: подписка на изменения покупок, цены, текущий доступ.
     func start(_ store: RatesStore) {
         self.store = store
@@ -132,6 +143,9 @@ final class Purchases {
             else { continue }
             if best == nil || plan.rank > best!.rank { best = plan }
         }
+        #if DEBUG
+        if ignoresPurchases { best = nil }
+        #endif
         guard let store else { return }
         if let best {
             if !store.isPro { store.isPro = true }
