@@ -127,34 +127,55 @@ struct ProStatusCard: View {
     let plan: ProPlan?
     var onManage: () -> Void = {}
 
-    /// Обычная строка списка, а не большой баннер: Pro уже куплен, рекламировать нечего.
+    private let shape = RoundedRectangle(cornerRadius: 22, style: .continuous)
+
+    /// Компактная премиальная плашка: слева «Cento Pro» и статус, справа значок
+    /// (у подписки — кнопка «Управлять»). Ниже рекламного баннера, чтобы не мешать настройкам.
     var body: some View {
         HStack(spacing: 12) {
-            Image(systemName: "checkmark.seal.fill")
-                .font(.body.weight(.semibold))
-                .foregroundStyle(.white)
-                .frame(width: 30, height: 30)
-                .background(
-                    LinearGradient(colors: [Color.proIndigo, Color.proViolet], startPoint: .topLeading, endPoint: .bottomTrailing),
-                    in: RoundedRectangle(cornerRadius: 8, style: .continuous)
-                )
-            VStack(alignment: .leading, spacing: 2) {
-                Text(verbatim: "Cento Pro")
-                    .font(.body.weight(.semibold))
+            VStack(alignment: .leading, spacing: 3) {
+                HStack(alignment: .firstTextBaseline, spacing: 6) {
+                    Text(verbatim: "Cento")
+                        .font(.system(.title3, design: .rounded).weight(.semibold))
+                        .foregroundStyle(.white.opacity(0.85))
+                    Text(verbatim: "Pro")
+                        .font(.system(.title3, design: .rounded).weight(.heavy))
+                        .foregroundStyle(
+                            LinearGradient(colors: [.white, Color(red: 1, green: 0.86, blue: 0.98)], startPoint: .top, endPoint: .bottom)
+                        )
+                }
                 Text(subtitle)
-                    .font(.subheadline)
-                    .foregroundStyle(Color.secondaryLabel)
+                    .font(.footnote.weight(.medium))
+                    .foregroundStyle(.white.opacity(0.78))
                     .lineLimit(2)
             }
             Spacer(minLength: 4)
-            // Без тарифа (Pro включён вручную) кнопка тоже нужна — иначе непонятно, где управлять.
             if plan?.isSubscription ?? true {
-                Button(L(.manageSubscription), action: onManage)
-                    .font(.subheadline.weight(.semibold))
-                    .buttonStyle(.borderless)
+                // Без тарифа (Pro включён вручную) кнопка тоже нужна — иначе непонятно, где управлять.
+                Button(action: onManage) {
+                    Text(L(.manageSubscription))
+                        .font(.subheadline.weight(.semibold))
+                        .lineLimit(1)
+                        .fixedSize()
+                        .padding(.horizontal, 14)
+                        .frame(height: 34)
+                }
+                .buttonStyle(GlassPillButtonStyle())
+            } else {
+                Image(systemName: "checkmark.seal.fill")
+                    .font(.system(size: 28, weight: .semibold))
+                    .symbolRenderingMode(.palette)
+                    .foregroundStyle(Color.proIndigo, .white)
+                    .shadow(color: .white.opacity(0.35), radius: 8)
             }
         }
-        .padding(.vertical, 4)
+        .padding(.horizontal, 18)
+        .padding(.vertical, 14)
+        .frame(maxWidth: .infinity)
+        .background { ProBannerBackground() }
+        .clipShape(shape)
+        .overlay(shape.strokeBorder(.white.opacity(0.14), lineWidth: 1))
+        .shadow(color: Color.proIndigo.opacity(0.25), radius: 10, y: 4)
         .accessibilityElement(children: .combine)
     }
 
