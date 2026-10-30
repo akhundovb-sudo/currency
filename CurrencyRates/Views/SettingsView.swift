@@ -29,15 +29,13 @@ struct SettingsView: View {
             Form {
                 // Без Pro — предложение подписки; с Pro — какой тариф куплен.
                 Section {
-                    Group {
-                        if store.isPro {
-                            ProStatusCard(plan: store.proPlan) { openURL(AppLinks.manageSubscriptions) }
-                        } else {
-                            ProBanner(onDetails: { isPaywallPresented = true })
-                        }
+                    if store.isPro {
+                        ProStatusCard(plan: store.proPlan) { openURL(AppLinks.manageSubscriptions) }
+                    } else {
+                        ProBanner(onDetails: { isPaywallPresented = true })
+                            .listRowInsets(EdgeInsets())
+                            .listRowBackground(Color.clear)
                     }
-                    .listRowInsets(EdgeInsets())
-                    .listRowBackground(Color.clear)
                 }
 
                 Section(L(.appearance)) {
