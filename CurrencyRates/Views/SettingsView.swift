@@ -109,6 +109,17 @@ struct SettingsView: View {
                         .listRowInsets(EdgeInsets(top: 12, leading: 0, bottom: 14, trailing: 0))
                 }
 
+                #if DEBUG
+                // Только в сборке из Xcode: проверить бесплатную версию после тестовой покупки.
+                Section {
+                    Toggle(isOn: Bindable(Purchases.shared).ignoresPurchases) {
+                        Text(verbatim: "Test: ignore purchases")
+                    }
+                } footer: {
+                    Text(verbatim: "Debug builds only. Not shown in the App Store version.")
+                }
+                #endif
+
                 Section(L(.support)) {
                     Button { requestReview() } label: {
                         linkRow(L(.rateApp), symbol: "star")
