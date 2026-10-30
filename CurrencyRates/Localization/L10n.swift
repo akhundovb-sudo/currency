@@ -121,7 +121,7 @@ enum L10n {
         case proBecome, proSubscription, upgrade
         case proHeadline, planMonthly, planYearly, planLifetime, perMonth, perYear, oneTime
         case bestValue, included, featUnlimited, featFiat, featCrypto, featSupport
-        case rateApp, manageSubscription, proActive, support, termsPrivacy
+        case rateApp, manageSubscription, proActive, proLifetimeOwned, support, termsPrivacy
         case appIcon, iconChrome, iconKnit, iconRubber, iconStone, iconBlocks, iconDoodle, iconPixel, iconEngraving, iconAmethyst, iconSticker, iconPuffy, iconSponge, iconPlush, iconGummy, iconBubbles, iconHolo
         case getFullAccess, startTrial, trialNote, terms, privacy, restore
         case formatAutomatic, formatInternational, formatEuropean, formatSpaced
@@ -231,6 +231,7 @@ enum L10n {
         .rateApp: ["Оценить приложение", "Rate the App", "Uygulamayı Değerlendir", "Noter l’app", "Valorar la app", "App bewerten", "给应用评分", "قيّم التطبيق", "アプリを評価", "Avaliar o app", "앱 평가하기", "為 App 評分", "Valuta l’app", "Oceń aplikację"],
         .manageSubscription: ["Управлять", "Manage", "Yönet", "Gérer", "Gestionar", "Verwalten", "管理", "إدارة", "管理", "Gerenciar", "관리", "管理", "Gestisci", "Zarządzaj"],
         .proActive: ["Pro активен", "Pro is active", "Pro etkin", "Pro est actif", "Pro está activo", "Pro ist aktiv", "Pro 已启用", "Pro مُفعّل", "Pro は有効です", "Pro ativo", "Pro 사용 중", "Pro 已啟用", "Pro attivo", "Pro jest aktywne"],
+        .proLifetimeOwned: ["У вас Pro навсегда", "You have Pro for life", "Pro ömür boyu sizin", "Pro vous appartient à vie", "Tienes Pro de por vida", "Pro gehört dir für immer", "您已永久拥有 Pro", "لديك Pro مدى الحياة", "Pro を永久に利用できます", "Você tem o Pro para sempre", "Pro를 평생 이용할 수 있습니다", "您已永久擁有 Pro", "Hai Pro a vita", "Masz Pro na zawsze"],
         .support: ["Поддержка", "Support", "Destek", "Assistance", "Soporte", "Support", "支持", "الدعم", "サポート", "Suporte", "지원", "支援", "Assistenza", "Pomoc"],
         .getFullAccess: ["Получить полный доступ", "Get Full Access", "Tam Erişim Al", "Obtenir l’accès complet", "Obtener acceso completo", "Vollzugriff erhalten", "获取完整权限", "احصل على الوصول الكامل", "フルアクセスを取得", "Obter acesso completo", "전체 이용권 받기", "取得完整權限", "Ottieni l’accesso completo", "Uzyskaj pełny dostęp"],
         .terms: ["Условия", "Terms of Use", "Kullanım Şartları", "Conditions", "Términos", "Nutzungsbedingungen", "使用条款", "شروط الاستخدام", "利用規約", "Termos de Uso", "이용 약관", "使用條款", "Termini di utilizzo", "Warunki użytkowania"],

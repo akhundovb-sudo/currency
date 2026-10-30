@@ -127,52 +127,43 @@ struct ProStatusCard: View {
     let plan: ProPlan?
     var onManage: () -> Void = {}
 
-    private let shape = RoundedRectangle(cornerRadius: 28, style: .continuous)
-
+    /// Обычная строка списка, а не большой баннер: Pro уже куплен, рекламировать нечего.
     var body: some View {
         HStack(spacing: 12) {
-            VStack(alignment: .leading, spacing: 6) {
-                // Значок — по центру высоты букв «Pro».
-                HStack(alignment: .center, spacing: 8) {
-                    GlassProBadge()
-                    Image(systemName: "checkmark.seal.fill")
-                        .font(.title3)
-                        .foregroundStyle(.white.opacity(0.9))
-                }
+            Image(systemName: "checkmark.seal.fill")
+                .font(.body.weight(.semibold))
+                .foregroundStyle(.white)
+                .frame(width: 30, height: 30)
+                .background(
+                    LinearGradient(colors: [Color.proIndigo, Color.proViolet], startPoint: .topLeading, endPoint: .bottomTrailing),
+                    in: RoundedRectangle(cornerRadius: 8, style: .continuous)
+                )
+            VStack(alignment: .leading, spacing: 2) {
+                Text(verbatim: "Cento Pro")
+                    .font(.body.weight(.semibold))
                 Text(subtitle)
                     .font(.subheadline)
-                    .foregroundStyle(.white.opacity(0.88))
+                    .foregroundStyle(Color.secondaryLabel)
                     .lineLimit(2)
-                    .minimumScaleFactor(0.85)
             }
             Spacer(minLength: 4)
-            // Без тарифа (Pro включён вручную) кнопка тоже нужна — иначе плашка выглядит пустой.
+            // Без тарифа (Pro включён вручную) кнопка тоже нужна — иначе непонятно, где управлять.
             if plan?.isSubscription ?? true {
-                Button(action: onManage) {
-                    Text(L(.manageSubscription))
-                        .font(.headline)
-                        .lineLimit(1)
-                        .fixedSize()
-                        .padding(.horizontal, 18)
-                        .frame(height: 44)
-                }
-                .buttonStyle(GlassPillButtonStyle())
+                Button(L(.manageSubscription), action: onManage)
+                    .font(.subheadline.weight(.semibold))
+                    .buttonStyle(.borderless)
             }
         }
-        .padding(.horizontal, 20)
-        .padding(.vertical, 20)
-        .frame(maxWidth: .infinity)
-        .background { ProBannerBackground() }
-        .clipShape(shape)
-        .shadow(color: Color.proIndigo.opacity(0.35), radius: 12, y: 6)
+        .padding(.vertical, 4)
         .accessibilityElement(children: .combine)
     }
 
-    /// «Pro активен · Год · $9.99 / год»; пока цена не загрузилась — без неё.
+    /// Навсегда — «У вас Pro навсегда»; подписка — «Год · $9.99 / год» (пока цена не загрузилась — без неё).
     private var subtitle: String {
         guard let plan else { return L(.proActive) }
+        if !plan.isSubscription { return L(.proLifetimeOwned) }
         let price = Purchases.shared.priceText(for: plan)
-        return price == "…" ? "\(L(.proActive)) · \(plan.title)" : "\(L(.proActive)) · \(plan.title) · \(price)"
+        return price == "…" ? plan.title : "\(plan.title) · \(price)"
     }
 }
 
