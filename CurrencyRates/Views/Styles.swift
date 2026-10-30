@@ -5,9 +5,9 @@ import CoreText
 extension Font {
     /// Шрифт сумм — SF Pro Rounded, полужирный, чуть крупнее кода валюты;
     /// масштабируется с Dynamic Type.
-    static let amount = Font.system(.title2, design: .rounded).weight(.semibold)
+    static let amount = Font.system(.title3, design: .rounded).weight(.semibold)
     /// Сумма в строке ввода, пока её набирают, — того же размера, но жирнее.
-    static let amountEditing = Font.system(.title2, design: .rounded).weight(.bold)
+    static let amountEditing = Font.system(.title3, design: .rounded).weight(.bold)
 }
 
 /// Иконка из Assets/Icons (Iconoir, MIT; толщина линий 2) нужного размера.

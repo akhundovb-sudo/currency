@@ -21,6 +21,8 @@ struct CurrencyRow: View {
     var isReordering = false
 
     @Environment(\.dynamicTypeSize) private var dynamicTypeSize
+    /// Код валюты — 18 pt при обычном размере текста, масштабируется вместе с суммой.
+    @ScaledMetric(relativeTo: .title3) private var codeSize: CGFloat = 18
 
     private var isSource: Bool { code == sourceCode }
     /// Строка выделяется только во время ввода.
@@ -98,7 +100,7 @@ struct CurrencyRow: View {
     private var codeText: some View {
         // Код чуть меньше суммы: крупнее подписи, но не спорит с цифрами.
         Text(code)
-            .font(.title3.weight(.medium))
+            .font(.system(size: codeSize, weight: .medium))
             .foregroundStyle(Color.primary)
             .fixedSize()
     }
@@ -175,7 +177,7 @@ struct CurrencyRow: View {
 /// Мигающий курсор ввода, как у текстового поля.
 private struct BlinkingCursor: View {
     @State private var isVisible = true
-    @ScaledMetric(relativeTo: .title2) private var height = 24
+    @ScaledMetric(relativeTo: .title3) private var height = 22
 
     var body: some View {
         Capsule()
