@@ -133,20 +133,18 @@ struct ProStatusCard: View {
     /// (у подписки — кнопка «Управлять»). Ниже рекламного баннера, чтобы не мешать настройкам.
     var body: some View {
         HStack(spacing: 12) {
-            VStack(alignment: .leading, spacing: 3) {
-                HStack(alignment: .firstTextBaseline, spacing: 6) {
+            VStack(alignment: .leading, spacing: 1) {
+                // «Cento» и стеклянное «Pro» — одного кегля, вплотную, по общей базовой линии.
+                HStack(alignment: .firstTextBaseline, spacing: 4) {
                     Text(verbatim: "Cento")
-                        .font(.system(.title3, design: .rounded).weight(.semibold))
-                        .foregroundStyle(.white.opacity(0.85))
-                    Text(verbatim: "Pro")
-                        .font(.system(.title3, design: .rounded).weight(.heavy))
-                        .foregroundStyle(
-                            LinearGradient(colors: [.white, Color(red: 1, green: 0.86, blue: 0.98)], startPoint: .top, endPoint: .bottom)
-                        )
+                        .font(.system(size: 22, weight: .bold, design: .rounded))
+                        .foregroundStyle(.white.opacity(0.92))
+                    GlassProBadge(size: 22)
                 }
+                .tracking(-0.3)
                 Text(subtitle)
-                    .font(.footnote.weight(.medium))
-                    .foregroundStyle(.white.opacity(0.78))
+                    .font(.system(.subheadline, design: .rounded).weight(.medium))
+                    .foregroundStyle(.white.opacity(0.72))
                     .lineLimit(2)
             }
             Spacer(minLength: 4)
@@ -191,10 +189,12 @@ struct ProStatusCard: View {
 /// Слово «Pro» без подложки — стеклянное само по себе: буквы залиты полупрозрачным
 /// белым с ярким бликом сверху и резкой границей посередине, мягкое свечение вокруг.
 private struct GlassProBadge: View {
+    /// В рекламном баннере — чуть крупнее «Become a», в плашке купленного Pro — как «Cento».
+    var size: CGFloat = 27
+
     var body: some View {
         Text(verbatim: "Pro")
-            // Чуть крупнее «Become a», как в референсе.
-            .font(.system(size: 27, weight: .heavy, design: .rounded))
+            .font(.system(size: size, weight: .heavy, design: .rounded))
             .foregroundStyle(
                 LinearGradient(
                     stops: [
