@@ -85,6 +85,11 @@ struct SettingsView: View {
                     Text(L(.numbers))
                 }
 
+                Section(L(.appIcon)) {
+                    AppIconPicker(isPro: store.isPro, onLocked: { isPaywallPresented = true })
+                        .listRowInsets(EdgeInsets(top: 12, leading: 0, bottom: 14, trailing: 0))
+                }
+
                 Section {
                     sourceRow(name: RatesService.fiatSourceName, url: RatesService.fiatSourceURL, kind: .fiat)
                     sourceRow(name: RatesService.cryptoSourceName, url: RatesService.cryptoSourceURL, kind: .crypto)
@@ -102,11 +107,6 @@ struct SettingsView: View {
                     Text(L(.rates))
                 } footer: {
                     Text(L(.dataFooter))
-                }
-
-                Section(L(.appIcon)) {
-                    AppIconPicker(isPro: store.isPro, onLocked: { isPaywallPresented = true })
-                        .listRowInsets(EdgeInsets(top: 12, leading: 0, bottom: 14, trailing: 0))
                 }
 
                 #if DEBUG
