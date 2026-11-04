@@ -274,11 +274,15 @@ final class RatesStore {
     var freeCodes: Set<String> {
         let starting = Self.startingCodes(local: localCurrency)
         let first = fiatCodes.filter { !starting.contains($0) }.prefix(Self.freeChoiceCount)
-        return Set(starting).union(first)
+        // Биткоин — бесплатно: самая частая крипта, остальная — с Pro.
+        return Set(starting).union(first).union(Self.freeCrypto)
     }
 
+    /// Криптовалюты, доступные без подписки.
+    static let freeCrypto: Set<String> = ["BTC"]
+
     /// Можно ли добавить валюту без подписки: только из бесплатных и в пределах лимита.
-    /// Остальной фиат и вся крипта — только с Pro.
+    /// Остальной фиат и крипта, кроме биткоина, — только с Pro.
     func canAdd(_ code: String) -> Bool {
         if isPro { return true }
         return freeCodes.contains(code) && selectedCodes.count < Self.freeLimit
