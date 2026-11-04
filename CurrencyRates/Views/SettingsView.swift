@@ -86,22 +86,27 @@ struct SettingsView: View {
                 }
 
                 Section {
-                    sourceRow(name: RatesService.fiatSourceName, url: RatesService.fiatSourceURL, kind: .fiat)
-                    sourceRow(name: RatesService.cryptoSourceName, url: RatesService.cryptoSourceURL, kind: .crypto)
-                    Button {
-                        Task { await store.refresh() }
-                    } label: {
-                        HStack {
-                            Text(L(.refreshRates))
-                            Spacer()
-                            if store.isLoading { ProgressView() }
+                    sourceRow(.fiat)
+                    sourceRow(.crypto)
+                } header: {
+                    // Обновление — иконкой в заголовке, а не отдельной строкой: блок остаётся тихим.
+                    HStack {
+                        Text(L(.rates))
+                        Spacer()
+                        if store.isLoading {
+                            ProgressView().controlSize(.small)
+                        } else {
+                            Button {
+                                Task { await store.refresh() }
+                            } label: {
+                                Image(systemName: "arrow.clockwise")
+                                    .font(.subheadline.weight(.semibold))
+                            }
+                            .accessibilityLabel(L(.refreshRates))
                         }
                     }
-                    .disabled(store.isLoading)
-                } header: {
-                    Text(L(.rates))
                 } footer: {
-                    Text(L(.dataFooter))
+                    Text(sourcesFooter)
                 }
 
                 Section(L(.appIcon)) {
@@ -121,9 +126,6 @@ struct SettingsView: View {
                 #endif
 
                 Section(L(.support)) {
-                    Button { requestReview() } label: {
-                        linkRow(L(.rateApp), symbol: "star")
-                    }
                     // Условия и конфиденциальность — одна строка, ведёт на страницу с документами.
                     Link(destination: AppLinks.legal) {
                         linkRow(L(.termsPrivacy), symbol: "arrow.up.right")
@@ -169,17 +171,17 @@ struct SettingsView: View {
     }
 
     /// Источник курсов: слева тип, справа ссылка на источник и под ней мелко время обновления.
-    private func sourceRow(name: String, url: URL, kind: CurrencyKind) -> some View {
-        LabeledContent {
-            VStack(alignment: .trailing, spacing: 2) {
-                Link(name, destination: url)
-                Text(updatedText(kind))
-                    .font(.footnote)
-                    .foregroundStyle(Color.secondaryLabel)
-            }
-        } label: {
-            Text(kind == .fiat ? L(.fiatCurrencies) : L(.cryptoCurrencies))
-        }
+    /// Тип курсов и время обновления — серым, без ссылок: источники названы в сноске.
+    private func sourceRow(_ kind: CurrencyKind) -> some View {
+        LabeledContent(kind == .fiat ? L(.fiatCurrencies) : L(.cryptoCurrencies), value: updatedText(kind))
+    }
+
+    /// «Данные: ExchangeRate-API и CoinGecko.» — названия ссылками, затем как часто обновляются курсы.
+    private var sourcesFooter: AttributedString {
+        let fiat = "[\(RatesService.fiatSourceName)](\(RatesService.fiatSourceURL.absoluteString))"
+        let crypto = "[\(RatesService.cryptoSourceName)](\(RatesService.cryptoSourceURL.absoluteString))"
+        let markdown = L(.dataSources, fiat, crypto) + " " + L(.dataFooter)
+        return (try? AttributedString(markdown: markdown)) ?? AttributedString(markdown)
     }
 
     private func updatedText(_ kind: CurrencyKind) -> String {
