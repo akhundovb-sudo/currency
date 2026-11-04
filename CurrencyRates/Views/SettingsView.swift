@@ -241,6 +241,7 @@ struct AppIconPicker: View {
 
     /// nil — основная иконка.
     @State private var current: String? = UIApplication.shared.alternateIconName
+    @Environment(\.colorScheme) private var colorScheme
 
     struct Option: Identifiable {
         let name: String?
@@ -317,17 +318,43 @@ struct AppIconPicker: View {
                     // Рамка выбранной — с заметным зазором от иконки.
                     .padding(5)
                     .overlay {
-                        RoundedRectangle(cornerRadius: 18, style: .continuous)
-                            .strokeBorder(Color.accentColor, lineWidth: 2.5)
-                            .opacity(isSelected ? 1 : 0)
+                        // Светлая тема — стеклянная рамка, как у кружка с галочкой и тега PRO:
+                        // белый ободок, тонкая линия акцента внутри и мягкое свечение.
+                        // В тёмной стекло выходит серым — там сплошная линия акцента.
+                        Group {
+                            if colorScheme == .dark {
+                                RoundedRectangle(cornerRadius: 18, style: .continuous)
+                                    .strokeBorder(Color.accentColor, lineWidth: 2.5)
+                            } else {
+                                ZStack {
+                                    RoundedRectangle(cornerRadius: 18, style: .continuous)
+                                        .strokeBorder(
+                                            LinearGradient(colors: [Color.glassRim, Color.glassRim.opacity(0.7)], startPoint: .top, endPoint: .bottom),
+                                            lineWidth: 3
+                                        )
+                                    RoundedRectangle(cornerRadius: 18, style: .continuous)
+                                        .strokeBorder(Color.amountHighlight.opacity(0.7), lineWidth: 1.5)
+                                }
+                                .shadow(color: Color.amountHighlight.opacity(0.35), radius: 6)
+                            }
+                        }
+                        .opacity(isSelected ? 1 : 0)
                     }
                     .overlay(alignment: .bottomTrailing) {
-                        Image(systemName: "checkmark.circle.fill")
-                            .font(.system(size: 20))
-                            .symbolRenderingMode(.palette)
-                            .foregroundStyle(Color.onAccent, Color.accentButton)
-                            .background(Circle().fill(Color(.secondarySystemGroupedBackground)).padding(1))
-                            .offset(x: 4, y: 4)
+                        // Светлая — стеклянный кружок, как в списке валют; тёмная — системная галочка.
+                        Group {
+                            if colorScheme == .dark {
+                                Image(systemName: "checkmark.circle.fill")
+                                    .font(.system(size: 20))
+                                    .symbolRenderingMode(.palette)
+                                    .foregroundStyle(Color.onAccent, Color.accentButton)
+                                    .background(Circle().fill(Color(.secondarySystemGroupedBackground)).padding(1))
+                                    .offset(x: 4, y: 4)
+                            } else {
+                                SelectionBubble(isSelected: true, size: 24)
+                                    .offset(x: 5, y: 5)
+                            }
+                        }
                             .scaleEffect(isSelected ? 1 : 0.3)
                             .opacity(isSelected ? 1 : 0)
                     }
