@@ -293,21 +293,19 @@ private struct TickerCoin: View {
 }
 
 /// Стеклянный кружок выбора в стиле клавиш: пустой — не выбрано, с галочкой — выбрано.
-struct SelectionBubble: View {
+private struct SelectionBubble: View {
     let isSelected: Bool
-    /// 30 — в списке валют; на иконке приложения — меньше.
-    var size: CGFloat = 30
 
     var body: some View {
         Image(systemName: "checkmark")
-            .font(.system(size: size * 0.43, weight: .heavy))
+            .font(.system(size: 13, weight: .heavy))
             .foregroundStyle(Color.amountHighlight)
             .opacity(isSelected ? 1 : 0)
             .scaleEffect(isSelected ? 1 : 0.4)
-            .frame(width: size, height: size)
+            .frame(width: 30, height: 30)
             .background {
                 // Тот же стеклянный пузырь, что у клавиш; выбранный — с синим оттенком.
-                Button(action: {}) { Color.clear.frame(width: size, height: size) }
+                Button(action: {}) { Color.clear.frame(width: 30, height: 30) }
                     .buttonStyle(GlassBubbleStyle(tint: isSelected ? .amountHighlight : .glassNeutral, prominentTint: isSelected))
                     .allowsHitTesting(false)
             }

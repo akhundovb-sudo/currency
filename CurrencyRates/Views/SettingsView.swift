@@ -317,24 +317,17 @@ struct AppIconPicker: View {
                     // Рамка выбранной — с заметным зазором от иконки.
                     .padding(5)
                     .overlay {
-                        // Стеклянная рамка, как у кружка с галочкой и тега PRO:
-                        // белый ободок, тонкая линия акцента внутри и мягкое свечение.
-                        ZStack {
-                            RoundedRectangle(cornerRadius: 18, style: .continuous)
-                                .strokeBorder(
-                                    LinearGradient(colors: [Color.glassRim, Color.glassRim.opacity(0.7)], startPoint: .top, endPoint: .bottom),
-                                    lineWidth: 3
-                                )
-                            RoundedRectangle(cornerRadius: 18, style: .continuous)
-                                .strokeBorder(Color.amountHighlight.opacity(0.7), lineWidth: 1.5)
-                        }
-                        .shadow(color: Color.amountHighlight.opacity(0.35), radius: 6)
-                        .opacity(isSelected ? 1 : 0)
+                        RoundedRectangle(cornerRadius: 18, style: .continuous)
+                            .strokeBorder(Color.accentColor, lineWidth: 2.5)
+                            .opacity(isSelected ? 1 : 0)
                     }
                     .overlay(alignment: .bottomTrailing) {
-                        // Тот же стеклянный кружок с галочкой, что в списке валют.
-                        SelectionBubble(isSelected: true, size: 24)
-                            .offset(x: 5, y: 5)
+                        Image(systemName: "checkmark.circle.fill")
+                            .font(.system(size: 20))
+                            .symbolRenderingMode(.palette)
+                            .foregroundStyle(Color.onAccent, Color.accentButton)
+                            .background(Circle().fill(Color(.secondarySystemGroupedBackground)).padding(1))
+                            .offset(x: 4, y: 4)
                             .scaleEffect(isSelected ? 1 : 0.3)
                             .opacity(isSelected ? 1 : 0)
                     }
