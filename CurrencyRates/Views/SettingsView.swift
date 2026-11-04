@@ -83,6 +83,10 @@ struct SettingsView: View {
                     .animation(.snappy, value: store.decimalPlaces)
                 } header: {
                     Text(L(.numbers))
+                } footer: {
+                    if store.decimalPlaces != nil {
+                        Text(L(.tinyAmountsFooter))
+                    }
                 }
 
                 Section {
