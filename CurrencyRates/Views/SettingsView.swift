@@ -5,6 +5,7 @@ struct SettingsView: View {
     @Environment(RatesStore.self) private var store
     @Environment(\.dismiss) private var dismiss
     @State private var isPaywallPresented = false
+    @State private var isRatesInfoPresented = false
     @Environment(\.requestReview) private var requestReview
     @Environment(\.openURL) private var openURL
 
@@ -90,8 +91,27 @@ struct SettingsView: View {
                     sourceRow(.crypto)
                 } header: {
                     // Обновление — иконкой в заголовке, а не отдельной строкой: блок остаётся тихим.
-                    HStack {
+                    HStack(spacing: 6) {
                         Text(L(.rates))
+                        // Источники и частота обновления — по нажатию, а не сноской: блок остаётся коротким.
+                        Button {
+                            isRatesInfoPresented = true
+                        } label: {
+                            Image(systemName: "info.circle")
+                                .font(.subheadline)
+                                .foregroundStyle(Color.secondaryLabel)
+                        }
+                        // Над иконкой (стрелка снизу), чтобы не закрывать строки курсов.
+                        .popover(isPresented: $isRatesInfoPresented, arrowEdge: .bottom) {
+                            Text(sourcesFooter)
+                                .font(.subheadline)
+                                .foregroundStyle(Color.primary)
+                                .lineSpacing(2)
+                                .frame(width: 280, alignment: .leading)
+                                .padding(.horizontal, 18)
+                                .padding(.vertical, 16)
+                                .presentationCompactAdaptation(.popover)
+                        }
                         Spacer()
                         if store.isLoading {
                             ProgressView().controlSize(.small)
@@ -99,14 +119,14 @@ struct SettingsView: View {
                             Button {
                                 Task { await store.refresh() }
                             } label: {
-                                Image(systemName: "arrow.clockwise")
-                                    .font(.subheadline.weight(.semibold))
+                                // Словом, как кнопки в заголовках iOS: понятнее иконки и тише фиолетовой стрелки.
+                                Text(L(.update))
+                                    .font(.subheadline.weight(.medium))
+                                    .textCase(nil)
                             }
                             .accessibilityLabel(L(.refreshRates))
                         }
                     }
-                } footer: {
-                    Text(sourcesFooter)
                 }
 
                 Section(L(.appIcon)) {

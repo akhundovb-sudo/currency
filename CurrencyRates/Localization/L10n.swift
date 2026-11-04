@@ -117,7 +117,7 @@ enum L10n {
         case themeSystem, themeLight, themeDark
         case minTwoCurrencies, proOnly, proDiscover, seeDetails, proSuspended, freeSetChanged, purchaseFailed, purchasePending, pricesUnavailable, nothingToRestore
         case numbers, numberFormat, decimalPlaces, auto, formatFooter
-        case example, rates, about, dataFooter, dataSources
+        case example, rates, about, dataFooter, dataSources, update
         case proBecome, proSubscription, upgrade
         case proHeadline, planMonthly, planYearly, planLifetime, perMonth, perYear, oneTime
         case bestValue, included, featUnlimited, featFiat, featCrypto, featSupport
@@ -240,6 +240,7 @@ enum L10n {
         .example: ["Пример", "Example", "Örnek", "Exemple", "Ejemplo", "Beispiel", "示例", "مثال", "例", "Exemplo", "예시", "範例", "Esempio", "Przykład"],
         .rates: ["Курсы", "Rates", "Kurlar", "Taux", "Tipos", "Kurse", "汇率", "الأسعار", "レート", "Cotações", "환율", "匯率", "Tassi", "Kursy"],
         .about: ["О приложении", "About", "Hakkında", "À propos", "Acerca de", "Über", "关于", "حول", "このアプリについて", "Sobre", "정보", "關於", "Informazioni", "O aplikacji"],
+        .update: ["Обновить", "Update", "Güncelle", "Actualiser", "Actualizar", "Aktualisieren", "更新", "تحديث", "更新", "Atualizar", "업데이트", "更新", "Aggiorna", "Odśwież"],
         .dataSources: ["Данные: %@ и %@.", "Data from %@ and %@.", "Veriler: %@ ve %@.", "Données : %@ et %@.", "Datos de %@ y %@.", "Daten von %@ und %@.", "数据来源：%@ 和 %@。", "البيانات من %@ و%@.", "データ提供：%@、%@。", "Dados de %@ e %@.", "데이터 제공: %@, %@.", "資料來源：%@ 和 %@。", "Dati da %@ e %@.", "Dane: %@ i %@."],
         .dataFooter: ["Фиат обновляется раз в сутки, крипта — несколько раз в минуту. Последние курсы доступны без интернета.", "Fiat rates update daily, crypto several times a minute. The latest rates work offline.", "İtibari kurlar günde bir, kripto dakikada birkaç kez güncellenir. Son kurlar çevrimdışı da kullanılabilir.", "Les devises sont mises à jour chaque jour, les cryptos plusieurs fois par minute. Les derniers taux restent disponibles hors ligne.", "Las divisas se actualizan a diario y las criptos varias veces por minuto. Los últimos tipos funcionan sin conexión.", "Fiatkurse werden täglich, Krypto mehrmals pro Minute aktualisiert. Die letzten Kurse sind offline verfügbar.", "法币汇率每天更新，加密货币每分钟更新数次。最新汇率离线也可使用。", "تتحدث أسعار العملات النقدية يوميًا والمشفّرة عدة مرات في الدقيقة. تتوفر أحدث الأسعار دون اتصال.", "法定通貨は1日1回、暗号資産は1分間に数回更新されます。最新のレートはオフラインでも使えます。", "As moedas fiduciárias são atualizadas diariamente e as criptomoedas várias vezes por minuto. As cotações mais recentes funcionam offline.", "법정화폐는 하루에 한 번, 암호화폐는 분당 여러 번 업데이트됩니다. 최신 환율은 오프라인에서도 사용할 수 있습니다.", "法幣匯率每天更新，加密貨幣每分鐘更新數次。最新匯率離線時也能使用。", "Le valute fiat si aggiornano ogni giorno, le criptovalute più volte al minuto. Gli ultimi tassi funzionano offline.", "Kursy walut fiat aktualizują się raz dziennie, kryptowalut — kilka razy na minutę. Najnowsze kursy działają offline."],
         .numbers: ["Числа", "Numbers", "Sayılar", "Nombres", "Números", "Zahlen", "数字", "الأرقام", "数字", "Números", "숫자", "數字", "Numeri", "Liczby"],
