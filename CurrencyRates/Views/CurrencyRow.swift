@@ -21,8 +21,10 @@ struct CurrencyRow: View {
     var isReordering = false
 
     @Environment(\.dynamicTypeSize) private var dynamicTypeSize
-    /// Код валюты — 18 pt при обычном размере текста, масштабируется вместе с суммой.
-    @ScaledMetric(relativeTo: .title3) private var codeSize: CGFloat = 18
+    /// Код валюты — 17 pt при обычном размере текста, масштабируется вместе с суммой.
+    @ScaledMetric(relativeTo: .title3) private var codeSize: CGFloat = 17
+    /// Название валюты — 14 pt, на ступень крупнее курса.
+    @ScaledMetric(relativeTo: .subheadline) private var nameSize: CGFloat = 14
 
     private var isSource: Bool { code == sourceCode }
     /// Строка выделяется только во время ввода.
@@ -49,7 +51,7 @@ struct CurrencyRow: View {
                     CurrencyIcon(currency: Currency(code: code))
                     // Две строки: код и сумма, затем название и курс — каждая пара на одной базовой линии,
                     // поэтому отступ от кода до названия равен отступу от суммы до курса.
-                    VStack(spacing: 2) {
+                    VStack(spacing: 3) {
                         // Без Spacer: он делил свободное место с суммой, и та получала лишь часть —
                         // короткая сумма строки ввода (с курсором) уменьшалась. Теперь сумма
                         // занимает всё место справа от кода и уменьшается, только если и так не влезает.
@@ -67,7 +69,7 @@ struct CurrencyRow: View {
                 }
             }
         }
-        .padding(20)
+        .padding(18)
         .frame(maxWidth: .infinity, alignment: .leading)
         .contentShape(.rect)
         .accessibilityElement(children: .ignore)
@@ -91,7 +93,7 @@ struct CurrencyRow: View {
 
     @ViewBuilder private var captionSlot: some View {
         if isReordering {
-            Text(verbatim: " ").font(.subheadline).hidden()
+            Text(verbatim: " ").font(.system(.footnote, design: .rounded)).hidden()
         } else {
             captionView.transition(Self.valueTransition)
         }
@@ -100,14 +102,14 @@ struct CurrencyRow: View {
     private var codeText: some View {
         // Код чуть меньше суммы: крупнее подписи, но не спорит с цифрами.
         Text(code)
-            .font(.system(size: codeSize, weight: .medium))
+            .font(.system(size: codeSize, weight: .semibold, design: .rounded))
             .foregroundStyle(Color.primary)
             .fixedSize()
     }
 
     private var nameText: some View {
         Text(Currency.name(for: code))
-            .font(.subheadline)
+            .font(.system(size: nameSize, weight: .medium, design: .rounded))
             .foregroundStyle(Color.secondaryLabel)
             .lineLimit(dynamicTypeSize.isAccessibilitySize ? nil : 1)
             // Название того же размера, что и курс: длинное не уменьшается, а обрезается с «…».
@@ -152,7 +154,7 @@ struct CurrencyRow: View {
 
     private var captionView: some View {
         Text(captionText)
-            .font(.subheadline.monospacedDigit())
+            .font(.system(.footnote, design: .rounded).weight(.medium).monospacedDigit())
             .foregroundStyle(Color.secondaryLabel)
             .lineLimit(dynamicTypeSize.isAccessibilitySize ? nil : 1)
     }
