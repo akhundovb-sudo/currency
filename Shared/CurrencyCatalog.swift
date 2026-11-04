@@ -149,6 +149,12 @@ enum AmountFormat {
             return value.formatted(.number.locale(locale).notation(.scientific).precision(.fractionLength(0...3)))
         }
         if let places = decimalPlaces {
+            // Малая ненулевая сумма не должна стать «0,00» (0,0013 BTC при двух знаках) —
+            // тогда значащие цифры, как в автоматическом режиме.
+            let rounded = (value * pow(10, Double(places))).rounded() / pow(10, Double(places))
+            if rounded == 0 && value != 0 {
+                return value.formatted(.number.locale(locale).precision(.significantDigits(2...4)))
+            }
             return value.formatted(.number.locale(locale).precision(.fractionLength(places)))
         }
         if value >= 1 || value == 0 {

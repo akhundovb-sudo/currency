@@ -5,7 +5,6 @@ struct SettingsView: View {
     @Environment(RatesStore.self) private var store
     @Environment(\.dismiss) private var dismiss
     @State private var isPaywallPresented = false
-    @State private var isRatesInfoPresented = false
     @Environment(\.requestReview) private var requestReview
     @Environment(\.openURL) private var openURL
 
@@ -83,7 +82,11 @@ struct SettingsView: View {
                     .animation(.snappy, value: store.numberStyle)
                     .animation(.snappy, value: store.decimalPlaces)
                 } header: {
-                    Text(L(.numbers))
+                    // Почему маленькие суммы показываются точнее выбранного числа знаков — по нажатию.
+                    HStack(spacing: 6) {
+                        Text(L(.numbers))
+                        InfoButton(text: AttributedString(L(.tinyAmountsFooter)))
+                    }
                 }
 
                 Section {
@@ -94,24 +97,7 @@ struct SettingsView: View {
                     HStack(spacing: 6) {
                         Text(L(.rates))
                         // Источники и частота обновления — по нажатию, а не сноской: блок остаётся коротким.
-                        Button {
-                            isRatesInfoPresented = true
-                        } label: {
-                            Image(systemName: "info.circle")
-                                .font(.subheadline)
-                                .foregroundStyle(Color.secondaryLabel)
-                        }
-                        // Над иконкой (стрелка снизу), чтобы не закрывать строки курсов.
-                        .popover(isPresented: $isRatesInfoPresented, arrowEdge: .bottom) {
-                            Text(sourcesFooter)
-                                .font(.subheadline)
-                                .foregroundStyle(Color.primary)
-                                .lineSpacing(2)
-                                .frame(width: 280, alignment: .leading)
-                                .padding(.horizontal, 18)
-                                .padding(.vertical, 16)
-                                .presentationCompactAdaptation(.popover)
-                        }
+                        InfoButton(text: sourcesFooter)
                         Spacer()
                         if store.isLoading {
                             ProgressView().controlSize(.small)
@@ -218,6 +204,33 @@ struct SettingsView: View {
 #Preview {
     SettingsView()
         .environment(RatesStore.preview())
+}
+
+/// Серая «ⓘ» в заголовке секции: по нажатию — пояснение во всплывающем окне над иконкой.
+private struct InfoButton: View {
+    let text: AttributedString
+    @State private var isPresented = false
+
+    var body: some View {
+        Button {
+            isPresented = true
+        } label: {
+            Image(systemName: "info.circle")
+                .font(.subheadline)
+                .foregroundStyle(Color.secondaryLabel)
+        }
+        // Над иконкой (стрелка снизу), чтобы не закрывать строки секции.
+        .popover(isPresented: $isPresented, arrowEdge: .bottom) {
+            Text(text)
+                .font(.subheadline)
+                .foregroundStyle(Color.primary)
+                .lineSpacing(2)
+                .frame(width: 280, alignment: .leading)
+                .padding(.horizontal, 18)
+                .padding(.vertical, 16)
+                .presentationCompactAdaptation(.popover)
+        }
+    }
 }
 
 /// Выбор иконки приложения: одна строка, листается вбок. Первые три — бесплатные, остальные — с тегом PRO:
