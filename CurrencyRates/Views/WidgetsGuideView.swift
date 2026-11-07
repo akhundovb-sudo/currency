@@ -29,8 +29,8 @@ struct WidgetsGuideView: View {
         let data = data
 
         ScrollView {
-            // Каждый виджет — отдельный блок; между блоками ровный отступ.
-            VStack(alignment: .leading, spacing: 16) {
+            // Между виджетами ровный отступ.
+            VStack(alignment: .leading, spacing: 32) {
                 WidgetSection(title: .widgetPair, description: .widgetPairInfo, isPro: false) {
                     WidgetTile(.small) { PairSmall(data: data) }
                     WidgetTile(.medium) { PairMedium(data: data) }
@@ -87,18 +87,25 @@ struct WidgetsGuideView: View {
     }
 }
 
-/// Блок виджета: название, тариф и описание; под ними размеры виджета, листаются вбок.
+/// Виджет: название, тариф и описание; под ними размеры виджета на фоне «экрана Домой», листаются вбок.
 private struct WidgetSection<Tiles: View>: View {
     let title: L10n.Key
     let description: L10n.Key
     let isPro: Bool
     @ViewBuilder let tiles: Tiles
 
-    private let shape = RoundedRectangle(cornerRadius: 28, style: .continuous)
+    private let wallpaperShape = RoundedRectangle(cornerRadius: 28, style: .continuous)
+
+    /// Фон «экрана Домой»: светлая голубо-сиреневая дымка, в тёмной теме — приглушённая.
+    private static var wallpaper: LinearGradient { LinearGradient(
+        colors: [Color.dynamic(light: 0xCFD8EA, dark: 0x262C3A), Color.dynamic(light: 0xE6DCEF, dark: 0x30283A)],
+        startPoint: .topLeading,
+        endPoint: .bottomTrailing
+    ) }
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 14) {
-            VStack(alignment: .leading, spacing: 4) {
+        VStack(alignment: .leading, spacing: 12) {
+            VStack(alignment: .leading, spacing: 2) {
                 HStack(spacing: 8) {
                     Text(L(title)).font(.headline)
                     if isPro {
@@ -116,19 +123,18 @@ private struct WidgetSection<Tiles: View>: View {
                     .font(.subheadline)
                     .foregroundStyle(Color.secondaryLabel)
             }
-            .padding(.horizontal, 16)
-            .padding(.top, 16)
             .accessibilityElement(children: .combine)
 
+            // Превью лежат на мягком фоне, как на экране «Домой».
             ScrollView(.horizontal) {
                 HStack(spacing: 12) { tiles }
-                    .padding(.horizontal, 16)
-                    .padding(.bottom, 16)
+                    .padding(12)
             }
             .scrollIndicators(.hidden)
+            .background(Self.wallpaper, in: wallpaperShape)
+            .clipShape(wallpaperShape)
         }
-        .background(Color(.secondarySystemGroupedBackground), in: shape)
-        .clipShape(shape)
+        // Без белой карточки: заголовок на фоне страницы, под ним только «экран Домой».
         .padding(.horizontal, 16)
     }
 }
@@ -155,10 +161,11 @@ private struct WidgetTile<Content: View>: View {
             .padding(14)
             .frame(width: size.width, height: 158)
             .background {
-                // Внутри белого блока виджет — на фоне страницы, без тени.
+                // На фоне «экрана Домой» — как настоящий виджет: своя плашка и лёгкая тень.
                 shape
-                    .fill(Color(.systemGroupedBackground))
+                    .fill(Color(.secondarySystemGroupedBackground))
                     .overlay(shape.strokeBorder(Color.primary.opacity(0.06), lineWidth: 1))
+                    .shadow(color: .black.opacity(0.08), radius: 8, y: 3)
             }
             .dynamicTypeSize(.large)
             .accessibilityHidden(true)
