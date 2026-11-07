@@ -87,21 +87,12 @@ struct WidgetsGuideView: View {
     }
 }
 
-/// Виджет: название, тариф и описание; под ними размеры виджета на фоне «экрана Домой», листаются вбок.
+/// Виджет: название, тариф и описание; под ними размеры виджета, листаются вбок.
 private struct WidgetSection<Tiles: View>: View {
     let title: L10n.Key
     let description: L10n.Key
     let isPro: Bool
     @ViewBuilder let tiles: Tiles
-
-    private let wallpaperShape = RoundedRectangle(cornerRadius: 28, style: .continuous)
-
-    /// Фон «экрана Домой»: светлая голубо-сиреневая дымка, в тёмной теме — приглушённая.
-    private static var wallpaper: LinearGradient { LinearGradient(
-        colors: [Color.dynamic(light: 0xCFD8EA, dark: 0x262C3A), Color.dynamic(light: 0xE6DCEF, dark: 0x30283A)],
-        startPoint: .topLeading,
-        endPoint: .bottomTrailing
-    ) }
 
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
@@ -123,19 +114,18 @@ private struct WidgetSection<Tiles: View>: View {
                     .font(.subheadline)
                     .foregroundStyle(Color.secondaryLabel)
             }
+            // Отступ заголовка — как у заголовков секций iOS (20pt), карточек — 16pt от края.
+            .padding(.horizontal, 20)
             .accessibilityElement(children: .combine)
 
-            // Превью лежат на мягком фоне, как на экране «Домой».
             ScrollView(.horizontal) {
-                HStack(spacing: 12) { tiles }
-                    .padding(12)
+                HStack(spacing: 16) { tiles }
+                    .padding(.horizontal, 16)
             }
             .scrollIndicators(.hidden)
-            .background(Self.wallpaper, in: wallpaperShape)
-            .clipShape(wallpaperShape)
+            // Иначе тень карточек обрезается по краю прокрутки.
+            .scrollClipDisabled()
         }
-        // Без белой карточки: заголовок на фоне страницы, под ним только «экран Домой».
-        .padding(.horizontal, 16)
     }
 }
 
@@ -161,7 +151,7 @@ private struct WidgetTile<Content: View>: View {
             .padding(14)
             .frame(width: size.width, height: 158)
             .background {
-                // На фоне «экрана Домой» — как настоящий виджет: своя плашка и лёгкая тень.
+                // Как настоящий виджет: своя плашка и лёгкая тень.
                 shape
                     .fill(Color(.secondarySystemGroupedBackground))
                     .overlay(shape.strokeBorder(Color.primary.opacity(0.06), lineWidth: 1))
