@@ -1,3833 +1,3926 @@
 {
-  "sourceLanguage": "en",
-  "strings": {
-    "A pair with a chart for a day, week or month": {
-      "extractionState": "manual",
-      "localizations": {
-        "ar": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "زوج عملات مع مخطط ليوم أو أسبوع أو شهر"
+  "sourceLanguage" : "en",
+  "strings" : {
+    "%@" : {},
+    "A pair with a chart for a day, week or month" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "زوج عملات مع مخطط ليوم أو أسبوع أو شهر"
           }
         },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Ein Paar mit Diagramm für Tag, Woche oder Monat"
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ein Paar mit Diagramm für Tag, Woche oder Monat"
           }
         },
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "A pair with a chart for a day, week or month"
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "A pair with a chart for a day, week or month"
           }
         },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Un par con gráfico de un día, una semana o un mes"
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Un par con gráfico de un día, una semana o un mes"
           }
         },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Une paire avec un graphique sur un jour, une semaine ou un mois"
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Une paire avec un graphique sur un jour, une semaine ou un mois"
           }
         },
-        "it": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Una coppia con grafico di un giorno, una settimana o un mese"
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Una coppia con grafico di un giorno, una settimana o un mese"
           }
         },
-        "ja": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "1日・1週間・1か月のチャート付き通貨ペア"
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "1日・1週間・1か月のチャート付き通貨ペア"
           }
         },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "하루·일주일·한 달 차트가 있는 통화 쌍"
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "하루·일주일·한 달 차트가 있는 통화 쌍"
           }
         },
-        "pl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Para walut z wykresem z dnia, tygodnia lub miesiąca"
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Para walut z wykresem z dnia, tygodnia lub miesiąca"
           }
         },
-        "pt-BR": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Um par com gráfico de um dia, semana ou mês"
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Um par com gráfico de um dia, semana ou mês"
           }
         },
-        "ru": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Пара валют и график за день, неделю или месяц"
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Пара валют и график за день, неделю или месяц"
           }
         },
-        "tr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Gün, hafta veya ay için grafikli kur"
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Gün, hafta veya ay için grafikli kur"
           }
         },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "货币对及一天、一周或一个月的图表"
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "货币对及一天、一周或一个月的图表"
           }
         },
-        "zh-Hant": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "貨幣對及一天、一週或一個月的圖表"
-          }
-        }
-      }
-    },
-    "Amount": {
-      "extractionState": "manual",
-      "localizations": {
-        "ar": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "المبلغ"
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Betrag"
-          }
-        },
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Amount"
-          }
-        },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Importe"
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Montant"
-          }
-        },
-        "it": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Importo"
-          }
-        },
-        "ja": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "金額"
-          }
-        },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "금액"
-          }
-        },
-        "pl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Kwota"
-          }
-        },
-        "pt-BR": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Valor"
-          }
-        },
-        "ru": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Сумма"
-          }
-        },
-        "tr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Tutar"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "金额"
-          }
-        },
-        "zh-Hant": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "金額"
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "貨幣對及一天、一週或一個月的圖表"
           }
         }
       }
     },
-    "Any currency with Pro": {
-      "extractionState": "manual",
-      "localizations": {
-        "ar": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "جميع العملات مع Pro"
+    "Amount" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "المبلغ"
           }
         },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Alle Währungen mit Pro"
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Betrag"
           }
         },
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Any currency with Pro"
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Amount"
           }
         },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Todas las divisas con Pro"
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Importe"
           }
         },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Toutes les devises avec Pro"
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Montant"
           }
         },
-        "it": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Tutte le valute con Pro"
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Importo"
           }
         },
-        "ja": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Pro ですべての通貨を選択"
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "金額"
           }
         },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Pro에서 모든 통화 선택"
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "금액"
           }
         },
-        "pl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Wszystkie waluty w Pro"
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Kwota"
           }
         },
-        "pt-BR": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Todas as moedas com o Pro"
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Valor"
           }
         },
-        "ru": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Любые валюты — в Pro"
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Сумма"
           }
         },
-        "tr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Tüm para birimleri Pro’da"
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tutar"
           }
         },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Pro 可选择任意货币"
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "金额"
           }
         },
-        "zh-Hant": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Pro 可選擇任意貨幣"
-          }
-        }
-      }
-    },
-    "Base currency": {
-      "extractionState": "manual",
-      "localizations": {
-        "ar": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "العملة الأساسية"
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Basiswährung"
-          }
-        },
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Base currency"
-          }
-        },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Divisa base"
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Devise de base"
-          }
-        },
-        "it": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Valuta base"
-          }
-        },
-        "ja": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "基準通貨"
-          }
-        },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "기준 통화"
-          }
-        },
-        "pl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Waluta bazowa"
-          }
-        },
-        "pt-BR": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Moeda base"
-          }
-        },
-        "ru": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Основная валюта"
-          }
-        },
-        "tr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Ana para birimi"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "基准货币"
-          }
-        },
-        "zh-Hant": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "基準貨幣"
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "金額"
           }
         }
       }
     },
-    "Chart color": {
-      "extractionState": "manual",
-      "localizations": {
-        "ar": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "لون الرسم البياني"
+    "Any currency with Pro" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "جميع العملات مع Pro"
           }
         },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Diagrammfarbe"
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Alle Währungen mit Pro"
           }
         },
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Chart color"
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Any currency with Pro"
           }
         },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Color del gráfico"
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Todas las divisas con Pro"
           }
         },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Couleur du graphique"
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Toutes les devises avec Pro"
           }
         },
-        "it": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Colore del grafico"
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tutte le valute con Pro"
           }
         },
-        "ja": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "チャートの色"
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pro ですべての通貨を選択"
           }
         },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "차트 색상"
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pro에서 모든 통화 선택"
           }
         },
-        "pl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Kolor wykresu"
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wszystkie waluty w Pro"
           }
         },
-        "pt-BR": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Cor do gráfico"
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Todas as moedas com o Pro"
           }
         },
-        "ru": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Цвет графика"
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Любые валюты — в Pro"
           }
         },
-        "tr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Grafik rengi"
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tüm para birimleri Pro’da"
           }
         },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "图表颜色"
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pro 可选择任意货币"
           }
         },
-        "zh-Hant": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "圖表顏色"
-          }
-        }
-      }
-    },
-    "Collecting history…": {
-      "extractionState": "manual",
-      "localizations": {
-        "ar": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "جارٍ جمع السجل…"
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Verlauf wird gesammelt…"
-          }
-        },
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Collecting history…"
-          }
-        },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Recopilando historial…"
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Collecte de l’historique…"
-          }
-        },
-        "it": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Raccolta della cronologia…"
-          }
-        },
-        "ja": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "履歴を収集中…"
-          }
-        },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "기록 수집 중…"
-          }
-        },
-        "pl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Zbieramy historię kursu…"
-          }
-        },
-        "pt-BR": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Coletando histórico…"
-          }
-        },
-        "ru": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Собираем историю курса…"
-          }
-        },
-        "tr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Kur geçmişi toplanıyor…"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "正在收集历史数据…"
-          }
-        },
-        "zh-Hant": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "正在收集歷史資料…"
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pro 可選擇任意貨幣"
           }
         }
       }
     },
-    "Color": {
-      "extractionState": "manual",
-      "localizations": {
-        "ar": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "اللون"
+    "Available with Pro subscription" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "متاح مع اشتراك Pro"
           }
         },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Farbe"
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mit Pro-Abo verfügbar"
           }
         },
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Color"
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Available with Pro subscription"
           }
         },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Color"
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Disponible con la suscripción Pro"
           }
         },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Couleur"
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Disponible avec l’abonnement Pro"
           }
         },
-        "it": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Colore"
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Disponibile con l’abbonamento Pro"
           }
         },
-        "ja": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "カラー"
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pro サブスクリプションで利用可能"
           }
         },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "색상"
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pro 구독으로 이용 가능"
           }
         },
-        "pl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Kolor"
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dostępne z subskrypcją Pro"
           }
         },
-        "pt-BR": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Cor"
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Disponível com a assinatura Pro"
           }
         },
-        "ru": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Цвет"
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Доступно с подпиской Pro"
           }
         },
-        "tr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Renk"
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pro abonelikle kullanılabilir"
           }
         },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "颜色"
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pro 订阅可用"
           }
         },
-        "zh-Hant": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "顏色"
-          }
-        }
-      }
-    },
-    "Crypto market": {
-      "extractionState": "manual",
-      "localizations": {
-        "ar": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "سوق العملات المشفرة"
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Kryptomarkt"
-          }
-        },
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Crypto market"
-          }
-        },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Mercado cripto"
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Marché crypto"
-          }
-        },
-        "it": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Mercato cripto"
-          }
-        },
-        "ja": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "暗号資産マーケット"
-          }
-        },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "암호화폐 시장"
-          }
-        },
-        "pl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Rynek kryptowalut"
-          }
-        },
-        "pt-BR": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Mercado cripto"
-          }
-        },
-        "ru": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Крипто-рынок"
-          }
-        },
-        "tr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Kripto piyasası"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "加密市场"
-          }
-        },
-        "zh-Hant": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "加密市場"
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pro 訂閱可用"
           }
         }
       }
     },
-    "Currency": {
-      "extractionState": "manual",
-      "localizations": {
-        "ar": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "العملة"
+    "Base currency" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "العملة الأساسية"
           }
         },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Währung"
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Basiswährung"
           }
         },
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Currency"
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Base currency"
           }
         },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Divisa"
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Divisa base"
           }
         },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Devise"
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Devise de base"
           }
         },
-        "it": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Valuta"
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Valuta base"
           }
         },
-        "ja": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "通貨"
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "基準通貨"
           }
         },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "통화"
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "기준 통화"
           }
         },
-        "pl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Waluta"
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Waluta bazowa"
           }
         },
-        "pt-BR": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Moeda"
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Moeda base"
           }
         },
-        "ru": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Валюта"
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Основная валюта"
           }
         },
-        "tr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Para birimi"
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ana para birimi"
           }
         },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "货币"
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "基准货币"
           }
         },
-        "zh-Hant": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "貨幣"
-          }
-        }
-      }
-    },
-    "Currency 2": {
-      "extractionState": "manual",
-      "localizations": {
-        "ar": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "العملة 2"
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Währung 2"
-          }
-        },
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Currency 2"
-          }
-        },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Divisa 2"
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Devise 2"
-          }
-        },
-        "it": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Valuta 2"
-          }
-        },
-        "ja": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "通貨 2"
-          }
-        },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "통화 2"
-          }
-        },
-        "pl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Waluta 2"
-          }
-        },
-        "pt-BR": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Moeda 2"
-          }
-        },
-        "ru": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Валюта 2"
-          }
-        },
-        "tr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Para birimi 2"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "货币 2"
-          }
-        },
-        "zh-Hant": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "貨幣 2"
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "基準貨幣"
           }
         }
       }
     },
-    "Currency 3": {
-      "extractionState": "manual",
-      "localizations": {
-        "ar": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "العملة 3"
+    "Chart color" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "لون الرسم البياني"
           }
         },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Währung 3"
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Diagrammfarbe"
           }
         },
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Currency 3"
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Chart color"
           }
         },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Divisa 3"
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Color del gráfico"
           }
         },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Devise 3"
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Couleur du graphique"
           }
         },
-        "it": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Valuta 3"
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Colore del grafico"
           }
         },
-        "ja": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "通貨 3"
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "チャートの色"
           }
         },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "통화 3"
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "차트 색상"
           }
         },
-        "pl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Waluta 3"
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Kolor wykresu"
           }
         },
-        "pt-BR": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Moeda 3"
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cor do gráfico"
           }
         },
-        "ru": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Валюта 3"
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Цвет графика"
           }
         },
-        "tr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Para birimi 3"
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Grafik rengi"
           }
         },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "货币 3"
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "图表颜色"
           }
         },
-        "zh-Hant": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "貨幣 3"
-          }
-        }
-      }
-    },
-    "Currency 4": {
-      "extractionState": "manual",
-      "localizations": {
-        "ar": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "العملة 4"
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Währung 4"
-          }
-        },
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Currency 4"
-          }
-        },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Divisa 4"
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Devise 4"
-          }
-        },
-        "it": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Valuta 4"
-          }
-        },
-        "ja": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "通貨 4"
-          }
-        },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "통화 4"
-          }
-        },
-        "pl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Waluta 4"
-          }
-        },
-        "pt-BR": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Moeda 4"
-          }
-        },
-        "ru": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Валюта 4"
-          }
-        },
-        "tr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Para birimi 4"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "货币 4"
-          }
-        },
-        "zh-Hant": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "貨幣 4"
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "圖表顏色"
           }
         }
       }
     },
-    "Currency 5": {
-      "extractionState": "manual",
-      "localizations": {
-        "ar": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "العملة 5"
+    "Collecting history…" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "جارٍ جمع السجل…"
           }
         },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Währung 5"
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Verlauf wird gesammelt…"
           }
         },
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Currency 5"
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Collecting history…"
           }
         },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Divisa 5"
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Recopilando historial…"
           }
         },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Devise 5"
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Collecte de l’historique…"
           }
         },
-        "it": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Valuta 5"
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Raccolta della cronologia…"
           }
         },
-        "ja": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "通貨 5"
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "履歴を収集中…"
           }
         },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "통화 5"
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "기록 수집 중…"
           }
         },
-        "pl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Waluta 5"
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zbieramy historię kursu…"
           }
         },
-        "pt-BR": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Moeda 5"
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Coletando histórico…"
           }
         },
-        "ru": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Валюта 5"
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Собираем историю курса…"
           }
         },
-        "tr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Para birimi 5"
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Kur geçmişi toplanıyor…"
           }
         },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "货币 5"
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "正在收集历史数据…"
           }
         },
-        "zh-Hant": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "貨幣 5"
-          }
-        }
-      }
-    },
-    "Currency 6": {
-      "extractionState": "manual",
-      "localizations": {
-        "ar": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "العملة 6"
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Währung 6"
-          }
-        },
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Currency 6"
-          }
-        },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Divisa 6"
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Devise 6"
-          }
-        },
-        "it": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Valuta 6"
-          }
-        },
-        "ja": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "通貨 6"
-          }
-        },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "통화 6"
-          }
-        },
-        "pl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Waluta 6"
-          }
-        },
-        "pt-BR": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Moeda 6"
-          }
-        },
-        "ru": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Валюта 6"
-          }
-        },
-        "tr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Para birimi 6"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "货币 6"
-          }
-        },
-        "zh-Hant": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "貨幣 6"
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "正在收集歷史資料…"
           }
         }
       }
     },
-    "Day": {
-      "extractionState": "manual",
-      "localizations": {
-        "ar": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "يوم"
+    "Color" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "اللون"
           }
         },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Tag"
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Farbe"
           }
         },
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Day"
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Color"
           }
         },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Día"
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Color"
           }
         },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Jour"
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Couleur"
           }
         },
-        "it": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Giorno"
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Colore"
           }
         },
-        "ja": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "日"
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "カラー"
           }
         },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "일"
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "색상"
           }
         },
-        "pl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Dzień"
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Kolor"
           }
         },
-        "pt-BR": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Dia"
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cor"
           }
         },
-        "ru": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "День"
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Цвет"
           }
         },
-        "tr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Gün"
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Renk"
           }
         },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "天"
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "颜色"
           }
         },
-        "zh-Hant": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "天"
-          }
-        }
-      }
-    },
-    "Default": {
-      "extractionState": "manual",
-      "localizations": {
-        "ar": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "افتراضي"
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Standard"
-          }
-        },
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Default"
-          }
-        },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Predeterminado"
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Par défaut"
-          }
-        },
-        "it": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Predefinito"
-          }
-        },
-        "ja": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "デフォルト"
-          }
-        },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "기본"
-          }
-        },
-        "pl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Domyślny"
-          }
-        },
-        "pt-BR": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Padrão"
-          }
-        },
-        "ru": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "По умолчанию"
-          }
-        },
-        "tr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Varsayılan"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "默认"
-          }
-        },
-        "zh-Hant": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "預設"
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "顏色"
           }
         }
       }
     },
-    "Exchange rate": {
-      "extractionState": "manual",
-      "localizations": {
-        "ar": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "سعر الصرف"
+    "Crypto market" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "سوق العملات المشفرة"
           }
         },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Wechselkurs"
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Kryptomarkt"
           }
         },
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Exchange rate"
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Crypto market"
           }
         },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Tipo de cambio"
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mercado cripto"
           }
         },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Taux de change"
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Marché crypto"
           }
         },
-        "it": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Tasso di cambio"
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mercato cripto"
           }
         },
-        "ja": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "為替レート"
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "暗号資産マーケット"
           }
         },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "환율"
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "암호화폐 시장"
           }
         },
-        "pl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Kurs waluty"
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rynek kryptowalut"
           }
         },
-        "pt-BR": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Cotação"
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mercado cripto"
           }
         },
-        "ru": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Курс валюты"
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Крипто-рынок"
           }
         },
-        "tr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Döviz kuru"
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Kripto piyasası"
           }
         },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "汇率"
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "加密市场"
           }
         },
-        "zh-Hant": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "匯率"
-          }
-        }
-      }
-    },
-    "From": {
-      "extractionState": "manual",
-      "localizations": {
-        "ar": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "من"
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Von"
-          }
-        },
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "From"
-          }
-        },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "De"
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "De"
-          }
-        },
-        "it": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Da"
-          }
-        },
-        "ja": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "変換元"
-          }
-        },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "기준 통화"
-          }
-        },
-        "pl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Z"
-          }
-        },
-        "pt-BR": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "De"
-          }
-        },
-        "ru": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Из"
-          }
-        },
-        "tr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Kaynak"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "源货币"
-          }
-        },
-        "zh-Hant": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "來源貨幣"
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "加密市場"
           }
         }
       }
     },
-    "Home currency": {
-      "extractionState": "manual",
-      "localizations": {
-        "ar": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "عملتك"
+    "Currency" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "العملة"
           }
         },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Heimatwährung"
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Währung"
           }
         },
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Home currency"
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Currency"
           }
         },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Tu moneda"
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Divisa"
           }
         },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Devise de référence"
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Devise"
           }
         },
-        "it": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "La tua valuta"
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Valuta"
           }
         },
-        "ja": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "自国通貨"
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "通貨"
           }
         },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "내 통화"
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "통화"
           }
         },
-        "pl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Twoja waluta"
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Waluta"
           }
         },
-        "pt-BR": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Sua moeda"
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Moeda"
           }
         },
-        "ru": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Домашняя валюта"
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Валюта"
           }
         },
-        "tr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Kendi para biriminiz"
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Para birimi"
           }
         },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "本国货币"
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "货币"
           }
         },
-        "zh-Hant": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "本國貨幣"
-          }
-        }
-      }
-    },
-    "Main currency color": {
-      "extractionState": "manual",
-      "localizations": {
-        "ar": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "لون العملة الأساسية"
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Farbe der Hauptwährung"
-          }
-        },
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Main currency color"
-          }
-        },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Color de la divisa principal"
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Couleur de la devise principale"
-          }
-        },
-        "it": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Colore della valuta principale"
-          }
-        },
-        "ja": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "基準通貨の色"
-          }
-        },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "기준 통화 색상"
-          }
-        },
-        "pl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Kolor waluty głównej"
-          }
-        },
-        "pt-BR": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Cor da moeda principal"
-          }
-        },
-        "ru": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Цвет основной валюты"
-          }
-        },
-        "tr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Ana para biriminin rengi"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "主货币颜色"
-          }
-        },
-        "zh-Hant": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "主貨幣顏色"
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "貨幣"
           }
         }
       }
     },
-    "Month": {
-      "extractionState": "manual",
-      "localizations": {
-        "ar": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "شهر"
+    "Currency 2" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "العملة 2"
           }
         },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Monat"
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Währung 2"
           }
         },
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Month"
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Currency 2"
           }
         },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Mes"
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Divisa 2"
           }
         },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Mois"
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Devise 2"
           }
         },
-        "it": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Mese"
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Valuta 2"
           }
         },
-        "ja": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "月"
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "通貨 2"
           }
         },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "월"
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "통화 2"
           }
         },
-        "pl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Miesiąc"
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Waluta 2"
           }
         },
-        "pt-BR": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Mês"
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Moeda 2"
           }
         },
-        "ru": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Месяц"
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Валюта 2"
           }
         },
-        "tr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Ay"
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Para birimi 2"
           }
         },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "月"
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "货币 2"
           }
         },
-        "zh-Hant": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "月"
-          }
-        }
-      }
-    },
-    "My currencies": {
-      "extractionState": "manual",
-      "localizations": {
-        "ar": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "عملاتي"
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Meine Währungen"
-          }
-        },
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "My currencies"
-          }
-        },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Mis divisas"
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Mes devises"
-          }
-        },
-        "it": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Le mie valute"
-          }
-        },
-        "ja": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "マイ通貨"
-          }
-        },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "내 통화"
-          }
-        },
-        "pl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Moje waluty"
-          }
-        },
-        "pt-BR": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Minhas moedas"
-          }
-        },
-        "ru": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Мои валюты"
-          }
-        },
-        "tr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Para birimlerim"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "我的货币"
-          }
-        },
-        "zh-Hant": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "我的貨幣"
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "貨幣 2"
           }
         }
       }
     },
-    "Not selected": {
-      "extractionState": "manual",
-      "localizations": {
-        "ar": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "غير محدد"
+    "Currency 3" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "العملة 3"
           }
         },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Keine"
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Währung 3"
           }
         },
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Not selected"
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Currency 3"
           }
         },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Ninguna"
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Divisa 3"
           }
         },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Aucune"
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Devise 3"
           }
         },
-        "it": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Nessuna"
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Valuta 3"
           }
         },
-        "ja": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "未選択"
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "通貨 3"
           }
         },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "선택 안 함"
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "통화 3"
           }
         },
-        "pl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Nie wybrano"
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Waluta 3"
           }
         },
-        "pt-BR": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Nenhuma"
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Moeda 3"
           }
         },
-        "ru": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Не выбрано"
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Валюта 3"
           }
         },
-        "tr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Seçilmedi"
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Para birimi 3"
           }
         },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "未选择"
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "货币 3"
           }
         },
-        "zh-Hant": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "未選擇"
-          }
-        }
-      }
-    },
-    "On a trip, the local currency will appear here": {
-      "extractionState": "manual",
-      "localizations": {
-        "ar": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "أثناء السفر ستظهر العملة المحلية هنا"
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Auf Reisen erscheint hier die lokale Währung"
-          }
-        },
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "On a trip, the local currency will appear here"
-          }
-        },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "De viaje, aquí aparecerá la moneda local"
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "En voyage, la devise locale s’affichera ici"
-          }
-        },
-        "it": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "In viaggio qui apparirà la valuta locale"
-          }
-        },
-        "ja": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "旅行中は現地の通貨がここに表示されます"
-          }
-        },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "여행 중에는 현지 통화가 여기에 표시됩니다"
-          }
-        },
-        "pl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "W podróży pojawi się tu lokalna waluta"
-          }
-        },
-        "pt-BR": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Em viagem, a moeda local aparecerá aqui"
-          }
-        },
-        "ru": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "В поездке здесь появится местная валюта"
-          }
-        },
-        "tr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Seyahatte burada yerel para birimi görünecek"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "旅行时这里会显示当地货币"
-          }
-        },
-        "zh-Hant": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "旅行時這裡會顯示當地貨幣"
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "貨幣 3"
           }
         }
       }
     },
-    "One currency in another, with the change over a day": {
-      "extractionState": "manual",
-      "localizations": {
-        "ar": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "سعر عملة مقابل أخرى وتغيّره خلال يوم"
+    "Currency 4" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "العملة 4"
           }
         },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Kurs einer Währung in einer anderen und die Änderung in 24 h"
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Währung 4"
           }
         },
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "One currency in another, with the change over a day"
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Currency 4"
           }
         },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "El valor de una divisa en otra y su cambio en 24 h"
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Divisa 4"
           }
         },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Le cours d’une devise dans une autre et sa variation sur 24 h"
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Devise 4"
           }
         },
-        "it": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Il tasso di una valuta in un’altra e la variazione in 24 ore"
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Valuta 4"
           }
         },
-        "ja": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "通貨ペアのレートと 24 時間の変動"
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "通貨 4"
           }
         },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "통화 간 환율과 24시간 변동"
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "통화 4"
           }
         },
-        "pl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Kurs jednej waluty w drugiej i zmiana w ciągu doby"
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Waluta 4"
           }
         },
-        "pt-BR": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "A cotação de uma moeda em outra e a variação em 24 h"
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Moeda 4"
           }
         },
-        "ru": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Курс одной валюты к другой и его изменение за сутки"
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Валюта 4"
           }
         },
-        "tr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Bir para biriminin diğerine kuru ve günlük değişimi"
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Para birimi 4"
           }
         },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "一种货币兑另一种货币的汇率及 24 小时变化"
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "货币 4"
           }
         },
-        "zh-Hant": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "一種貨幣兌另一種貨幣的匯率及 24 小時變化"
-          }
-        }
-      }
-    },
-    "Open Cento on your trip to detect the country": {
-      "extractionState": "manual",
-      "localizations": {
-        "ar": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "افتح Cento أثناء سفرك لتحديد البلد"
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Öffne Cento auf Reisen, um das Land zu erkennen"
-          }
-        },
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Open Cento on your trip to detect the country"
-          }
-        },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Abre Cento en tu viaje para detectar el país"
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Ouvrez Cento en voyage pour détecter le pays"
-          }
-        },
-        "it": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Apri Cento in viaggio per rilevare il paese"
-          }
-        },
-        "ja": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "旅行先で Cento を開くと国を判別します"
-          }
-        },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "여행 중 Cento를 열면 국가를 감지합니다"
-          }
-        },
-        "pl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Otwórz Cento w podróży, aby wykryć kraj"
-          }
-        },
-        "pt-BR": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Abra o Cento na viagem para detectar o país"
-          }
-        },
-        "ru": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Откройте Cento в поездке — виджет определит страну"
-          }
-        },
-        "tr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Ülkeyi algılamak için seyahatte Cento’yu açın"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "旅行时打开 Cento 以识别国家"
-          }
-        },
-        "zh-Hant": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "旅行時開啟 Cento 以辨識國家"
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "貨幣 4"
           }
         }
       }
     },
-    "Open Cento to choose currencies": {
-      "extractionState": "manual",
-      "localizations": {
-        "ar": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "افتح Cento لاختيار العملات"
+    "Currency 5" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "العملة 5"
           }
         },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Öffne Cento, um Währungen zu wählen"
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Währung 5"
           }
         },
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Open Cento to choose currencies"
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Currency 5"
           }
         },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Abre Cento para elegir tus divisas"
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Divisa 5"
           }
         },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Ouvrez Cento pour choisir vos devises"
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Devise 5"
           }
         },
-        "it": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Apri Cento per scegliere le valute"
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Valuta 5"
           }
         },
-        "ja": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Cento を開いて通貨を選択"
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "通貨 5"
           }
         },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Cento를 열어 통화를 선택하세요"
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "통화 5"
           }
         },
-        "pl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Otwórz Cento, aby wybrać waluty"
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Waluta 5"
           }
         },
-        "pt-BR": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Abra o Cento para escolher as moedas"
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Moeda 5"
           }
         },
-        "ru": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Откройте Cento, чтобы выбрать валюты"
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Валюта 5"
           }
         },
-        "tr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Para birimlerini seçmek için Cento’yu aç"
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Para birimi 5"
           }
         },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "打开 Cento 选择货币"
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "货币 5"
           }
         },
-        "zh-Hant": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "開啟 Cento 選擇貨幣"
-          }
-        }
-      }
-    },
-    "Pair": {
-      "extractionState": "manual",
-      "localizations": {
-        "ar": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "الزوج"
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Paar"
-          }
-        },
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Pair"
-          }
-        },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Par"
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Paire"
-          }
-        },
-        "it": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Coppia"
-          }
-        },
-        "ja": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "ペア"
-          }
-        },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "통화 쌍"
-          }
-        },
-        "pl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Para"
-          }
-        },
-        "pt-BR": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Par"
-          }
-        },
-        "ru": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Пара"
-          }
-        },
-        "tr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Çift"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "货币对"
-          }
-        },
-        "zh-Hant": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "貨幣對"
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "貨幣 5"
           }
         }
       }
     },
-    "Period": {
-      "extractionState": "manual",
-      "localizations": {
-        "ar": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "الفترة"
+    "Currency 6" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "العملة 6"
           }
         },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Zeitraum"
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Währung 6"
           }
         },
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Period"
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Currency 6"
           }
         },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Periodo"
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Divisa 6"
           }
         },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Période"
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Devise 6"
           }
         },
-        "it": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Periodo"
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Valuta 6"
           }
         },
-        "ja": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "期間"
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "通貨 6"
           }
         },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "기간"
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "통화 6"
           }
         },
-        "pl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Okres"
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Waluta 6"
           }
         },
-        "pt-BR": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Período"
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Moeda 6"
           }
         },
-        "ru": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Период"
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Валюта 6"
           }
         },
-        "tr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Dönem"
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Para birimi 6"
           }
         },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "时间段"
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "货币 6"
           }
         },
-        "zh-Hant": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "時間段"
-          }
-        }
-      }
-    },
-    "Price in": {
-      "extractionState": "manual",
-      "localizations": {
-        "ar": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "السعر بـ"
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Preis in"
-          }
-        },
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Price in"
-          }
-        },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Precio en"
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Prix en"
-          }
-        },
-        "it": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Prezzo in"
-          }
-        },
-        "ja": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "価格の通貨"
-          }
-        },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "가격 통화"
-          }
-        },
-        "pl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Cena w"
-          }
-        },
-        "pt-BR": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Preço em"
-          }
-        },
-        "ru": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Цена в"
-          }
-        },
-        "tr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Fiyat birimi"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "计价货币"
-          }
-        },
-        "zh-Hant": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "計價貨幣"
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "貨幣 6"
           }
         }
       }
     },
-    "Rate chart": {
-      "extractionState": "manual",
-      "localizations": {
-        "ar": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "مخطط السعر"
+    "Day" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "يوم"
           }
         },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Kursdiagramm"
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tag"
           }
         },
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Rate chart"
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Day"
           }
         },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Gráfico del tipo"
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Día"
           }
         },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Graphique du cours"
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Jour"
           }
         },
-        "it": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Grafico del tasso"
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Giorno"
           }
         },
-        "ja": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "レートチャート"
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "日"
           }
         },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "환율 차트"
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "일"
           }
         },
-        "pl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Wykres kursu"
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dzień"
           }
         },
-        "pt-BR": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Gráfico da cotação"
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dia"
           }
         },
-        "ru": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "График курса"
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "День"
           }
         },
-        "tr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Kur grafiği"
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Gün"
           }
         },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "汇率图表"
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "天"
           }
         },
-        "zh-Hant": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "匯率圖表"
-          }
-        }
-      }
-    },
-    "Second currency color": {
-      "extractionState": "manual",
-      "localizations": {
-        "ar": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "لون العملة الثانية"
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Farbe der zweiten Währung"
-          }
-        },
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Second currency color"
-          }
-        },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Color de la segunda divisa"
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Couleur de la deuxième devise"
-          }
-        },
-        "it": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Colore della seconda valuta"
-          }
-        },
-        "ja": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "2番目の通貨の色"
-          }
-        },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "두 번째 통화 색상"
-          }
-        },
-        "pl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Kolor drugiej waluty"
-          }
-        },
-        "pt-BR": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Cor da segunda moeda"
-          }
-        },
-        "ru": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Цвет второй валюты"
-          }
-        },
-        "tr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "İkinci para biriminin rengi"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "第二种货币颜色"
-          }
-        },
-        "zh-Hant": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "第二種貨幣顏色"
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "天"
           }
         }
       }
     },
-    "Several currencies at once — from your app list or chosen here": {
-      "extractionState": "manual",
-      "localizations": {
-        "ar": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "عدة عملات معًا — من قائمتك في التطبيق أو تختارها هنا"
+    "Default" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "افتراضي"
           }
         },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Mehrere Währungen auf einmal – aus der App oder hier gewählt"
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Standard"
           }
         },
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Several currencies at once — from your app list or chosen here"
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Default"
           }
         },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Varias divisas a la vez: las de la app o las que elijas aquí"
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Predeterminado"
           }
         },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Plusieurs devises à la fois — celles de l’app ou à choisir ici"
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Par défaut"
           }
         },
-        "it": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Più valute insieme: dalla lista dell’app o scelte qui"
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Predefinito"
           }
         },
-        "ja": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "複数の通貨をまとめて表示—アプリのリストまたはここで選択"
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "デフォルト"
           }
         },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "여러 통화를 한 번에 — 앱 목록 또는 직접 선택"
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "기본"
           }
         },
-        "pl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Kilka walut naraz — z listy w aplikacji lub wybranych tutaj"
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Domyślny"
           }
         },
-        "pt-BR": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Várias moedas de uma vez — da lista do app ou escolhidas aqui"
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Padrão"
           }
         },
-        "ru": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Несколько валют сразу — из списка в приложении или на выбор"
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "По умолчанию"
           }
         },
-        "tr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Birden fazla para birimi — uygulamadaki listenden ya da burada seçerek"
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Varsayılan"
           }
         },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "同时查看多种货币——来自应用列表或在此选择"
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "默认"
           }
         },
-        "zh-Hant": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "同時查看多種貨幣——來自 App 列表或在此選擇"
-          }
-        }
-      }
-    },
-    "Show": {
-      "extractionState": "manual",
-      "localizations": {
-        "ar": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "عرض"
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Anzeigen"
-          }
-        },
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Show"
-          }
-        },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Mostrar"
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Afficher"
-          }
-        },
-        "it": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Mostra"
-          }
-        },
-        "ja": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "表示"
-          }
-        },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "표시"
-          }
-        },
-        "pl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Pokaż"
-          }
-        },
-        "pt-BR": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Mostrar"
-          }
-        },
-        "ru": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Показывать"
-          }
-        },
-        "tr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Göster"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "显示"
-          }
-        },
-        "zh-Hant": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "顯示"
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "預設"
           }
         }
       }
     },
-    "Swap currencies": {
-      "extractionState": "manual",
-      "localizations": {
-        "ar": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "تبديل العملتين"
+    "Exchange rate" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "سعر الصرف"
           }
         },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Währungen tauschen"
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wechselkurs"
           }
         },
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Swap currencies"
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Exchange rate"
           }
         },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Intercambiar divisas"
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tipo de cambio"
           }
         },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Inverser les devises"
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Taux de change"
           }
         },
-        "it": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Inverti valute"
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tasso di cambio"
           }
         },
-        "ja": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "通貨を入れ替える"
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "為替レート"
           }
         },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "통화 바꾸기"
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "환율"
           }
         },
-        "pl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Zamień waluty"
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Kurs waluty"
           }
         },
-        "pt-BR": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Inverter moedas"
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cotação"
           }
         },
-        "ru": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Поменять валюты"
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Курс валюты"
           }
         },
-        "tr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Para birimlerini değiştir"
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Döviz kuru"
           }
         },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "交换货币"
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "汇率"
           }
         },
-        "zh-Hant": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "交換貨幣"
-          }
-        }
-      }
-    },
-    "The currency of the country you are in, next to your home currency": {
-      "extractionState": "manual",
-      "localizations": {
-        "ar": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "عملة البلد الذي أنت فيه بجانب عملتك"
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Die Währung des Landes, in dem du bist, neben deiner Heimatwährung"
-          }
-        },
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "The currency of the country you are in, next to your home currency"
-          }
-        },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "La moneda del país donde estás, junto a la tuya"
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "La devise du pays où vous êtes, à côté de votre devise"
-          }
-        },
-        "it": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "La valuta del paese in cui ti trovi, accanto alla tua"
-          }
-        },
-        "ja": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "滞在国の通貨と自国通貨を並べて表示"
-          }
-        },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "현재 있는 나라의 통화와 내 통화를 나란히"
-          }
-        },
-        "pl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Waluta kraju, w którym jesteś, obok twojej waluty"
-          }
-        },
-        "pt-BR": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "A moeda do país onde você está, ao lado da sua"
-          }
-        },
-        "ru": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Валюта страны, где вы сейчас, рядом с вашей домашней"
-          }
-        },
-        "tr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Bulunduğunuz ülkenin para birimi, kendi para biriminizin yanında"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "所在国家的货币与您的本国货币对照"
-          }
-        },
-        "zh-Hant": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "所在國家的貨幣與您的本國貨幣對照"
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "匯率"
           }
         }
       }
     },
-    "To": {
-      "extractionState": "manual",
-      "localizations": {
-        "ar": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "إلى"
+    "From" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "من"
           }
         },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "In"
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Von"
           }
         },
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "To"
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "From"
           }
         },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "A"
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "De"
           }
         },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Vers"
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "De"
           }
         },
-        "it": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "A"
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Da"
           }
         },
-        "ja": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "変換先"
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "変換元"
           }
         },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "대상 통화"
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "기준 통화"
           }
         },
-        "pl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Na"
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Z"
           }
         },
-        "pt-BR": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Para"
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "De"
           }
         },
-        "ru": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "В"
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Из"
           }
         },
-        "tr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Hedef"
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Kaynak"
           }
         },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "目标货币"
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "源货币"
           }
         },
-        "zh-Hant": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "目標貨幣"
-          }
-        }
-      }
-    },
-    "Top coins": {
-      "extractionState": "manual",
-      "localizations": {
-        "ar": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "الأبرز"
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Top-Coins"
-          }
-        },
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Top coins"
-          }
-        },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Principales"
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Principales"
-          }
-        },
-        "it": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Principali"
-          }
-        },
-        "ja": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "上位"
-          }
-        },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "상위 코인"
-          }
-        },
-        "pl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Najważniejsze"
-          }
-        },
-        "pt-BR": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Principais"
-          }
-        },
-        "ru": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Топ монет"
-          }
-        },
-        "tr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Önde gelenler"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "热门"
-          }
-        },
-        "zh-Hant": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "熱門"
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "來源貨幣"
           }
         }
       }
     },
-    "Top coins with the change over a day": {
-      "extractionState": "manual",
-      "localizations": {
-        "ar": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "أبرز العملات وتغيّرها خلال يوم"
+    "Home currency" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "عملتك"
           }
         },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Top-Coins und ihre Änderung in 24 h"
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Heimatwährung"
           }
         },
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Top coins with the change over a day"
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Home currency"
           }
         },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Principales criptomonedas y su cambio en 24 h"
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tu moneda"
           }
         },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Les principales cryptos et leur variation sur 24 h"
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Devise de référence"
           }
         },
-        "it": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Le principali criptovalute e la variazione in 24 ore"
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "La tua valuta"
           }
         },
-        "ja": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "主要コインと24時間の変動"
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "自国通貨"
           }
         },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "주요 코인과 24시간 변동"
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "내 통화"
           }
         },
-        "pl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Najważniejsze kryptowaluty i zmiana w ciągu doby"
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Twoja waluta"
           }
         },
-        "pt-BR": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Principais moedas e a variação em 24 h"
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sua moeda"
           }
         },
-        "ru": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Топ монет и изменение за сутки"
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Домашняя валюта"
           }
         },
-        "tr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Önde gelen coinler ve günlük değişim"
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Kendi para biriminiz"
           }
         },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "热门币种及 24 小时涨跌"
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "本国货币"
           }
         },
-        "zh-Hant": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "熱門幣種及 24 小時漲跌"
-          }
-        }
-      }
-    },
-    "Top gainers": {
-      "extractionState": "manual",
-      "localizations": {
-        "ar": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "الأكثر ارتفاعًا"
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Größte Gewinner"
-          }
-        },
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Top gainers"
-          }
-        },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Mayores subidas"
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Plus fortes hausses"
-          }
-        },
-        "it": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Maggiori rialzi"
-          }
-        },
-        "ja": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "値上がり上位"
-          }
-        },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "상승 상위"
-          }
-        },
-        "pl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Największe wzrosty"
-          }
-        },
-        "pt-BR": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Maiores altas"
-          }
-        },
-        "ru": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Лидеры роста"
-          }
-        },
-        "tr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "En çok yükselenler"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "涨幅榜"
-          }
-        },
-        "zh-Hant": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "漲幅榜"
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "本國貨幣"
           }
         }
       }
     },
-    "Top losers": {
-      "extractionState": "manual",
-      "localizations": {
-        "ar": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "الأكثر انخفاضًا"
+    "Low" : {},
+    "Main currency color" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "لون العملة الأساسية"
           }
         },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Größte Verlierer"
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Farbe der Hauptwährung"
           }
         },
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Top losers"
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Main currency color"
           }
         },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Mayores caídas"
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Color de la divisa principal"
           }
         },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Plus fortes baisses"
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Couleur de la devise principale"
           }
         },
-        "it": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Maggiori ribassi"
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Colore della valuta principale"
           }
         },
-        "ja": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "値下がり上位"
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "基準通貨の色"
           }
         },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "하락 상위"
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "기준 통화 색상"
           }
         },
-        "pl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Największe spadki"
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Kolor waluty głównej"
           }
         },
-        "pt-BR": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Maiores quedas"
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cor da moeda principal"
           }
         },
-        "ru": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Лидеры падения"
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Цвет основной валюты"
           }
         },
-        "tr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "En çok düşenler"
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ana para biriminin rengi"
           }
         },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "跌幅榜"
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "主货币颜色"
           }
         },
-        "zh-Hant": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "跌幅榜"
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "主貨幣顏色"
           }
         }
       }
     },
-    "Travel": {
-      "extractionState": "manual",
-      "localizations": {
-        "ar": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "السفر"
+    "Month" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "شهر"
           }
         },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Reise"
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Monat"
           }
         },
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Travel"
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Month"
           }
         },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Viaje"
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mes"
           }
         },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Voyage"
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mois"
           }
         },
-        "it": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Viaggio"
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mese"
           }
         },
-        "ja": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "旅行"
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "月"
           }
         },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "여행"
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "월"
           }
         },
-        "pl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Podróż"
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Miesiąc"
           }
         },
-        "pt-BR": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Viagem"
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mês"
           }
         },
-        "ru": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Путешествие"
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Месяц"
           }
         },
-        "tr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Seyahat"
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ay"
           }
         },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "旅行"
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "月"
           }
         },
-        "zh-Hant": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "旅行"
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "月"
           }
         }
       }
     },
-    "Week": {
-      "extractionState": "manual",
-      "localizations": {
-        "ar": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "أسبوع"
+    "My currencies" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "عملاتي"
           }
         },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Woche"
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Meine Währungen"
           }
         },
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Week"
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "My currencies"
           }
         },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Semana"
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mis divisas"
           }
         },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Semaine"
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mes devises"
           }
         },
-        "it": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Settimana"
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Le mie valute"
           }
         },
-        "ja": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "週"
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "マイ通貨"
           }
         },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "주"
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "내 통화"
           }
         },
-        "pl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Tydzień"
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Moje waluty"
           }
         },
-        "pt-BR": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Semana"
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Minhas moedas"
           }
         },
-        "ru": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Неделя"
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Мои валюты"
           }
         },
-        "tr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Hafta"
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Para birimlerim"
           }
         },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "周"
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "我的货币"
           }
         },
-        "zh-Hant": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "週"
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "我的貨幣"
+          }
+        }
+      }
+    },
+    "Not selected" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "غير محدد"
+          }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Keine"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Not selected"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ninguna"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aucune"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nessuna"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "未選択"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "선택 안 함"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nie wybrano"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nenhuma"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Не выбрано"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Seçilmedi"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "未选择"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "未選擇"
+          }
+        }
+      }
+    },
+    "On a trip, the local currency will appear here" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "أثناء السفر ستظهر العملة المحلية هنا"
+          }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Auf Reisen erscheint hier die lokale Währung"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "On a trip, the local currency will appear here"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "De viaje, aquí aparecerá la moneda local"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "En voyage, la devise locale s’affichera ici"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "In viaggio qui apparirà la valuta locale"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "旅行中は現地の通貨がここに表示されます"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "여행 중에는 현지 통화가 여기에 표시됩니다"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "W podróży pojawi się tu lokalna waluta"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Em viagem, a moeda local aparecerá aqui"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "В поездке здесь появится местная валюта"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Seyahatte burada yerel para birimi görünecek"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "旅行时这里会显示当地货币"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "旅行時這裡會顯示當地貨幣"
+          }
+        }
+      }
+    },
+    "One currency in another, with the change over a day" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "سعر عملة مقابل أخرى وتغيّره خلال يوم"
+          }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Kurs einer Währung in einer anderen und die Änderung in 24 h"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "One currency in another, with the change over a day"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "El valor de una divisa en otra y su cambio en 24 h"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Le cours d’une devise dans une autre et sa variation sur 24 h"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Il tasso di una valuta in un’altra e la variazione in 24 ore"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "通貨ペアのレートと 24 時間の変動"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "통화 간 환율과 24시간 변동"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Kurs jednej waluty w drugiej i zmiana w ciągu doby"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "A cotação de uma moeda em outra e a variação em 24 h"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Курс одной валюты к другой и его изменение за сутки"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bir para biriminin diğerine kuru ve günlük değişimi"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "一种货币兑另一种货币的汇率及 24 小时变化"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "一種貨幣兌另一種貨幣的匯率及 24 小時變化"
+          }
+        }
+      }
+    },
+    "Open Cento on your trip to detect the country" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "افتح Cento أثناء سفرك لتحديد البلد"
+          }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Öffne Cento auf Reisen, um das Land zu erkennen"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Open Cento on your trip to detect the country"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Abre Cento en tu viaje para detectar el país"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ouvrez Cento en voyage pour détecter le pays"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Apri Cento in viaggio per rilevare il paese"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "旅行先で Cento を開くと国を判別します"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "여행 중 Cento를 열면 국가를 감지합니다"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Otwórz Cento w podróży, aby wykryć kraj"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Abra o Cento na viagem para detectar o país"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Откройте Cento в поездке — виджет определит страну"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ülkeyi algılamak için seyahatte Cento’yu açın"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "旅行时打开 Cento 以识别国家"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "旅行時開啟 Cento 以辨識國家"
+          }
+        }
+      }
+    },
+    "Open Cento to choose currencies" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "افتح Cento لاختيار العملات"
+          }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Öffne Cento, um Währungen zu wählen"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Open Cento to choose currencies"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Abre Cento para elegir tus divisas"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ouvrez Cento pour choisir vos devises"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Apri Cento per scegliere le valute"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cento を開いて通貨を選択"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cento를 열어 통화를 선택하세요"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Otwórz Cento, aby wybrać waluty"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Abra o Cento para escolher as moedas"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Откройте Cento, чтобы выбрать валюты"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Para birimlerini seçmek için Cento’yu aç"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "打开 Cento 选择货币"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "開啟 Cento 選擇貨幣"
+          }
+        }
+      }
+    },
+    "Pair" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "الزوج"
+          }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Paar"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pair"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Par"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Paire"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Coppia"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ペア"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "통화 쌍"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Para"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Par"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Пара"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Çift"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "货币对"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "貨幣對"
+          }
+        }
+      }
+    },
+    "Period" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "الفترة"
+          }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zeitraum"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Period"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Periodo"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Période"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Periodo"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "期間"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "기간"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Okres"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Período"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Период"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dönem"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "时间段"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "時間段"
+          }
+        }
+      }
+    },
+    "Price in" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "السعر بـ"
+          }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Preis in"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Price in"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Precio en"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Prix en"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Prezzo in"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "価格の通貨"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "가격 통화"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cena w"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Preço em"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Цена в"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fiyat birimi"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "计价货币"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "計價貨幣"
+          }
+        }
+      }
+    },
+    "Rate" : {},
+    "Rate chart" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "مخطط السعر"
+          }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Kursdiagramm"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rate chart"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Gráfico del tipo"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Graphique du cours"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Grafico del tasso"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "レートチャート"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "환율 차트"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wykres kursu"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Gráfico da cotação"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "График курса"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Kur grafiği"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "汇率图表"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "匯率圖表"
+          }
+        }
+      }
+    },
+    "Second currency color" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "لون العملة الثانية"
+          }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Farbe der zweiten Währung"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Second currency color"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Color de la segunda divisa"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Couleur de la deuxième devise"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Colore della seconda valuta"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "2番目の通貨の色"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "두 번째 통화 색상"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Kolor drugiej waluty"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cor da segunda moeda"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Цвет второй валюты"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "İkinci para biriminin rengi"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "第二种货币颜色"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "第二種貨幣顏色"
+          }
+        }
+      }
+    },
+    "Several currencies at once — from your app list or chosen here" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "عدة عملات معًا — من قائمتك في التطبيق أو تختارها هنا"
+          }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mehrere Währungen auf einmal – aus der App oder hier gewählt"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Several currencies at once — from your app list or chosen here"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Varias divisas a la vez: las de la app o las que elijas aquí"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Plusieurs devises à la fois — celles de l’app ou à choisir ici"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Più valute insieme: dalla lista dell’app o scelte qui"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "複数の通貨をまとめて表示—アプリのリストまたはここで選択"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "여러 통화를 한 번에 — 앱 목록 또는 직접 선택"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Kilka walut naraz — z listy w aplikacji lub wybranych tutaj"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Várias moedas de uma vez — da lista do app ou escolhidas aqui"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Несколько валют сразу — из списка в приложении или на выбор"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Birden fazla para birimi — uygulamadaki listenden ya da burada seçerek"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "同时查看多种货币——来自应用列表或在此选择"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "同時查看多種貨幣——來自 App 列表或在此選擇"
+          }
+        }
+      }
+    },
+    "Show" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "عرض"
+          }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Anzeigen"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Show"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mostrar"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Afficher"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mostra"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "表示"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "표시"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pokaż"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mostrar"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Показывать"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Göster"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "显示"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "顯示"
+          }
+        }
+      }
+    },
+    "Swap currencies" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "تبديل العملتين"
+          }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Währungen tauschen"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Swap currencies"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Intercambiar divisas"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Inverser les devises"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Inverti valute"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "通貨を入れ替える"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "통화 바꾸기"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zamień waluty"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Inverter moedas"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Поменять валюты"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Para birimlerini değiştir"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "交换货币"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "交換貨幣"
+          }
+        }
+      }
+    },
+    "The currency of the country you are in, next to your home currency" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "عملة البلد الذي أنت فيه بجانب عملتك"
+          }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Die Währung des Landes, in dem du bist, neben deiner Heimatwährung"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The currency of the country you are in, next to your home currency"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "La moneda del país donde estás, junto a la tuya"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "La devise du pays où vous êtes, à côté de votre devise"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "La valuta del paese in cui ti trovi, accanto alla tua"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "滞在国の通貨と自国通貨を並べて表示"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "현재 있는 나라의 통화와 내 통화를 나란히"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Waluta kraju, w którym jesteś, obok twojej waluty"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "A moeda do país onde você está, ao lado da sua"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Валюта страны, где вы сейчас, рядом с вашей домашней"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bulunduğunuz ülkenin para birimi, kendi para biriminizin yanında"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "所在国家的货币与您的本国货币对照"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "所在國家的貨幣與您的本國貨幣對照"
+          }
+        }
+      }
+    },
+    "Time" : {},
+    "To" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "إلى"
+          }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "In"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "To"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "A"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Vers"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "A"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "変換先"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "대상 통화"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Na"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Para"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "В"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hedef"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "目标货币"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "目標貨幣"
+          }
+        }
+      }
+    },
+    "Top coins" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "الأبرز"
+          }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Top-Coins"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Top coins"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Principales"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Principales"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Principali"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "上位"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "상위 코인"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Najważniejsze"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Principais"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Топ монет"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Önde gelenler"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "热门"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "熱門"
+          }
+        }
+      }
+    },
+    "Top coins with the change over a day" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "أبرز العملات وتغيّرها خلال يوم"
+          }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Top-Coins und ihre Änderung in 24 h"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Top coins with the change over a day"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Principales criptomonedas y su cambio en 24 h"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Les principales cryptos et leur variation sur 24 h"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Le principali criptovalute e la variazione in 24 ore"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "主要コインと24時間の変動"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "주요 코인과 24시간 변동"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Najważniejsze kryptowaluty i zmiana w ciągu doby"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Principais moedas e a variação em 24 h"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Топ монет и изменение за сутки"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Önde gelen coinler ve günlük değişim"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "热门币种及 24 小时涨跌"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "熱門幣種及 24 小時漲跌"
+          }
+        }
+      }
+    },
+    "Top gainers" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "الأكثر ارتفاعًا"
+          }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Größte Gewinner"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Top gainers"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mayores subidas"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Plus fortes hausses"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Maggiori rialzi"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "値上がり上位"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "상승 상위"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Największe wzrosty"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Maiores altas"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Лидеры роста"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "En çok yükselenler"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "涨幅榜"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "漲幅榜"
+          }
+        }
+      }
+    },
+    "Top losers" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "الأكثر انخفاضًا"
+          }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Größte Verlierer"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Top losers"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mayores caídas"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Plus fortes baisses"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Maggiori ribassi"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "値下がり上位"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "하락 상위"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Największe spadki"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Maiores quedas"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Лидеры падения"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "En çok düşenler"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "跌幅榜"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "跌幅榜"
+          }
+        }
+      }
+    },
+    "Travel" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "السفر"
+          }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Reise"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Travel"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Viaje"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Voyage"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Viaggio"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "旅行"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "여행"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Podróż"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Viagem"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Путешествие"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Seyahat"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "旅行"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "旅行"
+          }
+        }
+      }
+    },
+    "Week" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "أسبوع"
+          }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Woche"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Week"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Semana"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Semaine"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Settimana"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "週"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "주"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tydzień"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Semana"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Неделя"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hafta"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "周"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "週"
           }
         }
       }
     }
   },
-  "version": "1.0"
+  "version" : "1.0"
 }

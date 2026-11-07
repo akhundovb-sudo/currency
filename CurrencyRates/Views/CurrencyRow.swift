@@ -209,7 +209,12 @@ enum AssetCache {
 struct CurrencyIcon: View {
     let currency: Currency
 
-    @ScaledMetric(relativeTo: .title) private var size = 44
+    @ScaledMetric private var size: CGFloat
+
+    init(currency: Currency, size: CGFloat = 44) {
+        self.currency = currency
+        _size = ScaledMetric(wrappedValue: size, relativeTo: .title)
+    }
 
     var body: some View {
         artwork
@@ -327,6 +332,8 @@ struct ProBadge: View {
             .font(.system(size: 11, weight: .heavy, design: .rounded))
             .tracking(0.5)
             .foregroundStyle(Color.accentColor)
+            // Разрядка добавляет место после «O», а у «P» свой отступ слева: слово смещено влево.
+            .offset(x: 0.4)
             .padding(.horizontal, 8)
             .frame(height: 22)
             // Стекло, как у кружков выбора: лёгкое свечение акцента внутри, белый ободок

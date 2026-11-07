@@ -170,7 +170,7 @@ struct ChartProvider: AppIntentTimelineProvider {
 struct ChartWidget: Widget {
     var body: some WidgetConfiguration {
         AppIntentConfiguration(kind: "ChartWidget", intent: ChartIntent.self, provider: ChartProvider()) { entry in
-            ChartWidgetView(entry: entry)
+            ProGated { ChartWidgetView(entry: entry) }
         }
         .configurationDisplayName("Rate chart")
         .description("A pair with a chart for a day, week or month")
@@ -426,7 +426,7 @@ struct CryptoProvider: AppIntentTimelineProvider {
 struct CryptoWidget: Widget {
     var body: some WidgetConfiguration {
         AppIntentConfiguration(kind: "CryptoWidget", intent: CryptoIntent.self, provider: CryptoProvider()) { entry in
-            CryptoWidgetView(entry: entry)
+            ProGated { CryptoWidgetView(entry: entry) }
         }
         .configurationDisplayName("Crypto market")
         .description("Top coins with the change over a day")
@@ -706,7 +706,7 @@ struct TravelProvider: AppIntentTimelineProvider {
 struct TravelWidget: Widget {
     var body: some WidgetConfiguration {
         AppIntentConfiguration(kind: "TravelWidget", intent: TravelIntent.self, provider: TravelProvider()) { entry in
-            TravelWidgetView(entry: entry)
+            ProGated { TravelWidgetView(entry: entry) }
         }
         .configurationDisplayName("Travel")
         .description("The currency of the country you are in, next to your home currency")

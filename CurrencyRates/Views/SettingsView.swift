@@ -8,20 +8,6 @@ struct SettingsView: View {
     @Environment(\.requestReview) private var requestReview
     @Environment(\.openURL) private var openURL
 
-    /// Выбор языка применяется, когда меню уже закрылось: смена языка пересобирает весь
-    /// интерфейс, и вместе с анимацией закрытия меню это подвисало.
-    private var languageSelection: Binding<AppLanguage> {
-        Binding(
-            get: { store.language },
-            set: { language in
-                Task { @MainActor in
-                    try? await Task.sleep(for: .milliseconds(200))
-                    store.language = language
-                }
-            }
-        )
-    }
-
     var body: some View {
         @Bindable var store = store
 
@@ -40,84 +26,47 @@ struct SettingsView: View {
                     .listRowBackground(Color.clear)
                 }
 
-                Section(L(.appearance)) {
-                    Picker(L(.language), selection: languageSelection) {
-                        // По алфавиту (по английскому названию языка).
-                        ForEach(AppLanguage.sortedByName) { language in
-                            Text(verbatim: language.nativeName).tag(language)
+                Section {
+                    // Язык — в системных настройках приложения.
+                    Button {
+                        if let url = URL(string: UIApplication.openSettingsURLString) { openURL(url) }
+                    } label: {
+                        LabeledContent {
+                            HStack(spacing: 6) {
+                                Text(store.language.nativeName).foregroundStyle(Color.secondaryLabel)
+                                Image(systemName: "chevron.forward")
+                                    .font(.footnote.weight(.semibold))
+                                    .foregroundStyle(Color(.tertiaryLabel))
+                            }
+                        } label: {
+                            rowLabel(L(.language), icon: "globe")
                         }
                     }
-                    Picker(L(.theme), selection: $store.theme) {
+                    .foregroundStyle(Color.primary)
+                    Picker(selection: $store.theme) {
                         ForEach(AppTheme.allCases) { theme in
                             Text(theme.title).tag(theme)
                         }
+                    } label: {
+                        rowLabel(L(.theme), icon: "circle.lefthalf.filled")
                     }
                 }
 
                 Section {
-                    Picker(L(.numberFormat), selection: $store.numberStyle) {
-                        ForEach(NumberStyle.allCases) { style in
-                            Text(style.title).tag(style)
-                        }
+                    NavigationLink { NumbersSettingsView() } label: {
+                        rowLabel(L(.numbers), icon: "number")
                     }
-                    // −1 — «Авто», дальше 0…8 знаков.
-                    Stepper(
-                        value: Binding(
-                            get: { store.decimalPlaces ?? -1 },
-                            set: { store.decimalPlaces = $0 >= 0 ? $0 : nil }
-                        ),
-                        in: -1...8
-                    ) {
-                        LabeledContent(L(.decimalPlaces), value: store.decimalPlaces.map(String.init) ?? L(.auto))
-                            .monospacedDigit()
+                    NavigationLink { RatesSettingsView() } label: {
+                        rowLabel(L(.rates), icon: "arrow.triangle.2.circlepath")
                     }
-                    // Живой пример — так суммы выглядят в конвертере.
-                    LabeledContent(L(.example)) {
-                        Text(verbatim: "\(RateFormat.amount(1234.56)) $")
-                            .font(.amount)
-                            .monospacedDigit()
-                            .foregroundStyle(Color.primary)
-                            .contentTransition(.numericText())
+                    NavigationLink {
+                        AppIconSettingsView(onLocked: { isPaywallPresented = true })
+                    } label: {
+                        rowLabel(L(.appIcon), icon: "app")
                     }
-                    .animation(.snappy, value: store.numberStyle)
-                    .animation(.snappy, value: store.decimalPlaces)
-                } header: {
-                    // Почему маленькие суммы показываются точнее выбранного числа знаков — по нажатию.
-                    HStack(spacing: 6) {
-                        Text(L(.numbers))
-                        InfoButton(text: AttributedString(L(.tinyAmountsFooter)))
+                    NavigationLink { WidgetsGuideView() } label: {
+                        rowLabel(L(.widgets), icon: "square.grid.2x2")
                     }
-                }
-
-                Section {
-                    sourceRow(.fiat)
-                    sourceRow(.crypto)
-                } header: {
-                    // Обновление — иконкой в заголовке, а не отдельной строкой: блок остаётся тихим.
-                    HStack(spacing: 6) {
-                        Text(L(.rates))
-                        // Источники и частота обновления — по нажатию, а не сноской: блок остаётся коротким.
-                        InfoButton(text: sourcesFooter)
-                        Spacer()
-                        if store.isLoading {
-                            ProgressView().controlSize(.small)
-                        } else {
-                            Button {
-                                Task { await store.refresh() }
-                            } label: {
-                                // Словом, как кнопки в заголовках iOS: понятнее иконки и тише фиолетовой стрелки.
-                                Text(L(.update))
-                                    .font(.subheadline.weight(.medium))
-                                    .textCase(nil)
-                            }
-                            .accessibilityLabel(L(.refreshRates))
-                        }
-                    }
-                }
-
-                Section(L(.appIcon)) {
-                    AppIconPicker(isPro: store.isPro, onLocked: { isPaywallPresented = true })
-                        .listRowInsets(EdgeInsets(top: 12, leading: 0, bottom: 14, trailing: 0))
                 }
 
                 #if DEBUG
@@ -131,10 +80,13 @@ struct SettingsView: View {
                 }
                 #endif
 
-                Section(L(.support)) {
+                Section {
+                    ShareLink(item: AppLinks.share) {
+                        linkRow(L(.shareApp), icon: "square.and.arrow.up")
+                    }
                     // Условия и конфиденциальность — одна строка, ведёт на страницу с документами.
                     Link(destination: AppLinks.legal) {
-                        linkRow(L(.termsPrivacy), symbol: "arrow.up.right")
+                        linkRow(L(.termsPrivacy), icon: "doc.text", trailing: "arrow.up.right")
                     }
                 }
             }
@@ -165,19 +117,143 @@ struct SettingsView: View {
         }
     }
 
-    /// Строка-ссылка: подпись слева, значок справа.
-    private func linkRow(_ title: String, symbol: String) -> some View {
-        HStack {
+    /// Подпись строки со значком слева — значок нейтральный серый, текст основным.
+    private func rowLabel(_ title: String, icon: String) -> some View {
+        Label {
             Text(title).foregroundStyle(Color.primary)
-            Spacer()
-            Image(systemName: symbol)
-                .font(.footnote.weight(.semibold))
-                .foregroundStyle(Color.secondaryLabel)
+        } icon: {
+            Image(systemName: icon).foregroundStyle(Color.secondaryLabel)
         }
     }
 
-    /// Источник курсов: слева тип, справа ссылка на источник и под ней мелко время обновления.
-    /// Тип курсов и время обновления — серым, без ссылок: источники названы в сноске.
+    /// Строка-ссылка: значок и подпись слева, при необходимости значок справа.
+    private func linkRow(_ title: String, icon: String, trailing: String? = nil) -> some View {
+        HStack {
+            rowLabel(title, icon: icon)
+            Spacer()
+            if let trailing {
+                Image(systemName: trailing)
+                    .font(.footnote.weight(.semibold))
+                    .foregroundStyle(Color.secondaryLabel)
+            }
+        }
+    }
+}
+
+#Preview {
+    SettingsView()
+        .environment(RatesStore.preview())
+}
+
+/// Внутренняя страница настроек: заголовок, кнопка «Назад» и те же отступы, что на главной.
+struct SettingsPage: ViewModifier {
+    let title: String
+    @Environment(RatesStore.self) private var store
+
+    func body(content: Content) -> some View {
+        content
+            .contentMargins(.top, 8, for: .scrollContent)
+            // Модальные окна не наследуют направление письма — для арабского задаём сами.
+            .environment(\.layoutDirection, store.language.isRightToLeft ? .rightToLeft : .leftToRight)
+            .softTopBar()
+            .navigationTitle(title)
+            .navigationBarTitleDisplayMode(.inline)
+    }
+}
+
+/// Плашка-пояснение внизу страницы — как сообщения в приложении, только без крестика.
+private struct NoticeSection: View {
+    let toast: Toast
+
+    var body: some View {
+        Section {
+            ToastView(toast: toast)
+                .listRowInsets(EdgeInsets())
+                .listRowBackground(Color.clear)
+        }
+    }
+}
+
+/// Настройки → «Числа»: формат и число знаков, пример — карточкой из списка валют.
+private struct NumbersSettingsView: View {
+    @Environment(RatesStore.self) private var store
+
+    private var exampleCode: String {
+        store.selectedCodes.first { $0 != store.sourceCode } ?? store.sourceCode
+    }
+
+    var body: some View {
+        @Bindable var store = store
+
+        Form {
+            Section(L(.example)) {
+                CurrencyRow(
+                    code: exampleCode,
+                    sourceCode: store.sourceCode,
+                    value: RateFormat.amount(1234.56),
+                    unitRate: store.unitRate(to: exampleCode)
+                )
+                .card(selected: false)
+                .accessibilityRemoveTraits(.isButton)
+                .animation(.snappy, value: store.numberStyle)
+                .animation(.snappy, value: store.decimalPlaces)
+                .listRowInsets(EdgeInsets())
+                .listRowBackground(Color.clear)
+            }
+
+            Section {
+                Picker(L(.numberFormat), selection: $store.numberStyle) {
+                    ForEach(NumberStyle.allCases) { style in
+                        Text(style.title).tag(style)
+                    }
+                }
+                // −1 — «Авто», дальше 0…8 знаков.
+                Stepper(
+                    value: Binding(
+                        get: { store.decimalPlaces ?? -1 },
+                        set: { store.decimalPlaces = $0 >= 0 ? $0 : nil }
+                    ),
+                    in: -1...8
+                ) {
+                    LabeledContent(L(.decimalPlaces), value: store.decimalPlaces.map(String.init) ?? L(.auto))
+                        .monospacedDigit()
+                }
+            }
+
+            NoticeSection(toast: Toast(kind: .info, message: L(.tinyAmountsFooter)))
+        }
+        .modifier(SettingsPage(title: L(.numbers)))
+    }
+}
+
+/// Настройки → «Курсы»: когда обновлялись, кнопка обновления и откуда данные.
+private struct RatesSettingsView: View {
+    @Environment(RatesStore.self) private var store
+
+    var body: some View {
+        Form {
+            Section {
+                sourceRow(.fiat)
+                sourceRow(.crypto)
+                Button {
+                    Task { await store.refresh() }
+                } label: {
+                    HStack {
+                        Text(L(.update))
+                        Spacer()
+                        if store.isLoading { ProgressView().controlSize(.small) }
+                    }
+                }
+                .disabled(store.isLoading)
+                .accessibilityLabel(L(.refreshRates))
+            }
+
+            NoticeSection(toast: Toast(kind: .info, message: String(sourcesFooter.characters), attributedMessage: sourcesFooter))
+        }
+        .modifier(SettingsPage(title: L(.rates)))
+    }
+
+    /// Тип курсов слева, время обновления справа.
     private func sourceRow(_ kind: CurrencyKind) -> some View {
         LabeledContent(kind == .fiat ? L(.fiatCurrencies) : L(.cryptoCurrencies), value: updatedText(kind))
     }
@@ -198,42 +274,25 @@ struct SettingsView: View {
             Date.FormatStyle(locale: store.language.locale).month(.abbreviated).day().hour().minute()
         )
     }
-
 }
 
-#Preview {
-    SettingsView()
-        .environment(RatesStore.preview())
-}
-
-/// Серая «ⓘ» в заголовке секции: по нажатию — пояснение во всплывающем окне над иконкой.
-private struct InfoButton: View {
-    let text: AttributedString
-    @State private var isPresented = false
+/// Настройки → «Иконка приложения».
+private struct AppIconSettingsView: View {
+    let onLocked: () -> Void
+    @Environment(RatesStore.self) private var store
 
     var body: some View {
-        Button {
-            isPresented = true
-        } label: {
-            Image(systemName: "info.circle")
-                .font(.subheadline)
-                .foregroundStyle(Color.secondaryLabel)
+        Form {
+            Section {
+                AppIconPicker(isPro: store.isPro, onLocked: onLocked)
+                    .listRowInsets(EdgeInsets(top: 12, leading: 0, bottom: 14, trailing: 0))
+            }
         }
-        // Над иконкой (стрелка снизу), чтобы не закрывать строки секции.
-        .popover(isPresented: $isPresented, arrowEdge: .bottom) {
-            Text(text)
-                .font(.subheadline)
-                .foregroundStyle(Color.primary)
-                .lineSpacing(2)
-                .frame(width: 280, alignment: .leading)
-                .padding(.horizontal, 18)
-                .padding(.vertical, 16)
-                .presentationCompactAdaptation(.popover)
-        }
+        .modifier(SettingsPage(title: L(.appIcon)))
     }
 }
 
-/// Выбор иконки приложения: одна строка, листается вбок. Первые три — бесплатные, остальные — с тегом PRO:
+/// Выбор иконки приложения: сетка. Первые три — бесплатные, остальные — с тегом PRO:
 /// без подписки нажатие открывает экран подписки.
 struct AppIconPicker: View {
     let isPro: Bool
@@ -278,26 +337,14 @@ struct AppIconPicker: View {
     }
 
     var body: some View {
-        // Одна строка, листается вбок; выбранная иконка при открытии — в зоне видимости.
-        ScrollViewReader { proxy in
-            ScrollView(.horizontal) {
-                // Последняя видимая иконка обрезана краем — видно, что дальше листается.
-                HStack(alignment: .top, spacing: 8) {
-                    ForEach(Self.options) { option in
-                        cell(option).id(option.id)
-                    }
-                }
-                .padding(.horizontal, 12)
-                .padding(.top, 8)
-                .padding(.bottom, 4)
-            }
-            .scrollIndicators(.hidden)
-            .onAppear {
-                if let selected = Self.options.first(where: { $0.name == current }) {
-                    proxy.scrollTo(selected.id, anchor: .center)
-                }
+        LazyVGrid(columns: [GridItem(.adaptive(minimum: 76), spacing: 8)], spacing: 16) {
+            ForEach(Self.options) { option in
+                cell(option)
             }
         }
+        .padding(.horizontal, 12)
+        .padding(.top, 8)
+        .padding(.bottom, 4)
         .animation(.spring(response: 0.3, dampingFraction: 0.7), value: current)
     }
 

@@ -7,18 +7,15 @@ enum KeypadKey: Hashable {
     case decimal
     case backspace
     case add, subtract, multiply, divide, equals
+    /// Процент от последнего числа.
+    case percent
+    /// Очистить сумму.
+    case clear
     /// Скрыть клавиатуру — не меняет сумму.
     case hide
-
-    var isOperator: Bool {
-        switch self {
-        case .add, .subtract, .multiply, .divide, .equals, .backspace: true
-        default: false
-        }
-    }
 }
 
-/// Цифровая клавиатура со стеклянными клавишами и рядом действий калькулятора.
+/// Клавиатура-калькулятор со стеклянными клавишами: цифры и действия в одной сетке 4 × 5.
 struct AmountKeypad: View {
     let onKey: (KeypadKey) -> Void
     /// Долгое нажатие на ⌫ очищает сумму.
@@ -28,30 +25,24 @@ struct AmountKeypad: View {
     /// Широкий экран (iPad): клавиатура во всю колонку карточек, а не узкой полосой.
     @Environment(\.horizontalSizeClass) private var sizeClass
 
-    private let operators: [KeypadKey] = [.divide, .multiply, .subtract, .add, .equals]
-
     private let rows: [[KeypadKey]] = [
-        [.digit(1), .digit(2), .digit(3)],
-        [.digit(4), .digit(5), .digit(6)],
-        [.digit(7), .digit(8), .digit(9)],
-        [.decimal, .digit(0), .hide],
+        [.clear, .backspace, .percent, .divide],
+        [.digit(7), .digit(8), .digit(9), .multiply],
+        [.digit(4), .digit(5), .digit(6), .subtract],
+        [.digit(1), .digit(2), .digit(3), .add],
+        [.hide, .digit(0), .decimal, .equals],
     ]
 
     var body: some View {
-        VStack(spacing: 10) {
-            HStack(spacing: 10) {
-                ForEach(operators, id: \.self) { key in
-                    KeypadButton(key: key, onTap: { onKey(key) })
-                }
-                KeypadButton(key: .backspace, onTap: { onKey(.backspace) }, onLongPress: onClear)
-            }
-
-            Grid(horizontalSpacing: 10, verticalSpacing: 10) {
-                ForEach(rows, id: \.self) { row in
-                    GridRow {
-                        ForEach(row, id: \.self) { key in
-                            KeypadButton(key: key, onTap: { key == .hide ? onDone() : onKey(key) })
-                        }
+        Grid(horizontalSpacing: 10, verticalSpacing: 10) {
+            ForEach(rows, id: \.self) { row in
+                GridRow {
+                    ForEach(row, id: \.self) { key in
+                        KeypadButton(
+                            key: key,
+                            onTap: { handle(key) },
+                            onLongPress: key == .backspace ? onClear : nil
+                        )
                     }
                 }
             }
@@ -75,6 +66,14 @@ struct AmountKeypad: View {
         // иначе они проходят сквозь стекло к карточке под ней и выбирают её.
         .contentShape(Rectangle())
         .onTapGesture {}
+    }
+
+    private func handle(_ key: KeypadKey) {
+        switch key {
+        case .hide: onDone()
+        case .clear: onClear()
+        default: onKey(key)
+        }
     }
 }
 
@@ -123,7 +122,7 @@ private struct KeypadButton: View {
         Button(action: tap) {
             label
                 .frame(maxWidth: .infinity)
-                .frame(height: min(key.isOperator ? height * 0.8 : height, maxHeight))
+                .frame(height: min(height, maxHeight))
         }
         .buttonStyle(GlassBubbleStyle(tint: tint))
         .scaleEffect(isBouncing ? 0.88 : 1)
@@ -175,9 +174,13 @@ private struct KeypadButton: View {
             } else {
                 Text(Calculator.decimalSeparator).font(.title)
             }
+        case .clear:
+            Text(verbatim: "C").font(.title).foregroundStyle(Color.accentColor)
+        case .percent:
+            Text(verbatim: "%").font(.title).foregroundStyle(Color.accentColor)
         case .backspace:
             AppIcon("icon-backspace", size: 26)
-                .foregroundStyle(Color.primary)
+                .foregroundStyle(Color.accentColor)
         default:
             AppIcon(operatorSymbol, size: key == .hide ? 28 : 24)
                 .foregroundStyle(operatorColor)
@@ -194,6 +197,8 @@ private struct KeypadButton: View {
         case .multiply: L(.multiply)
         case .divide: L(.divide)
         case .equals: L(.equals)
+        case .percent: "%"
+        case .clear: L(.clearAmount)
         case .hide: L(.hideKeyboard)
         }
     }
@@ -201,8 +206,7 @@ private struct KeypadButton: View {
     /// Цвет стекла клавиши: у цифр — нейтральный, у знаков — цвет акцента.
     private var tint: Color {
         switch key {
-        case .digit, .decimal, .hide: .glassNeutral
-        case .backspace: .glassNeutral
+        case .digit, .decimal, .hide, .clear, .backspace, .percent: .glassNeutral
         default: operatorColor
         }
     }
@@ -214,7 +218,7 @@ private struct KeypadButton: View {
         case .multiply: .operatorMultiply
         case .subtract: .operatorSubtract
         case .add: .operatorAdd
-        case .hide, .backspace: .primary
+        case .hide, .clear, .percent, .backspace: .primary
         default: .accentColor                                      // = основной цвет
         }
     }

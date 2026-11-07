@@ -242,6 +242,19 @@ enum Calculator {
         return String(expression[expression.index(after: index)...])
     }
 
+    /// «%» к последнему числу: после + и − это процент от выражения слева («200+10» → «200+20»),
+    /// иначе — сотая часть числа.
+    static func applyPercent(to expression: String) -> String? {
+        let last = lastNumber(in: expression)
+        guard let value = number(last) else { return nil }
+        let prefix = String(expression.dropLast(last.count))
+        var percent = value / 100
+        if let op = prefix.last, op == "+" || op == "−", let base = evaluate(String(prefix.dropLast())) {
+            percent *= base
+        }
+        return prefix + RateFormat.editable(percent)
+    }
+
     static func evaluate(_ expression: String) -> Double? {
         var numbers: [Double] = []
         var ops: [Character] = []

@@ -27,31 +27,6 @@ enum AppLanguage: String, CaseIterable, Identifiable, Sendable {
         }
     }
 
-    /// Название по-английски: по нему список языков в настройках идёт по алфавиту.
-    var englishName: String {
-        switch self {
-        case .ru: "Russian"
-        case .en: "English"
-        case .tr: "Turkish"
-        case .fr: "French"
-        case .es: "Spanish"
-        case .de: "German"
-        case .zh: "Chinese (Simplified)"
-        case .ar: "Arabic"
-        case .ja: "Japanese"
-        case .pt: "Portuguese (Brazil)"
-        case .ko: "Korean"
-        case .zhHant: "Chinese (Traditional)"
-        case .it: "Italian"
-        case .pl: "Polish"
-        }
-    }
-
-    /// Все языки по алфавиту (по английскому названию).
-    static var sortedByName: [AppLanguage] {
-        allCases.sorted { $0.englishName < $1.englishName }
-    }
-
     /// Локаль языка; создаётся один раз — её спрашивают при каждом форматировании числа.
     var locale: Locale {
         if let cached = Self.locales[self] { return cached }
@@ -109,7 +84,10 @@ enum L10n {
     enum Key {
         case title, settings, edit, done, close, delete, addCurrency
         case updateFailed, retry, loading, demoData, fiatShort, cryptoShort, notLoaded, updatedAt, cachedAt
-        case longPressClears, comma, erase, plus, minus, multiply, divide, equals, hideKeyboard
+        case shareApp, widgets, widgetFree, widgetAdd, widgetHowTo, widgetStep1, widgetStep2, widgetStep3, widgetStep4
+        case widgetPair, widgetList, widgetChart, widgetCrypto, widgetTravel
+        case widgetPairInfo, widgetListInfo, widgetChartInfo, widgetCryptoInfo, widgetTravelInfo
+        case longPressClears, clearAmount, ratesUpdated, comma, erase, plus, minus, multiply, divide, equals, hideKeyboard
         case alreadyAdded, addToList, nothingFound, noResults, searchPrompt, currencyType
         case sourceHint, enterHint, enteredAmount, noRate
         case appearance, theme, language, source, updated, fiatCurrencies, fiatFooter
@@ -167,6 +145,27 @@ enum L10n {
         .noRate: ["Нет курса", "No rate", "Kur yok", "Pas de taux", "Sin tipo", "Kein Kurs", "无汇率", "لا يوجد سعر", "レートなし", "Sem cotação", "환율 없음", "無匯率", "Nessun tasso", "Brak kursu"],
         .appearance: ["Оформление", "Appearance", "Görünüm", "Apparence", "Apariencia", "Darstellung", "外观", "المظهر", "外観", "Aparência", "화면 스타일", "外觀", "Aspetto", "Wygląd"],
         .theme: ["Тема", "Theme", "Tema", "Thème", "Tema", "Design", "主题", "السمة", "テーマ", "Tema", "테마", "主題", "Tema", "Motyw"],
+        .widgetPair: ["Курс валюты", "Exchange rate", "Döviz kuru", "Taux de change", "Tipo de cambio", "Wechselkurs", "汇率", "سعر الصرف", "為替レート", "Cotação", "환율", "匯率", "Tasso di cambio", "Kurs waluty"],
+        .widgetList: ["Мои валюты", "My currencies", "Para birimlerim", "Mes devises", "Mis divisas", "Meine Währungen", "我的货币", "عملاتي", "マイ通貨", "Minhas moedas", "내 통화", "我的貨幣", "Le mie valute", "Moje waluty"],
+        .widgetChart: ["График курса", "Rate chart", "Kur grafiği", "Graphique du cours", "Gráfico del tipo", "Kursdiagramm", "汇率图表", "مخطط السعر", "レートチャート", "Gráfico da cotação", "환율 차트", "匯率圖表", "Grafico del tasso", "Wykres kursu"],
+        .widgetCrypto: ["Крипто-рынок", "Crypto market", "Kripto piyasası", "Marché crypto", "Mercado cripto", "Kryptomarkt", "加密市场", "سوق العملات المشفرة", "暗号資産マーケット", "Mercado cripto", "암호화폐 시장", "加密市場", "Mercato cripto", "Rynek kryptowalut"],
+        .widgetTravel: ["Путешествие", "Travel", "Seyahat", "Voyage", "Viaje", "Reise", "旅行", "السفر", "旅行", "Viagem", "여행", "旅行", "Viaggio", "Podróż"],
+        .widgetPairInfo: ["Курс одной валюты к другой и его изменение за сутки", "One currency in another, with the change over a day", "Bir para biriminin diğerine kuru ve günlük değişimi", "Le cours d’une devise dans une autre et sa variation sur 24 h", "El valor de una divisa en otra y su cambio en 24 h", "Kurs einer Währung in einer anderen und die Änderung in 24 h", "一种货币兑另一种货币的汇率及 24 小时变化", "سعر عملة مقابل أخرى وتغيّره خلال يوم", "通貨ペアのレートと 24 時間の変動", "A cotação de uma moeda em outra e a variação em 24 h", "통화 간 환율과 24시간 변동", "一種貨幣兌另一種貨幣的匯率及 24 小時變化", "Il tasso di una valuta in un’altra e la variazione in 24 ore", "Kurs jednej waluty w drugiej i zmiana w ciągu doby"],
+        .widgetListInfo: ["Несколько валют сразу — из списка в приложении или на выбор", "Several currencies at once — from your app list or chosen here", "Birden fazla para birimi — uygulamadaki listenden ya da burada seçerek", "Plusieurs devises à la fois — celles de l’app ou à choisir ici", "Varias divisas a la vez: las de la app o las que elijas aquí", "Mehrere Währungen auf einmal – aus der App oder hier gewählt", "同时查看多种货币——来自应用列表或在此选择", "عدة عملات معًا — من قائمتك في التطبيق أو تختارها هنا", "複数の通貨をまとめて表示—アプリのリストまたはここで選択", "Várias moedas de uma vez — da lista do app ou escolhidas aqui", "여러 통화를 한 번에 — 앱 목록 또는 직접 선택", "同時查看多種貨幣——來自 App 列表或在此選擇", "Più valute insieme: dalla lista dell’app o scelte qui", "Kilka walut naraz — z listy w aplikacji lub wybranych tutaj"],
+        .widgetChartInfo: ["Пара валют и график за день, неделю или месяц", "A pair with a chart for a day, week or month", "Gün, hafta veya ay için grafikli kur", "Une paire avec un graphique sur un jour, une semaine ou un mois", "Un par con gráfico de un día, una semana o un mes", "Ein Paar mit Diagramm für Tag, Woche oder Monat", "货币对及一天、一周或一个月的图表", "زوج عملات مع مخطط ليوم أو أسبوع أو شهر", "1日・1週間・1か月のチャート付き通貨ペア", "Um par com gráfico de um dia, semana ou mês", "하루·일주일·한 달 차트가 있는 통화 쌍", "貨幣對及一天、一週或一個月的圖表", "Una coppia con grafico di un giorno, una settimana o un mese", "Para walut z wykresem z dnia, tygodnia lub miesiąca"],
+        .widgetCryptoInfo: ["Топ монет и изменение за сутки", "Top coins with the change over a day", "Önde gelen coinler ve günlük değişim", "Les principales cryptos et leur variation sur 24 h", "Principales criptomonedas y su cambio en 24 h", "Top-Coins und ihre Änderung in 24 h", "热门币种及 24 小时涨跌", "أبرز العملات وتغيّرها خلال يوم", "主要コインと24時間の変動", "Principais moedas e a variação em 24 h", "주요 코인과 24시간 변동", "熱門幣種及 24 小時漲跌", "Le principali criptovalute e la variazione in 24 ore", "Najważniejsze kryptowaluty i zmiana w ciągu doby"],
+        .widgetTravelInfo: ["Валюта страны, где вы сейчас, рядом с вашей домашней", "The currency of the country you are in, next to your home currency", "Bulunduğunuz ülkenin para birimi, kendi para biriminizin yanında", "La devise du pays où vous êtes, à côté de votre devise", "La moneda del país donde estás, junto a la tuya", "Die Währung des Landes, in dem du bist, neben deiner Heimatwährung", "所在国家的货币与您的本国货币对照", "عملة البلد الذي أنت فيه بجانب عملتك", "滞在国の通貨と自国通貨を並べて表示", "A moeda do país onde você está, ao lado da sua", "현재 있는 나라의 통화와 내 통화를 나란히", "所在國家的貨幣與您的本國貨幣對照", "La valuta del paese in cui ti trovi, accanto alla tua", "Waluta kraju, w którym jesteś, obok twojej waluty"],
+        .shareApp: ["Поделиться Cento", "Share Cento", "Cento'yu Paylaş", "Partager Cento", "Compartir Cento", "Cento teilen", "分享 Cento", "مشاركة Cento", "Centoを共有", "Compartilhar Cento", "Cento 공유", "分享 Cento", "Condividi Cento", "Udostępnij Cento"],
+        .widgets: ["Виджеты", "Widgets", "Widget'lar", "Widgets", "Widgets", "Widgets", "小组件", "الأدوات", "ウィジェット", "Widgets", "위젯", "小工具", "Widget", "Widżety"],
+        .widgetFree: ["Бесплатно", "Free", "Ücretsiz", "Gratuit", "Gratis", "Kostenlos", "免费", "مجاني", "無料", "Grátis", "무료", "免費", "Gratis", "Za darmo"],
+        .widgetAdd: ["Добавить виджет", "Add Widget", "Widget Ekle", "Ajouter le widget", "Añadir widget", "Widget hinzufügen", "添加小组件", "إضافة أداة", "ウィジェットを追加", "Adicionar Widget", "위젯 추가", "加入小工具", "Aggiungi widget", "Dodaj widżet"],
+        .widgetHowTo: ["Как добавить виджет", "How to add a widget", "Widget nasıl eklenir", "Comment ajouter un widget", "Cómo añadir un widget", "So fügst du ein Widget hinzu", "如何添加小组件", "كيفية إضافة أداة", "ウィジェットの追加方法", "Como adicionar um widget", "위젯 추가 방법", "如何加入小工具", "Come aggiungere un widget", "Jak dodać widżet"],
+        .widgetStep1: ["Коснитесь и удерживайте пустое место на экране «Домой», пока приложения не начнут покачиваться.", "Touch and hold an empty spot on the Home Screen until the apps jiggle.", "Uygulamalar sallanana kadar Ana Ekran'da boş bir alana dokunup basılı tutun.", "Touchez longuement un espace vide de l'écran d'accueil jusqu'à ce que les apps bougent.", "Mantén pulsado un espacio vacío de la pantalla de inicio hasta que las apps se muevan.", "Halte eine leere Stelle auf dem Home-Bildschirm gedrückt, bis die Apps wackeln.", "按住主屏幕的空白处，直到 App 开始晃动。", "المس مع الاستمرار مكانًا فارغًا في الشاشة الرئيسية حتى تهتز التطبيقات.", "アプリが揺れ始めるまで、ホーム画面の空いている場所を長押しします。", "Toque e mantenha pressionado um espaço vazio da Tela de Início até os apps tremerem.", "앱이 흔들릴 때까지 홈 화면의 빈 공간을 길게 터치합니다.", "按住主畫面的空白處，直到 App 開始晃動。", "Tocca e tieni premuto uno spazio vuoto della schermata Home finché le app non oscillano.", "Dotknij i przytrzymaj puste miejsce na ekranie początkowym, aż aplikacje zaczną się trząść."],
+        .widgetStep2: ["Нажмите «Изменить», затем «Добавить виджет».", "Tap Edit, then Add Widget.", "Düzenle'ye, ardından Widget Ekle'ye dokunun.", "Touchez Modifier, puis Ajouter un widget.", "Toca Editar y luego Añadir widget.", "Tippe auf „Bearbeiten“ und dann auf „Widget hinzufügen“.", "轻点“编辑”，然后轻点“添加小组件”。", "اضغط على تعديل، ثم إضافة أداة.", "「編集」をタップし、「ウィジェットを追加」をタップします。", "Toque em Editar e depois em Adicionar Widget.", "편집을 탭한 다음 위젯 추가를 탭합니다.", "點一下「編輯」，再點一下「加入小工具」。", "Tocca Modifica, poi Aggiungi widget.", "Stuknij w Edycja, a następnie w Dodaj widżet."],
+        .widgetStep3: ["Найдите Cento и выберите виджет и размер.", "Search for Cento and choose a widget and size.", "Cento'yu arayın, bir widget ve boyut seçin.", "Recherchez Cento, puis choisissez un widget et sa taille.", "Busca Cento y elige un widget y un tamaño.", "Suche nach Cento und wähle ein Widget und eine Größe aus.", "搜索 Cento，然后选择小组件和尺寸。", "ابحث عن Cento واختر أداة وحجمًا.", "Centoを検索し、ウィジェットとサイズを選びます。", "Busque por Cento e escolha um widget e um tamanho.", "Cento를 검색하고 위젯과 크기를 선택합니다.", "搜尋 Cento，然後選擇小工具和大小。", "Cerca Cento e scegli un widget e una dimensione.", "Wyszukaj Cento i wybierz widżet oraz rozmiar."],
+        .widgetStep4: ["Нажмите «Добавить виджет», затем «Готово».", "Tap Add Widget, then Done.", "Widget Ekle'ye, ardından Bitti'ye dokunun.", "Touchez Ajouter le widget, puis OK.", "Toca Añadir widget y luego OK.", "Tippe auf „Widget hinzufügen“ und dann auf „Fertig“.", "轻点“添加小组件”，然后轻点“完成”。", "اضغط على إضافة أداة، ثم تم.", "「ウィジェットを追加」をタップし、「完了」をタップします。", "Toque em Adicionar Widget e depois em OK.", "위젯 추가를 탭한 다음 완료를 탭합니다.", "點一下「加入小工具」，再點一下「完成」。", "Tocca Aggiungi widget, poi Fine.", "Stuknij w Dodaj widżet, a następnie w Gotowe."],
+        .clearAmount: ["Очистить", "Clear", "Temizle", "Effacer", "Borrar", "Löschen", "清除", "مسح", "クリア", "Limpar", "지우기", "清除", "Cancella", "Wyczyść"],
+        .ratesUpdated: ["Курсы обновлены", "Rates updated", "Kurlar güncellendi", "Taux mis à jour", "Tipos actualizados", "Kurse aktualisiert", "汇率已更新", "تم تحديث الأسعار", "レートを更新しました", "Cotações atualizadas", "환율이 업데이트되었습니다", "匯率已更新", "Tassi aggiornati", "Kursy zaktualizowane"],
         .language: ["Язык", "Language", "Dil", "Langue", "Idioma", "Sprache", "语言", "اللغة", "言語", "Idioma", "언어", "語言", "Lingua", "Język"],
         .source: ["Источник", "Source", "Kaynak", "Source", "Fuente", "Quelle", "来源", "المصدر", "提供元", "Fonte", "출처", "來源", "Fonte", "Źródło"],
         .updated: ["Обновлено", "Updated", "Güncellendi", "Mis à jour", "Actualizado", "Aktualisiert", "更新时间", "آخر تحديث", "更新日時", "Atualizado", "업데이트됨", "更新時間", "Aggiornato", "Zaktualizowano"],

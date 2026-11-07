@@ -13,6 +13,43 @@ struct CentoWidgetBundle: WidgetBundle {
     }
 }
 
+/// Виджет только с Pro: без подписки поверх содержимого — подпись. Первый виджет бесплатный.
+/// Подпись видна и в галерее виджетов, поэтому о подписке известно ещё до добавления.
+struct ProGated<Content: View>: View {
+    @ViewBuilder let content: Content
+    @Environment(\.widgetFamily) private var family
+
+    private var isLocked: Bool { WidgetSnapshot.load()?.isPro == false }
+    private var isAccessory: Bool {
+        family == .accessoryRectangular || family == .accessoryCircular || family == .accessoryInline
+    }
+
+    var body: some View {
+        if !isLocked {
+            content
+        } else if isAccessory {
+            // На экране блокировки места мало, а размытие там не читается.
+            content
+                .opacity(0)
+                .overlay {
+                    Text(verbatim: "PRO").font(.system(.headline, design: .rounded).weight(.heavy))
+                }
+        } else {
+            content
+                .blur(radius: 7)
+                .overlay {
+                    VStack(spacing: 6) {
+                        ProMark()
+                        Text("Available with Pro subscription")
+                            .font(.caption.weight(.semibold))
+                            .multilineTextAlignment(.center)
+                    }
+                    .padding(.horizontal, 10)
+                }
+        }
+    }
+}
+
 /// «Курс»: одна валюта в другой, на экране «Домой» и на экране блокировки.
 struct PairWidget: Widget {
     var body: some WidgetConfiguration {
@@ -32,7 +69,7 @@ struct PairWidget: Widget {
 struct CurrencyWidget: Widget {
     var body: some WidgetConfiguration {
         AppIntentConfiguration(kind: "CurrencyWidget", intent: ListIntent.self, provider: ListProvider()) { entry in
-            CurrencyWidgetView(entry: entry)
+            ProGated { CurrencyWidgetView(entry: entry) }
         }
         .configurationDisplayName("My currencies")
         .description("Several currencies at once — from your app list or chosen here")
@@ -568,6 +605,8 @@ struct ProMark: View {
             .font(.system(size: 11, weight: .heavy, design: .rounded))
             .tracking(0.5)
             .foregroundStyle(WidgetColor.accent)
+            // Разрядка добавляет место после «O», а у «P» свой отступ слева: слово смещено влево.
+            .offset(x: 0.4)
             .padding(.horizontal, 8)
             .frame(height: 22)
             .background {

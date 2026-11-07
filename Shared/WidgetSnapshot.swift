@@ -227,10 +227,15 @@ struct SharedRates: Codable, Equatable, Sendable {
             "SOL": 1 / 152.0, "XRP": 1 / 0.62, "BNB": 1 / 590.0, "DOGE": 1 / 0.16, "USDT": 1, "TON": 1 / 5.2,
         ]
         let now = Date.now
-        // Плавная волна ±1,5 % — для превью графика.
+        // Плавная волна ±1,5 % — для превью графика. У каждой валюты своя фаза: с общей волной
+        // она сокращалась в курсе пары, и график выходил ровным. Сейчас (0 часов назад) волна равна нулю.
         func sample(_ hoursAgo: Double) -> Sample {
-            let k = 1 + 0.015 * sin(hoursAgo / 30) + 0.004 * sin(hoursAgo / 3)
-            return Sample(date: now.addingTimeInterval(-hoursAgo * 3600), rates: rates.mapValues { $0 * k })
+            let wave = Dictionary(uniqueKeysWithValues: rates.map { code, rate in
+                let phase = Double(code.unicodeScalars.reduce(0) { $0 * 31 + Int($1.value) })
+                let k = 1 + 0.015 * (sin(hoursAgo / 30 + phase) - sin(phase)) + 0.004 * (sin(hoursAgo / 3 + phase) - sin(phase))
+                return (code, rate * k)
+            })
+            return Sample(date: now.addingTimeInterval(-hoursAgo * 3600), rates: wave)
         }
         return SharedRates(
             fiat: rates.filter { !CurrencyCatalog.isCrypto($0.key) },

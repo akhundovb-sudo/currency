@@ -430,6 +430,7 @@ struct CurrencyListView: View {
             if elapsed < 1.2 { try? await Task.sleep(for: .seconds(1.2 - elapsed)) }
             withAnimation(.snappy) { isRefreshing = false }
             // Подсветка карточек — когда капля закончила обновление.
+            // Об успехе сообщает сама капля: она становится плашкой и уходит в остров.
             if store.errorMessage == nil {
                 try? await Task.sleep(for: .seconds(0.3))
                 refreshedCount += 1
@@ -466,6 +467,7 @@ struct CurrencyListView: View {
             case "*", "x", "X", "×": key = .multiply
             case "/", "÷": key = .divide
             case "=": key = .equals
+            case "%": key = .percent
             default: return .ignored
             }
         }
@@ -525,8 +527,9 @@ struct CurrencyListView: View {
                 .cardListRow()
             }
 
-            // Источники и время обновления — в настройках; здесь только когда курсы не свежие.
-            if isShowingStaleData {
+            // Источники и время обновления — в настройках; здесь только если обновить курсы не вышло.
+            // Пока идёт первая загрузка, данные тоже «не свежие», но подписи там не нужны.
+            if isShowingStaleData, store.errorMessage != nil {
                 SourceFooter()
                     .font(.footnote)
                     .foregroundStyle(.secondary)
@@ -852,6 +855,12 @@ struct IslandRefreshIndicator: View {
     private let settleDuration: Double = 0.35
     private let hopDuration: Double = 0.3
     private let outDuration: Double = 0.35
+    /// Успех: капля растягивается в плашку с галочкой, плашка держится и уходит в остров.
+    private let morphDuration: Double = 0.3
+    private let holdDuration: Double = 1.3
+    private let pillHeight: CGFloat = 44
+    /// На сколько плашка ниже капли: иначе задевает кнопки верхней панели.
+    private let pillDrop: CGFloat = 16
 
     private static let face = Color(hex: 0x131313)
     private static let failure = Color(hex: 0xF87171)
@@ -878,19 +887,21 @@ struct IslandRefreshIndicator: View {
                 startedAt = pull > 0.5 ? Date.now.addingTimeInterval(-inDuration) : .now
                 endedAt = nil
             } else if startedAt != nil {
-                endedAt = .now
+                let ended = Date.now
+                endedAt = ended
                 Task {
                     try? await Task.sleep(for: .seconds(settleDuration))
-                    if endedAt != nil {
+                    if endedAt == ended {
                         if failed {
                             UINotificationFeedbackGenerator().notificationOccurred(.error)
                         } else {
                             UIImpactFeedbackGenerator(style: .soft).impactOccurred()
+                            AccessibilityNotification.Announcement(L(.ratesUpdated)).post()
                         }
                     }
-                    try? await Task.sleep(for: .seconds(hopDuration + outDuration))
-                    // Если за это время началось новое обновление, endedAt уже сброшен.
-                    if endedAt != nil {
+                    try? await Task.sleep(for: .seconds(failed ? hopDuration + outDuration : morphDuration + holdDuration + outDuration))
+                    // Если за это время началось новое обновление, endedAt уже другой.
+                    if endedAt == ended {
                         startedAt = nil
                         endedAt = nil
                     }
@@ -920,6 +931,13 @@ struct IslandRefreshIndicator: View {
         let target = (frozen / (2 * .pi)).rounded(.up) * 2 * .pi
         let settle = 1 - pow(1 - min(1, sinceEnd / settleDuration), 3)
         let angle = frozen + (target - frozen) * settle
+        // Знак коротко пружинит, когда обновление закончилось.
+        let result = min(1, sinceEnd / settleDuration)
+        if !failed {
+            let pill = Self.smooth((sinceEnd - settleDuration) / morphDuration)
+            let back = min(1, max(0, (sinceEnd - settleDuration - morphDuration - holdDuration) / outDuration))
+            return coin(amount: amount * (1 - back * back), angle: angle, lift: 0, alert: 0, result: result, width: width, pill: pill * (1 - back))
+        }
         // Подпрыгивает вниз-вверх, потом улетает в остров с ускорением.
         let hop = sinceEnd - settleDuration
         let lift: CGFloat = hop > 0 && hop < hopDuration ? CGFloat(sin(hop / hopDuration * .pi)) * 10 : 0
@@ -928,20 +946,20 @@ struct IslandRefreshIndicator: View {
             let back = min(1, outTime / outDuration)
             amount *= 1 - back * back
         }
-        let alert = failed ? sin(min(1, sinceEnd / (settleDuration + hopDuration)) * .pi) : 0
-        // Знак коротко пружинит, когда обновление закончилось.
-        let result = min(1, sinceEnd / settleDuration)
+        let alert = sin(min(1, sinceEnd / (settleDuration + hopDuration)) * .pi)
         return coin(amount: amount, angle: angle, lift: lift, alert: alert, result: result, width: width)
     }
 
     /// `angle` — поворот вокруг вертикальной оси; `lift` — подскок вниз (pt);
-    /// `alert` — сила красной вспышки (0…1).
-    private func coin(amount: CGFloat, angle: Double, lift: CGFloat, alert: Double, result: Double, width: CGFloat) -> some View {
+    /// `alert` — сила красной вспышки (0…1); `pill` — насколько капля стала плашкой (0…1).
+    private func coin(amount: CGFloat, angle: Double, lift: CGFloat, alert: Double, result: Double, width: CGFloat, pill: CGFloat = 0) -> some View {
         let island = Self.islandRect(screenWidth: width)
         let scale = 0.4 + 0.6 * amount
         let size = coinSize * scale
-        let center = CGPoint(x: width / 2, y: island.midY + dropDistance * amount + lift)
-        let blob = CGRect(x: center.x - size / 2, y: center.y - size / 2, width: size, height: size)
+        let center = CGPoint(x: width / 2, y: island.midY + (dropDistance + pillDrop * pill) * amount + lift)
+        let blobWidth = size + (min(Self.pillWidth, width - 32) - size) * pill
+        let blobHeight = size + (pillHeight - size) * pill
+        let blob = CGRect(x: center.x - blobWidth / 2, y: center.y - blobHeight / 2, width: blobWidth, height: blobHeight)
 
         return ZStack(alignment: .topLeading) {
             // Жидкая перемычка между островом и монетой.
@@ -950,15 +968,45 @@ struct IslandRefreshIndicator: View {
                 context.addFilter(.blur(radius: 7))
                 context.drawLayer { layer in
                     layer.fill(Path(roundedRect: island, cornerRadius: island.height / 2), with: .color(.black))
-                    layer.fill(Path(ellipseIn: blob), with: .color(.black))
+                    layer.fill(Path(roundedRect: blob, cornerRadius: blobHeight / 2), with: .color(.black))
                 }
             }
             coinFace(alert: alert, phase: angle, result: result)
                 .frame(width: coinSize, height: coinSize)
                 .scaleEffect(scale)
-                .opacity(Double(min(1, max(0, amount * 2 - 0.2))))
+                .opacity(Double(min(1, max(0, amount * 2 - 0.2))) * Double(max(0, 1 - pill * 2)))
+                .position(center)
+            successLabel
+                .frame(maxWidth: width - 64)
+                .opacity(Double(min(1, max(0, pill * 3 - 2))))
                 .position(center)
         }
+    }
+
+    /// Надпись плашки. Плашка всегда тёмная, поэтому цвет галочки — из тёмной темы.
+    private var successLabel: some View {
+        HStack(spacing: Self.pillGap) {
+            Image(systemName: Toast.Kind.success.symbol)
+                .font(.system(size: Self.pillSymbolSize, weight: .semibold))
+                .foregroundStyle(Toast.Kind.success.tint)
+            Text(L(.ratesUpdated))
+                .font(.system(size: Self.pillFontSize, weight: .semibold))
+                .foregroundStyle(.white)
+                .lineLimit(1)
+                .minimumScaleFactor(0.7)
+        }
+        .environment(\.colorScheme, .dark)
+    }
+
+    private static let pillFontSize: CGFloat = 15
+    private static let pillSymbolSize: CGFloat = 18
+    private static let pillGap: CGFloat = 8
+
+    /// Плашка по ширине текста, а не во весь экран.
+    private static var pillWidth: CGFloat {
+        let font = UIFont.systemFont(ofSize: pillFontSize, weight: .semibold)
+        let text = (L(.ratesUpdated) as NSString).size(withAttributes: [.font: font]).width
+        return ceil(text) + pillSymbolSize + 4 + pillGap + 36
     }
 
     /// Знак выбранной иконки — тот же, что на сплэше.
@@ -1082,13 +1130,16 @@ struct Toast: Equatable {
     var kind: Kind
     var title: String?
     var message: String
+    /// Текст со ссылками; показывается вместо `message`.
+    var attributedMessage: AttributedString?
 }
 
 /// Карточка сообщения: белая плашка, цветной значок без подложки, текст и крестик —
 /// всё по центру строки.
 struct ToastView: View {
     let toast: Toast
-    let onClose: () -> Void
+    /// nil — постоянная плашка на странице, без крестика.
+    var onClose: (() -> Void)?
 
     private let shape = RoundedRectangle(cornerRadius: 24, style: .continuous)
 
@@ -1105,25 +1156,27 @@ struct ToastView: View {
                         .font(.subheadline.weight(.semibold))
                         .foregroundStyle(Color.primary)
                 }
-                Text(toast.message)
+                Text(toast.attributedMessage ?? AttributedString(toast.message))
                     .font(.subheadline)
                     .foregroundStyle(toast.title == nil ? Color.primary : Color.secondaryLabel)
                     .fixedSize(horizontal: false, vertical: true)
             }
             .frame(maxWidth: .infinity, alignment: .leading)
 
-            Button(action: onClose) {
-                Image(systemName: "xmark")
-                    .font(.system(size: 12, weight: .bold))
-                    .foregroundStyle(Color.secondaryLabel)
-                    .frame(width: 28, height: 28)
-                    .contentShape(Rectangle())
+            if let onClose {
+                Button(action: onClose) {
+                    Image(systemName: "xmark")
+                        .font(.system(size: 12, weight: .bold))
+                        .foregroundStyle(Color.secondaryLabel)
+                        .frame(width: 28, height: 28)
+                        .contentShape(Rectangle())
+                }
+                .buttonStyle(.plain)
+                .accessibilityLabel(L(.close))
             }
-            .buttonStyle(.plain)
-            .accessibilityLabel(L(.close))
         }
         .padding(.leading, 16)
-        .padding(.trailing, 10)
+        .padding(.trailing, onClose == nil ? 16 : 10)
         .padding(.vertical, 14)
         .background {
             shape

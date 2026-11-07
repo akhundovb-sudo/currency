@@ -123,7 +123,8 @@ final class RatesStore {
         self.amountText = amountText ?? defaults?.string(forKey: Keys.amountText) ?? ""
         self.suspendedCodes = defaults?.stringArray(forKey: Keys.suspendedCodes) ?? []
         self.theme = defaults?.string(forKey: Keys.theme).flatMap(AppTheme.init(rawValue:)) ?? .system
-        let language = defaults?.string(forKey: Keys.language).flatMap(AppLanguage.init(rawValue:)) ?? .systemDefault
+        // Язык выбирается в системных настройках приложения; при смене iOS перезапускает его.
+        let language = AppLanguage.systemDefault
         self.language = language
         let pro = defaults?.bool(forKey: Keys.isPro) ?? false
         self.isPro = pro
@@ -228,7 +229,11 @@ final class RatesStore {
             text.append(Calculator.symbol(for: key))
         case .equals:
             if let value = Calculator.evaluate(text) { text = RateFormat.editable(value) }
-        case .hide:
+        case .percent:
+            if text.isEmpty { text = RateFormat.editable(amount) }
+            guard let result = Calculator.applyPercent(to: text) else { return true }
+            text = result
+        case .hide, .clear:
             return true
         }
         // Лимит длины — только для ввода: стирать длинную сумму можно всегда.
@@ -295,6 +300,10 @@ final class RatesStore {
             amountText = ""
         }
         selectedCodes.append(code)
+        // Пока криптовалют в списке не было, их курсы не обновлялись.
+        if CurrencyCatalog.isCrypto(code), !freshKinds.contains(.crypto) {
+            Task { await refresh() }
+        }
     }
 
     /// Меньше двух валют оставить нельзя.
@@ -387,11 +396,18 @@ final class RatesStore {
 
     /// Обновляет курсы при возврате в приложение, если данные устарели.
     func refreshIfStale() async {
-        let lastFetch = [snapshot?.fiat?.fetchedAt, snapshot?.crypto?.fetchedAt].compactMap { $0 }.min()
+        let kinds: Set<CurrencyKind> = needsCrypto ? Set(CurrencyKind.allCases) : [.fiat]
+        let lastFetch = kinds.compactMap { snapshot?.rateSet(for: $0)?.fetchedAt }.min()
         let isStale = lastFetch.map { Date.now.timeIntervalSince($0) > 10 * 60 } ?? true
-        if isStale || freshKinds.count < CurrencyKind.allCases.count {
+        if isStale || !kinds.isSubset(of: freshKinds) {
             await refresh()
         }
+    }
+
+    /// Курсы криптовалют нужны, только если такая валюта есть в списке или их ещё не загружали
+    /// (окно добавления показывает весь каталог): у поставщика низкий лимит запросов.
+    private var needsCrypto: Bool {
+        snapshot?.crypto == nil || selectedCodes.contains(where: CurrencyCatalog.isCrypto)
     }
 
     private func performLoad() async {
@@ -400,7 +416,8 @@ final class RatesStore {
         defer { isLoading = false }
 
         async let fiatResult = Self.capture { try await service.fetchFiat() }
-        async let cryptoResult = Self.capture { try await service.fetchCrypto() }
+        let loadsCrypto = needsCrypto
+        async let cryptoResult: Result<RateSet, Error>? = loadsCrypto ? await Self.capture { try await service.fetchCrypto() } : nil
         let (fiat, crypto) = await (fiatResult, cryptoResult)
 
         var updated = snapshot ?? RatesSnapshot()
@@ -422,6 +439,8 @@ final class RatesStore {
         case .failure(let error):
             if Self.isCancellation(error) { return }
             problems.append("\(L(.cryptoShort)): \(Self.message(for: error))")
+        case nil:
+            break
         }
 
         snapshot = updated
@@ -561,6 +580,8 @@ enum AppLinks {
     static let privacy = URL(string: "https://akhundovb-sudo.github.io/currency/privacy.html")!
     /// Одна страница с условиями и политикой конфиденциальности (строка в настройках).
     static let legal = URL(string: "https://akhundovb-sudo.github.io/currency/privacy.html")!
+    /// Чем делиться из настроек. Приложения ещё нет в App Store: после релиза — ссылка на него.
+    static let share = URL(string: "https://akhundovb-sudo.github.io/currency/")!
     /// Управление подписками в App Store.
     static let manageSubscriptions = URL(string: "https://apps.apple.com/account/subscriptions")!
 }
