@@ -39,7 +39,7 @@ struct SettingsView: View {
                                     .foregroundStyle(Color(.tertiaryLabel))
                             }
                         } label: {
-                            rowLabel(L(.language), icon: "globe")
+                            rowLabel(L(.language), icon: "io-globe")
                         }
                     }
                     .foregroundStyle(Color.primary)
@@ -48,24 +48,24 @@ struct SettingsView: View {
                             Text(theme.title).tag(theme)
                         }
                     } label: {
-                        rowLabel(L(.theme), icon: "circle.lefthalf.filled")
+                        rowLabel(L(.theme), icon: "io-half-moon")
                     }
                 }
 
                 Section {
                     NavigationLink { NumbersSettingsView() } label: {
-                        rowLabel(L(.numbers), icon: "number")
+                        rowLabel(L(.numbers), icon: "io-hashtag")
                     }
                     NavigationLink { RatesSettingsView() } label: {
-                        rowLabel(L(.rates), icon: "arrow.triangle.2.circlepath")
+                        rowLabel(L(.rates), icon: "io-coins-swap")
                     }
                     NavigationLink {
                         AppIconSettingsView(onLocked: { isPaywallPresented = true })
                     } label: {
-                        rowLabel(L(.appIcon), icon: "app")
+                        rowLabel(L(.appIcon), icon: "io-palette")
                     }
                     NavigationLink { WidgetsGuideView() } label: {
-                        rowLabel(L(.widgets), icon: "square.grid.2x2")
+                        rowLabel(L(.widgets), icon: "io-view-grid")
                     }
                 }
 
@@ -82,11 +82,11 @@ struct SettingsView: View {
 
                 Section {
                     ShareLink(item: AppLinks.share) {
-                        linkRow(L(.shareApp), icon: "square.and.arrow.up")
+                        linkRow(L(.shareApp), icon: "io-share-ios")
                     }
                     // Условия и конфиденциальность — одна строка, ведёт на страницу с документами.
                     Link(destination: AppLinks.legal) {
-                        linkRow(L(.termsPrivacy), icon: "doc.text", trailing: "arrow.up.right")
+                        linkRow(L(.termsPrivacy), icon: "io-page", trailing: "arrow.up.right")
                     }
                 }
             }
@@ -117,12 +117,17 @@ struct SettingsView: View {
         }
     }
 
-    /// Подпись строки со значком слева — значок нейтральный серый, текст основным.
+    /// Подпись строки со значком слева: контурный серый значок Iconoir, текст основным.
     private func rowLabel(_ title: String, icon: String) -> some View {
         Label {
             Text(title).foregroundStyle(Color.primary)
         } icon: {
-            Image(systemName: icon).foregroundStyle(Color.secondaryLabel)
+            // Значки Iconoir (iconoir.com, MIT) — в Assets/SettingsIcons.
+            Image(icon)
+                .resizable()
+                .scaledToFit()
+                .frame(width: 20, height: 20)
+                .foregroundStyle(Color.secondaryLabel)
         }
     }
 
