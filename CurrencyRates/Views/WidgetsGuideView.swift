@@ -29,7 +29,8 @@ struct WidgetsGuideView: View {
         let data = data
 
         ScrollView {
-            VStack(alignment: .leading, spacing: 28) {
+            // Каждый виджет — отдельный блок; между блоками ровный отступ.
+            VStack(alignment: .leading, spacing: 16) {
                 WidgetSection(title: .widgetPair, description: .widgetPairInfo, isPro: false) {
                     WidgetTile(.small) { PairSmall(data: data) }
                     WidgetTile(.medium) { PairMedium(data: data) }
@@ -62,7 +63,7 @@ struct WidgetsGuideView: View {
     }
 
     private var howTo: some View {
-        VStack(alignment: .leading, spacing: 12) {
+        VStack(alignment: .leading, spacing: 14) {
             Text(L(.widgetHowTo)).font(.headline)
             VStack(alignment: .leading, spacing: 14) {
                 ForEach(Array(steps.enumerated()), id: \.offset) { index, step in
@@ -78,24 +79,26 @@ struct WidgetsGuideView: View {
                     .accessibilityElement(children: .combine)
                 }
             }
-            .padding(16)
-            .frame(maxWidth: .infinity, alignment: .leading)
-            .background(Color(.secondarySystemGroupedBackground), in: RoundedRectangle(cornerRadius: 24, style: .continuous))
         }
+        .padding(16)
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .background(Color(.secondarySystemGroupedBackground), in: RoundedRectangle(cornerRadius: 28, style: .continuous))
         .padding(.horizontal, 16)
     }
 }
 
-/// Название виджета, тариф и описание; под ними размеры виджета, листаются вбок.
+/// Блок виджета: название, тариф и описание; под ними размеры виджета, листаются вбок.
 private struct WidgetSection<Tiles: View>: View {
     let title: L10n.Key
     let description: L10n.Key
     let isPro: Bool
     @ViewBuilder let tiles: Tiles
 
+    private let shape = RoundedRectangle(cornerRadius: 28, style: .continuous)
+
     var body: some View {
-        VStack(alignment: .leading, spacing: 12) {
-            VStack(alignment: .leading, spacing: 2) {
+        VStack(alignment: .leading, spacing: 14) {
+            VStack(alignment: .leading, spacing: 4) {
                 HStack(spacing: 8) {
                     Text(L(title)).font(.headline)
                     if isPro {
@@ -114,16 +117,19 @@ private struct WidgetSection<Tiles: View>: View {
                     .foregroundStyle(Color.secondaryLabel)
             }
             .padding(.horizontal, 16)
+            .padding(.top, 16)
             .accessibilityElement(children: .combine)
 
             ScrollView(.horizontal) {
                 HStack(spacing: 12) { tiles }
                     .padding(.horizontal, 16)
+                    .padding(.bottom, 16)
             }
             .scrollIndicators(.hidden)
-            // Иначе тень карточек обрезается по краю прокрутки.
-            .scrollClipDisabled()
         }
+        .background(Color(.secondarySystemGroupedBackground), in: shape)
+        .clipShape(shape)
+        .padding(.horizontal, 16)
     }
 }
 
@@ -149,10 +155,10 @@ private struct WidgetTile<Content: View>: View {
             .padding(14)
             .frame(width: size.width, height: 158)
             .background {
+                // Внутри белого блока виджет — на фоне страницы, без тени.
                 shape
-                    .fill(Color(.secondarySystemGroupedBackground))
+                    .fill(Color(.systemGroupedBackground))
                     .overlay(shape.strokeBorder(Color.primary.opacity(0.06), lineWidth: 1))
-                    .shadow(color: Color(red: 0.2, green: 0.25, blue: 0.4).opacity(0.12), radius: 12, y: 4)
             }
             .dynamicTypeSize(.large)
             .accessibilityHidden(true)
