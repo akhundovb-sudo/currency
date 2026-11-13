@@ -12,13 +12,6 @@ struct PriceScannerView: View {
     @State private var model = ScanModel()
     @State private var from = ""
     @State private var to = ""
-    /// Какую валюту сейчас выбирают в окне со списком.
-    @State private var picking: PickTarget?
-
-    private enum PickTarget: Identifiable {
-        case from, to
-        var id: Self { self }
-    }
 
     private var isSupported: Bool {
         DataScannerViewController.isSupported && DataScannerViewController.isAvailable
@@ -39,14 +32,6 @@ struct PriceScannerView: View {
         .overlay(alignment: .topLeading) { closeButton }
         .overlay(alignment: .bottom) { if isSupported { currencyBar } }
         .onAppear(perform: chooseDefaults)
-        .sheet(item: $picking) { target in
-            ScanCurrencyPicker(
-                selection: target == .from ? from : to,
-                pinned: pinnedCodes
-            ) { code in
-                if target == .from { from = code } else { to = code }
-            }
-        }
     }
 
     // MARK: - Суммы поверх цен
@@ -96,7 +81,7 @@ struct PriceScannerView: View {
                 .foregroundStyle(.white.opacity(0.85))
                 .shadow(color: .black.opacity(0.5), radius: 4)
             HStack(spacing: 10) {
-                currencyButton(from) { picking = .from }
+                currencyMenu(selection: $from)
                 Button {
                     withAnimation(.smooth(duration: 0.25)) { swap(&from, &to) }
                 } label: {
@@ -106,27 +91,31 @@ struct PriceScannerView: View {
                 }
                 .buttonStyle(CardBubbleStyle())
                 .accessibilityLabel(L(.swap))
-                currencyButton(to) { picking = .to }
+                currencyMenu(selection: $to)
             }
         }
         .padding(.bottom, 24)
         .environment(\.colorScheme, .dark)
     }
 
-    private func currencyButton(_ code: String, action: @escaping () -> Void) -> some View {
-        Button(action: action) {
+    /// Выбор валюты — меню с валютами из списка приложения, в том же порядке.
+    private func currencyMenu(selection: Binding<String>) -> some View {
+        Menu {
+            Picker(selection: selection) {
+                ForEach(store.selectedCodes, id: \.self) { code in
+                    Text(verbatim: "\(code) · \(Currency(code: code).name)").tag(code)
+                }
+            } label: { EmptyView() }
+        } label: {
             HStack(spacing: 8) {
-                CurrencyIcon(currency: Currency(code: code), size: 26)
-                Text(verbatim: code)
+                CurrencyIcon(currency: Currency(code: selection.wrappedValue), size: 26)
+                Text(verbatim: selection.wrappedValue)
                     .font(.headline)
                     .lineLimit(1)
                     .fixedSize()
-                Image(systemName: "chevron.down")
-                    .font(.caption.weight(.bold))
-                    .foregroundStyle(Color.secondaryLabel)
             }
             .padding(.leading, 9)
-            .padding(.trailing, 14)
+            .padding(.trailing, 16)
             .frame(height: 44)
         }
         .buttonStyle(CardBubbleStyle())
@@ -174,23 +163,15 @@ struct PriceScannerView: View {
 
     // MARK: - Валюты
 
-    /// Местная валюта (где вы сейчас или определённая при первом запуске).
-    private var local: String? { store.currentCountryCurrency ?? store.localCurrency }
-
-    /// Наверху выбора: местная валюта и валюты из списка.
-    private var pinnedCodes: [String] {
-        var codes = store.selectedCodes
-        if let local, !codes.contains(local) { codes.insert(local, at: 0) }
-        return codes
-    }
-
-    /// По умолчанию — из местной валюты в доллар. Дома в США — из доллара в следующую валюту списка.
+    /// Валюты только из списка приложения. По умолчанию — из местной валюты (если она в списке,
+    /// иначе первая) в доллар; если доллара нет в списке или он уже выбран — в следующую по списку.
     private func chooseDefaults() {
         guard from.isEmpty else { return }
-        from = local ?? store.selectedCodes.first ?? "USD"
-        to = from == "USD"
-            ? (store.selectedCodes.first(where: { $0 != "USD" }) ?? "EUR")
-            : "USD"
+        let codes = store.selectedCodes
+        let local = store.currentCountryCurrency ?? store.localCurrency
+        from = local.flatMap { codes.contains($0) ? $0 : nil } ?? codes.first ?? "USD"
+        to = (from != "USD" && codes.contains("USD") ? "USD" : nil)
+            ?? codes.first(where: { $0 != from }) ?? from
     }
 
     /// Если рядом с ценой есть знак или код валюты (€, ₺, THB) — считаем из неё, иначе из выбранной.
@@ -212,98 +193,6 @@ struct PriceScannerView: View {
         store.sourceCode = source
         store.amountText = RateFormat.editable(price.value)
         dismiss()
-    }
-}
-
-// MARK: - Выбор валюты
-
-/// Все валюты с поиском, фиат и крипта отдельно: сначала местная и валюты из списка, потом остальные.
-private struct ScanCurrencyPicker: View {
-    let selection: String
-    let pinned: [String]
-    let onPick: (String) -> Void
-
-    @Environment(RatesStore.self) private var store
-    @Environment(\.dismiss) private var dismiss
-    @State private var query = ""
-    /// Раздел: открывается на том, к которому относится выбранная валюта.
-    @State private var kind: CurrencyKind
-
-    init(selection: String, pinned: [String], onPick: @escaping (String) -> Void) {
-        self.selection = selection
-        self.pinned = pinned
-        self.onPick = onPick
-        _kind = State(initialValue: Currency(code: selection).kind)
-    }
-
-    private var codes: [String] {
-        let pool = kind == .fiat ? store.fiatCodes : CryptoAsset.all.map(\.code)
-        let top = pinned.filter { Currency(code: $0).kind == kind }
-        let all = top + pool.filter { !top.contains($0) }
-        let q = query.trimmingCharacters(in: .whitespaces)
-        guard !q.isEmpty else { return all }
-        return all.filter { code in
-            code.localizedCaseInsensitiveContains(q) || Currency(code: code).name.localizedCaseInsensitiveContains(q)
-        }
-    }
-
-    var body: some View {
-        NavigationStack {
-            List(codes, id: \.self) { code in
-                Button {
-                    onPick(code)
-                    dismiss()
-                } label: {
-                    HStack(spacing: 12) {
-                        CurrencyIcon(currency: Currency(code: code), size: 36)
-                        VStack(alignment: .leading, spacing: 1) {
-                            Text(verbatim: code).font(.headline)
-                            Text(verbatim: Currency(code: code).name)
-                                .font(.subheadline)
-                                .foregroundStyle(Color.secondaryLabel)
-                                .lineLimit(1)
-                        }
-                        Spacer(minLength: 8)
-                        if code == selection {
-                            Image(systemName: "checkmark")
-                                .font(.body.weight(.semibold))
-                                .foregroundStyle(Color.accentColor)
-                        }
-                    }
-                    .contentShape(Rectangle())
-                }
-                .buttonStyle(.plain)
-            }
-            .listStyle(.insetGrouped)
-            .searchable(text: $query, placement: .navigationBarDrawer(displayMode: .always), prompt: L(.searchPrompt))
-            .navigationTitle(L(kind == .fiat ? .fiatCurrencies : .cryptoCurrencies))
-            .navigationBarTitleDisplayMode(.inline)
-            .toolbar {
-                ToolbarItem(placement: .confirmationAction) {
-                    Button { dismiss() } label: {
-                        Text(L(.done))
-                            .fontWeight(.semibold)
-                            .lineLimit(1)
-                            .fixedSize()
-                            .padding(.horizontal, 16)
-                            .frame(height: 44)
-                    }
-                    .buttonStyle(AccentBubbleStyle())
-                }
-                .hidingSharedGlass()
-                // Фиат или крипта — как в «Добавить валюту».
-                ToolbarItem(placement: .topBarLeading) {
-                    KindSwitch(kind: $kind)
-                }
-                .hidingSharedGlass()
-                // Заголовок не показывается (как в «Добавить валюту»), но остаётся для VoiceOver.
-                ToolbarItem(placement: .principal) {
-                    Text(verbatim: "")
-                        .accessibilityHidden(true)
-                }
-            }
-        }
-        .presentationDragIndicator(.visible)
     }
 }
 

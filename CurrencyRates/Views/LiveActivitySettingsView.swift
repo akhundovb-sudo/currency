@@ -5,15 +5,8 @@ import SwiftUI
 struct LiveActivitySettingsView: View {
     @Environment(RatesStore.self) private var store
 
-    /// Валюты для выбора: из списка, местная и уже выбранные ранее (даже если их убрали из списка).
-    private var options: [String] {
-        var codes = store.selectedCodes
-        for code in [store.currentCountryCurrency, store.travelActivitySource, store.travelActivityTarget].compactMap({ $0 })
-        where !codes.contains(code) {
-            codes.append(code)
-        }
-        return codes
-    }
+    /// Валюты для выбора — только из списка приложения, в том же порядке.
+    private var options: [String] { store.selectedCodes }
 
     var body: some View {
         @Bindable var store = store
@@ -45,6 +38,11 @@ struct LiveActivitySettingsView: View {
         .onChange(of: store.showsTravelActivity) { _, _ in TravelActivityController.update(store) }
         .onChange(of: store.travelActivitySource) { _, _ in TravelActivityController.update(store) }
         .onChange(of: store.travelActivityTarget) { _, _ in TravelActivityController.update(store) }
+        // Валюту убрали из списка — выбор возвращается к «Местной» / «Первой в списке».
+        .onAppear {
+            if let code = store.travelActivitySource, !options.contains(code) { store.travelActivitySource = nil }
+            if let code = store.travelActivityTarget, !options.contains(code) { store.travelActivityTarget = nil }
+        }
         .modifier(SettingsPage(title: L(.liveActivity)))
     }
 }

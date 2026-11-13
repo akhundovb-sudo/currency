@@ -89,7 +89,10 @@ private struct TravelLockScreen: View {
                 ZStack(alignment: .bottomTrailing) {
                     CurrencyBadge(code: attributes.local, size: 30)
                     CurrencyBadge(code: attributes.home, size: 18)
-                        .offset(x: 6, y: 4)
+                        // Кольцо цвета фона: второй флаг «вырезан» из первого, а не лежит на нём.
+                        .padding(2)
+                        .background(Circle().fill(Color(.systemBackground)))
+                        .offset(x: 7, y: 5)
                 }
                 VStack(alignment: .leading, spacing: 0) {
                     if let country = f.countryName {

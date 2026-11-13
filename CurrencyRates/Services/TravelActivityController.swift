@@ -17,8 +17,11 @@ enum TravelActivityController {
         // Валюта показа — выбранная в настройках или первая фиатная в списке.
         // Валюта курса — выбранная (показывается всегда) или местная: тогда только в поездке,
         // то есть когда она не совпадает с домашней и с валютой страны, где приложение установили.
-        let home = store.travelActivityTarget ?? store.selectedCodes.first(where: { CryptoAsset.byCode[$0] == nil })
-        let local: String? = store.travelActivitySource ?? store.currentCountryCurrency.flatMap { code in
+        // Выбранная в настройках валюта действует, только пока она есть в списке приложения.
+        let chosenTarget = store.travelActivityTarget.flatMap { store.selectedCodes.contains($0) ? $0 : nil }
+        let chosenSource = store.travelActivitySource.flatMap { store.selectedCodes.contains($0) ? $0 : nil }
+        let home = chosenTarget ?? store.selectedCodes.first(where: { CryptoAsset.byCode[$0] == nil })
+        let local: String? = chosenSource ?? store.currentCountryCurrency.flatMap { code in
             code == home || code == store.localCurrency ? nil : code
         }
         guard store.showsTravelActivity,
