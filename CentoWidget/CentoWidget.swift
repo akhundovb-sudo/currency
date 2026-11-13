@@ -11,6 +11,7 @@ struct CentoWidgetBundle: WidgetBundle {
         CryptoWidget()
         TravelWidget()
         ScanWidget()
+        TravelLiveActivity()
     }
 }
 

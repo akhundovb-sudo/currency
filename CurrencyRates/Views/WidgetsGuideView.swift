@@ -51,6 +51,16 @@ struct WidgetsGuideView: View {
                     WidgetTile(.small) { TravelSmall(data: data) }
                     WidgetTile(.medium) { TravelMedium(data: data) }
                 }
+                WidgetSection(title: .widgetScan, description: .widgetScanInfo, isPro: false) {
+                    WidgetTile(.small) { ScanSmall(data: data) }
+                    WidgetTile(.medium) {
+                        HStack(spacing: 14) {
+                            ScanSmall(data: data)
+                            Divider()
+                            ScanCheatSheet(data: data)
+                        }
+                    }
+                }
                 howTo
             }
             .padding(.bottom, 24)
@@ -173,6 +183,8 @@ private struct WidgetPreviewData {
 
     var rate: Double { rates.rate(from: source, to: target) ?? 0 }
     var localRate: Double { rates.rate(from: local, to: source) ?? 0 }
+    /// Сканер считает из местной валюты в доллар, а из доллара — в евро.
+    var scanTarget: String { local == "USD" ? "EUR" : "USD" }
     var change: Double? { rates.change(from: source, to: target) }
 
     func name(_ code: String) -> String { CurrencyCatalog.name(for: code, locale: locale) }
@@ -540,6 +552,60 @@ private struct TravelMedium: View {
             }
             .frame(maxWidth: .infinity)
         }
+    }
+}
+
+/// «Сканер цен» — как настоящий виджет: кнопка камеры, название и направление пересчёта.
+private struct ScanSmall: View {
+    let data: WidgetPreviewData
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 0) {
+            ScanMark()
+            Spacer(minLength: 8)
+            Text(L(.widgetScan))
+                .font(.system(.headline, design: .rounded).weight(.bold))
+                .lineLimit(2)
+                .minimumScaleFactor(0.8)
+                // Отступ между названием и валютами — чтобы строки не слипались.
+                .padding(.bottom, 4)
+            HStack(spacing: 4) {
+                CurrencyIcon(currency: Currency(code: data.local), size: 16)
+                Text(verbatim: "\(data.local) → \(data.scanTarget)")
+                    .font(.subheadline.weight(.medium))
+                    .foregroundStyle(Color.secondaryLabel)
+                    .lineLimit(1)
+                    .minimumScaleFactor(0.7)
+            }
+        }
+        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .leading)
+    }
+}
+
+/// Шпаргалка широкого «Сканера цен»: ходовые суммы в местной валюте — в долларах.
+private struct ScanCheatSheet: View {
+    let data: WidgetPreviewData
+    private let amounts: [Double] = [10, 100, 500, 1000]
+
+    var body: some View {
+        let rate = data.rates.rate(from: data.local, to: data.scanTarget) ?? 0
+        VStack(spacing: 0) {
+            ForEach(amounts, id: \.self) { amount in
+                if amount != amounts[0] { Divider().opacity(0.5) }
+                HStack(spacing: 4) {
+                    Text(verbatim: "\(data.whole(amount)) \(data.local)")
+                        .foregroundStyle(Color.secondaryLabel)
+                    Spacer(minLength: 4)
+                    Text(verbatim: "\(RateFormat.amount(amount * rate)) \(data.scanTarget)")
+                        .fontWeight(.semibold)
+                }
+                .font(.caption.monospacedDigit())
+                .lineLimit(1)
+                .minimumScaleFactor(0.7)
+                .frame(maxHeight: .infinity)
+            }
+        }
+        .frame(maxWidth: .infinity)
     }
 }
 

@@ -104,7 +104,7 @@ enum L10n {
         case getFullAccess, startTrial, trialNote, terms, privacy, restore
         case formatAutomatic, formatInternational, formatEuropean, formatSpaced
         case errNoInternet, errTimeout, errServer, errRateLimited, errBadResponse
-        case scanHint, scanUnavailable, openSettings, swap
+        case scanHint, scanUnavailable, openSettings, swap, widgetScan, widgetScanInfo
     }
 
     // ru, en, tr, fr, es, de, zh, ar, ja, pt, ko, zh-Hant, it, pl
@@ -262,6 +262,8 @@ enum L10n {
         .scanUnavailable: ["Сканер недоступен: нет доступа к камере или устройство не поддерживает распознавание текста.", "The scanner isn’t available: camera access is off or this device doesn’t support text recognition.", "Tarayıcı kullanılamıyor: kamera erişimi kapalı ya da bu cihaz metin tanımayı desteklemiyor.", "Le scanner n’est pas disponible : l’accès à l’appareil photo est désactivé ou cet appareil ne prend pas en charge la reconnaissance de texte.", "El escáner no está disponible: el acceso a la cámara está desactivado o este dispositivo no admite el reconocimiento de texto.", "Der Scanner ist nicht verfügbar: Der Kamerazugriff ist deaktiviert oder dieses Gerät unterstützt keine Texterkennung.", "扫描不可用：相机访问已关闭，或此设备不支持文本识别。", "الماسح غير متاح: الوصول إلى الكاميرا متوقف أو أن هذا الجهاز لا يدعم التعرّف على النص.", "スキャナを使用できません。カメラへのアクセスがオフになっているか、このデバイスはテキスト認識に対応していません。", "O scanner não está disponível: o acesso à câmera está desativado ou este dispositivo não é compatível com o reconhecimento de texto.", "스캐너를 사용할 수 없습니다. 카메라 접근이 꺼져 있거나 이 기기에서 텍스트 인식을 지원하지 않습니다.", "無法使用掃描器：相機取用權限已關閉，或此裝置不支援文字辨識。", "Lo scanner non è disponibile: l’accesso alla fotocamera è disattivato o questo dispositivo non supporta il riconoscimento del testo.", "Skaner jest niedostępny: dostęp do aparatu jest wyłączony albo to urządzenie nie obsługuje rozpoznawania tekstu."],
         .openSettings: ["Открыть Настройки", "Open Settings", "Ayarları Aç", "Ouvrir Réglages", "Abrir Ajustes", "Einstellungen öffnen", "打开设置", "فتح الإعدادات", "設定を開く", "Abrir Ajustes", "설정 열기", "打開設定", "Apri Impostazioni", "Otwórz Ustawienia"],
         .swap: ["Поменять местами", "Swap", "Yer Değiştir", "Inverser", "Intercambiar", "Tauschen", "互换", "تبديل", "入れ替え", "Inverter", "바꾸기", "互換", "Inverti", "Zamień"],
+        .widgetScan: ["Сканер цен", "Scan Prices", "Fiyat Tara", "Scanner les prix", "Escanear precios", "Preise scannen", "扫描价格", "مسح الأسعار", "価格をスキャン", "Escanear preços", "가격 스캔", "掃描價格", "Scansiona prezzi", "Skanuj ceny"],
+        .widgetScanInfo: ["Наведите камеру на ценник или меню — цена сразу пересчитается", "Point the camera at a price tag or menu to convert it", "Dönüştürmek için kamerayı bir etikete veya menüye doğrultun", "Pointez l’appareil photo vers une étiquette ou un menu pour convertir le prix", "Apunta la cámara a una etiqueta o un menú para convertir el precio", "Richte die Kamera auf ein Preisschild oder eine Speisekarte, um umzurechnen", "将相机对准价签或菜单即可换算", "وجّه الكاميرا نحو بطاقة سعر أو قائمة لتحويله", "値札やメニューにカメラを向けると換算します", "Aponte a câmera para uma etiqueta ou cardápio para converter", "가격표나 메뉴에 카메라를 맞추면 환산됩니다", "將相機對準價格標籤或菜單即可換算", "Inquadra un cartellino o un menu per convertire il prezzo", "Skieruj aparat na metkę lub menu, aby przeliczyć cenę"],
     ]
 
     static func string(_ key: Key) -> String {

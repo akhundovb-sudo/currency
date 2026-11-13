@@ -1,7 +1,7 @@
 import SwiftUI
 import VisionKit
 
-/// Сканер цен: камера распознаёт числа на ценниках и в меню прямо на устройстве
+/// Сканер цен: камера распознаёт цены на ценниках и в меню прямо на устройстве
 /// (VisionKit, без интернета и сервера) и поверх каждой цены показывает сумму в выбранной валюте.
 /// Нажатие на сумму переносит цену в главный список.
 struct PriceScannerView: View {
@@ -12,6 +12,13 @@ struct PriceScannerView: View {
     @State private var model = ScanModel()
     @State private var from = ""
     @State private var to = ""
+    /// Какую валюту сейчас выбирают в окне со списком.
+    @State private var picking: PickTarget?
+
+    private enum PickTarget: Identifiable {
+        case from, to
+        var id: Self { self }
+    }
 
     private var isSupported: Bool {
         DataScannerViewController.isSupported && DataScannerViewController.isAvailable
@@ -32,34 +39,52 @@ struct PriceScannerView: View {
         .overlay(alignment: .topLeading) { closeButton }
         .overlay(alignment: .bottom) { if isSupported { currencyBar } }
         .onAppear(perform: chooseDefaults)
+        .sheet(item: $picking) { target in
+            ScanCurrencyPicker(
+                selection: target == .from ? from : to,
+                pinned: pinnedCodes
+            ) { code in
+                if target == .from { from = code } else { to = code }
+            }
+        }
     }
 
     // MARK: - Суммы поверх цен
 
+    /// Пересчитанная цена ложится прямо на исходную: плашка закрывает цифры на ценнике
+    /// и по высоте подстраивается под них, как перевод текста в камере.
     private var badges: some View {
         ForEach(model.prices) { price in
-            if let converted = convert(price.value) {
+            if let converted = convert(price) {
+                let height = min(max(price.bounds.height * 1.15, 26), 64)
                 Button {
-                    usePrice(price.value)
+                    usePrice(price)
                 } label: {
-                    Text(verbatim: "≈ \(RateFormat.amount(converted)) \(to)")
-                        .font(.system(.headline, design: .rounded).weight(.bold))
-                        .monospacedDigit()
-                        .foregroundStyle(Color.black.opacity(0.85))
-                        .lineLimit(1)
-                        .fixedSize()
-                        .padding(.horizontal, 12)
-                        .frame(height: 34)
-                        .background(Capsule().fill(Color.accentButton))
-                        .shadow(color: .black.opacity(0.35), radius: 8, y: 3)
+                    HStack(alignment: .firstTextBaseline, spacing: height * 0.12) {
+                        Text(verbatim: RateFormat.amount(converted))
+                            .font(.system(size: height * 0.62, weight: .bold, design: .rounded))
+                        Text(verbatim: to)
+                            .font(.system(size: height * 0.36, weight: .semibold, design: .rounded))
+                            .opacity(0.7)
+                    }
+                    .monospacedDigit()
+                    .foregroundStyle(Color.onAccent)
+                    .lineLimit(1)
+                    .fixedSize()
+                    .padding(.horizontal, height * 0.28)
+                    .frame(minWidth: price.bounds.width, minHeight: height)
+                    .background(
+                        RoundedRectangle(cornerRadius: height * 0.3, style: .continuous)
+                            .fill(Color.accentButton)
+                            .shadow(color: .black.opacity(0.3), radius: 6, y: 2)
+                    )
                 }
                 .buttonStyle(.plain)
-                // Над ценой, чтобы её было видно.
-                .position(x: price.bounds.midX, y: max(price.bounds.minY - 22, 60))
-                .transition(.scale(scale: 0.6).combined(with: .opacity))
+                .position(x: price.bounds.midX, y: price.bounds.midY)
+                .transition(.scale(scale: 0.85).combined(with: .opacity))
             }
         }
-        .animation(.spring(response: 0.3, dampingFraction: 0.75), value: model.prices.map(\.id))
+        .animation(.smooth(duration: 0.18), value: model.prices)
     }
 
     // MARK: - Панель валют
@@ -71,7 +96,7 @@ struct PriceScannerView: View {
                 .foregroundStyle(.white.opacity(0.85))
                 .shadow(color: .black.opacity(0.5), radius: 4)
             HStack(spacing: 10) {
-                currencyMenu(selection: $from)
+                currencyButton(from) { picking = .from }
                 Button {
                     withAnimation(.smooth(duration: 0.25)) { swap(&from, &to) }
                 } label: {
@@ -81,30 +106,27 @@ struct PriceScannerView: View {
                 }
                 .buttonStyle(CardBubbleStyle())
                 .accessibilityLabel(L(.swap))
-                currencyMenu(selection: $to)
+                currencyButton(to) { picking = .to }
             }
         }
         .padding(.bottom, 24)
         .environment(\.colorScheme, .dark)
     }
 
-    private func currencyMenu(selection: Binding<String>) -> some View {
-        Menu {
-            Picker(selection: selection) {
-                ForEach(choices, id: \.self) { code in
-                    Text(verbatim: "\(code) · \(Currency(code: code).name)").tag(code)
-                }
-            } label: { EmptyView() }
-        } label: {
+    private func currencyButton(_ code: String, action: @escaping () -> Void) -> some View {
+        Button(action: action) {
             HStack(spacing: 8) {
-                CurrencyIcon(currency: Currency(code: selection.wrappedValue), size: 26)
-                Text(verbatim: selection.wrappedValue)
+                CurrencyIcon(currency: Currency(code: code), size: 26)
+                Text(verbatim: code)
                     .font(.headline)
                     .lineLimit(1)
                     .fixedSize()
+                Image(systemName: "chevron.down")
+                    .font(.caption.weight(.bold))
+                    .foregroundStyle(Color.secondaryLabel)
             }
             .padding(.leading, 9)
-            .padding(.trailing, 16)
+            .padding(.trailing, 14)
             .frame(height: 44)
         }
         .buttonStyle(CardBubbleStyle())
@@ -114,8 +136,10 @@ struct PriceScannerView: View {
 
     private var unavailable: some View {
         VStack(spacing: 16) {
-            Image(systemName: "camera.viewfinder")
-                .font(.system(size: 52, weight: .light))
+            Image("icon-scan")
+                .resizable()
+                .scaledToFit()
+                .frame(width: 52, height: 52)
                 .foregroundStyle(Color.secondaryLabel)
             Text(L(.scanUnavailable))
                 .font(.body)
@@ -150,63 +174,209 @@ struct PriceScannerView: View {
 
     // MARK: - Валюты
 
-    /// Валюты списка и валюта страны, где вы сейчас.
-    private var choices: [String] {
+    /// Местная валюта (где вы сейчас или определённая при первом запуске).
+    private var local: String? { store.currentCountryCurrency ?? store.localCurrency }
+
+    /// Наверху выбора: местная валюта и валюты из списка.
+    private var pinnedCodes: [String] {
         var codes = store.selectedCodes
-        if let local = store.currentCountryCurrency, !codes.contains(local) { codes.insert(local, at: 0) }
+        if let local, !codes.contains(local) { codes.insert(local, at: 0) }
         return codes
     }
 
-    /// В поездке цены — в местной валюте, пересчёт — в первую валюту списка (домашнюю).
+    /// По умолчанию — из местной валюты в доллар. Дома в США — из доллара в следующую валюту списка.
     private func chooseDefaults() {
         guard from.isEmpty else { return }
-        let home = store.selectedCodes.first ?? "USD"
-        if let local = store.currentCountryCurrency, local != home {
-            from = local
-            to = home
-        } else {
-            from = home
-            to = store.selectedCodes.first(where: { $0 != home }) ?? "USD"
-        }
+        from = local ?? store.selectedCodes.first ?? "USD"
+        to = from == "USD"
+            ? (store.selectedCodes.first(where: { $0 != "USD" }) ?? "EUR")
+            : "USD"
     }
 
-    private func convert(_ value: Double) -> Double? {
-        store.snapshot?.rate(from: from, to: to).map { $0 * value }
+    /// Если рядом с ценой есть знак или код валюты (€, ₺, THB) — считаем из неё, иначе из выбранной.
+    private func source(of price: ScannedPrice) -> String {
+        if let code = price.currency, store.snapshot?.rate(from: code, to: to) != nil { return code }
+        return from
+    }
+
+    private func convert(_ price: ScannedPrice) -> Double? {
+        let source = source(of: price)
+        guard source != to else { return nil }
+        return store.snapshot?.rate(from: source, to: to).map { $0 * price.value }
     }
 
     /// Цена переносится в главный список, если её валюта там есть.
-    private func usePrice(_ value: Double) {
-        guard store.selectedCodes.contains(from) else { return }
-        store.sourceCode = from
-        store.amountText = RateFormat.editable(value)
+    private func usePrice(_ price: ScannedPrice) {
+        let source = source(of: price)
+        guard store.selectedCodes.contains(source) else { return }
+        store.sourceCode = source
+        store.amountText = RateFormat.editable(price.value)
         dismiss()
+    }
+}
+
+// MARK: - Выбор валюты
+
+/// Все валюты с поиском, фиат и крипта отдельно: сначала местная и валюты из списка, потом остальные.
+private struct ScanCurrencyPicker: View {
+    let selection: String
+    let pinned: [String]
+    let onPick: (String) -> Void
+
+    @Environment(RatesStore.self) private var store
+    @Environment(\.dismiss) private var dismiss
+    @State private var query = ""
+    /// Раздел: открывается на том, к которому относится выбранная валюта.
+    @State private var kind: CurrencyKind
+
+    init(selection: String, pinned: [String], onPick: @escaping (String) -> Void) {
+        self.selection = selection
+        self.pinned = pinned
+        self.onPick = onPick
+        _kind = State(initialValue: Currency(code: selection).kind)
+    }
+
+    private var codes: [String] {
+        let pool = kind == .fiat ? store.fiatCodes : CryptoAsset.all.map(\.code)
+        let top = pinned.filter { Currency(code: $0).kind == kind }
+        let all = top + pool.filter { !top.contains($0) }
+        let q = query.trimmingCharacters(in: .whitespaces)
+        guard !q.isEmpty else { return all }
+        return all.filter { code in
+            code.localizedCaseInsensitiveContains(q) || Currency(code: code).name.localizedCaseInsensitiveContains(q)
+        }
+    }
+
+    var body: some View {
+        NavigationStack {
+            List(codes, id: \.self) { code in
+                Button {
+                    onPick(code)
+                    dismiss()
+                } label: {
+                    HStack(spacing: 12) {
+                        CurrencyIcon(currency: Currency(code: code), size: 36)
+                        VStack(alignment: .leading, spacing: 1) {
+                            Text(verbatim: code).font(.headline)
+                            Text(verbatim: Currency(code: code).name)
+                                .font(.subheadline)
+                                .foregroundStyle(Color.secondaryLabel)
+                                .lineLimit(1)
+                        }
+                        Spacer(minLength: 8)
+                        if code == selection {
+                            Image(systemName: "checkmark")
+                                .font(.body.weight(.semibold))
+                                .foregroundStyle(Color.accentColor)
+                        }
+                    }
+                    .contentShape(Rectangle())
+                }
+                .buttonStyle(.plain)
+            }
+            .listStyle(.insetGrouped)
+            .searchable(text: $query, placement: .navigationBarDrawer(displayMode: .always), prompt: L(.searchPrompt))
+            .navigationTitle(L(kind == .fiat ? .fiatCurrencies : .cryptoCurrencies))
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .confirmationAction) {
+                    Button { dismiss() } label: {
+                        Text(L(.done))
+                            .fontWeight(.semibold)
+                            .lineLimit(1)
+                            .fixedSize()
+                            .padding(.horizontal, 16)
+                            .frame(height: 44)
+                    }
+                    .buttonStyle(AccentBubbleStyle())
+                }
+                .hidingSharedGlass()
+                // Фиат или крипта — как в «Добавить валюту».
+                ToolbarItem(placement: .topBarLeading) {
+                    KindSwitch(kind: $kind)
+                }
+                .hidingSharedGlass()
+                // Заголовок не показывается (как в «Добавить валюту»), но остаётся для VoiceOver.
+                ToolbarItem(placement: .principal) {
+                    Text(verbatim: "")
+                        .accessibilityHidden(true)
+                }
+            }
+        }
+        .presentationDragIndicator(.visible)
     }
 }
 
 // MARK: - Распознавание
 
-/// Цена в кадре: где она и сколько.
+/// Цена в кадре: где она, сколько и в какой валюте (если рядом есть знак или код).
 struct ScannedPrice: Identifiable, Equatable {
     let id: RecognizedItem.ID
     var bounds: CGRect
     var value: Double
+    var currency: String?
 }
 
 @MainActor
 @Observable
 final class ScanModel {
+    /// Цены, которые уже подтвердились и показываются.
     var prices: [ScannedPrice] = []
 
+    /// Кандидат: сколько кадров подряд распознаётся одно и то же значение.
+    private struct Track {
+        var value: Double
+        var currency: String?
+        var hits: Int
+        var bounds: CGRect
+    }
+    @ObservationIgnored private var tracks: [RecognizedItem.ID: Track] = [:]
+
+    /// Сколько кадров подряд цена должна совпасть, прежде чем появиться: без этого плашки
+    /// мигали на случайных числах и прыгали, пока камера дочитывает цифры.
+    private static let confirmations = 3
+
     func update(_ items: [RecognizedItem]) {
-        prices = items.compactMap { item in
+        var next: [RecognizedItem.ID: Track] = [:]
+        for item in items {
             guard case .text(let text) = item,
-                  let value = PriceParser.value(in: text.transcript) else { return nil }
-            let b = item.bounds
-            let xs = [b.topLeft.x, b.topRight.x, b.bottomLeft.x, b.bottomRight.x]
-            let ys = [b.topLeft.y, b.topRight.y, b.bottomLeft.y, b.bottomRight.y]
-            let rect = CGRect(x: xs.min()!, y: ys.min()!, width: xs.max()! - xs.min()!, height: ys.max()! - ys.min()!)
-            return ScannedPrice(id: item.id, bounds: rect, value: value)
+                  let found = PriceParser.price(in: text.transcript) else { continue }
+            let rect = Self.rect(of: found, in: item.bounds)
+            if var track = tracks[item.id], track.value == found.value {
+                track.hits += 1
+                track.currency = found.currency ?? track.currency
+                // Сглаживание: плашка плавно следует за ценой, а не дёргается за каждым кадром.
+                track.bounds = Self.blend(track.bounds, rect, 0.35)
+                next[item.id] = track
+            } else {
+                next[item.id] = Track(value: found.value, currency: found.currency, hits: 1, bounds: rect)
+            }
         }
+        tracks = next
+        prices = next.compactMap { id, track in
+            track.hits >= Self.confirmations
+                ? ScannedPrice(id: id, bounds: track.bounds, value: track.value, currency: track.currency)
+                : nil
+        }
+        .sorted { $0.bounds.minY < $1.bounds.minY }
+    }
+
+    /// Где в строке само число: доля длины текста до него и его длина — вдоль строки.
+    private static func rect(of found: PriceParser.Found, in b: RecognizedItem.Bounds) -> CGRect {
+        func lerp(_ p: CGPoint, _ q: CGPoint, _ t: CGFloat) -> CGPoint {
+            CGPoint(x: p.x + (q.x - p.x) * t, y: p.y + (q.y - p.y) * t)
+        }
+        let points = [
+            lerp(b.topLeft, b.topRight, found.start), lerp(b.topLeft, b.topRight, found.end),
+            lerp(b.bottomLeft, b.bottomRight, found.start), lerp(b.bottomLeft, b.bottomRight, found.end),
+        ]
+        let xs = points.map(\.x), ys = points.map(\.y)
+        return CGRect(x: xs.min()!, y: ys.min()!, width: xs.max()! - xs.min()!, height: ys.max()! - ys.min()!)
+    }
+
+    private static func blend(_ a: CGRect, _ b: CGRect, _ t: CGFloat) -> CGRect {
+        CGRect(x: a.minX + (b.minX - a.minX) * t, y: a.minY + (b.minY - a.minY) * t,
+               width: a.width + (b.width - a.width) * t, height: a.height + (b.height - a.height) * t)
     }
 }
 
@@ -217,7 +387,8 @@ private struct PriceCamera: UIViewControllerRepresentable {
     func makeUIViewController(context: Context) -> DataScannerViewController {
         let scanner = DataScannerViewController(
             recognizedDataTypes: [.text()],
-            qualityLevel: .balanced,
+            // Точнее: цифры на ценниках мелкие, а «8» и «3», «,» и «.» путаются.
+            qualityLevel: .accurate,
             recognizesMultipleItems: true,
             isHighFrameRateTrackingEnabled: true,
             isPinchToZoomEnabled: true,
@@ -253,35 +424,5 @@ private struct PriceCamera: UIViewControllerRepresentable {
         func dataScanner(_ scanner: DataScannerViewController, didRemove removed: [RecognizedItem], allItems: [RecognizedItem]) {
             model.update(allItems)
         }
-    }
-}
-
-/// Достаёт цену из распознанной строки: «12.99», «€ 1 234,50», «1,299.00 ₺», «120 THB».
-/// Время, даты и телефоны (с «:», «/», длинные числа) пропускаются.
-enum PriceParser {
-    nonisolated(unsafe) private static let number = /\d{1,3}(?:[ .,'\u{00A0}\u{202F}]\d{3})*(?:[.,]\d{1,2})?|\d+(?:[.,]\d{1,2})?/
-
-    static func value(in text: String) -> Double? {
-        guard !text.contains(":"), !text.contains("/") else { return nil }
-        let digits = text.filter(\.isNumber)
-        guard !digits.isEmpty, digits.count <= 9 else { return nil }
-        guard let match = text.firstMatch(of: number) else { return nil }
-        return parse(String(match.output))
-    }
-
-    static func parse(_ raw: String) -> Double? {
-        var s = raw.filter { !" '\u{00A0}\u{202F}".contains($0) }
-        let lastDot = s.lastIndex(of: "."), lastComma = s.lastIndex(of: ",")
-        // Десятичный разделитель — последний «.» или «,», если после него 1–2 цифры.
-        if let sep = [lastDot, lastComma].compactMap({ $0 }).max(),
-           s.distance(from: sep, to: s.endIndex) - 1 <= 2 {
-            let intPart = s[..<sep].filter(\.isNumber)
-            let frac = s[s.index(after: sep)...]
-            s = "\(intPart).\(frac)"
-        } else {
-            s = s.filter(\.isNumber)
-        }
-        guard let value = Double(s), value > 0 else { return nil }
-        return value
     }
 }

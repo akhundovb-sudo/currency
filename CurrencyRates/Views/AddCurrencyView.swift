@@ -160,7 +160,7 @@ private struct KeepToolbarWhileSearching: ViewModifier {
 
 /// Переключатель «Фиат / Крипта» в стиле кнопок приложения:
 /// капсула-карточка, выбранный сегмент — светлая плашка внутри.
-private struct KindSwitch: View {
+struct KindSwitch: View {
     @Binding var kind: CurrencyKind
     @Namespace private var selection
 

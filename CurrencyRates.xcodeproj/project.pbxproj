@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		C0FFEE00000000000000001B /* CentoWidget.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = C0FFEE000000000000000010 /* CentoWidget.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		C0FFEE000000000000000029 /* CentoAction.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = C0FFEE000000000000000020 /* CentoAction.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -17,6 +18,13 @@
 			proxyType = 1;
 			remoteGlobalIDString = C0FFEE000000000000000016;
 			remoteInfo = CentoWidget;
+		};
+		C0FFEE00000000000000002A /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = C0FFEE000000000000000009 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = C0FFEE000000000000000025;
+			remoteInfo = CentoAction;
 		};
 /* End PBXContainerItemProxy section */
 
@@ -28,6 +36,7 @@
 			dstSubfolderSpec = 13;
 			files = (
 				C0FFEE00000000000000001B /* CentoWidget.appex in Embed Foundation Extensions */,
+				C0FFEE000000000000000029 /* CentoAction.appex in Embed Foundation Extensions */,
 			);
 			name = "Embed Foundation Extensions";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -37,6 +46,7 @@
 /* Begin PBXFileReference section */
 		C0FFEE000000000000000001 /* CurrencyRates.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = CurrencyRates.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		C0FFEE000000000000000010 /* CentoWidget.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = CentoWidget.appex; sourceTree = BUILT_PRODUCTS_DIR; };
+		C0FFEE000000000000000020 /* CentoAction.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = CentoAction.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
@@ -53,6 +63,11 @@
 		C0FFEE000000000000000012 /* Shared */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			path = Shared;
+			sourceTree = "<group>";
+		};
+		C0FFEE000000000000000021 /* CentoAction */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = CentoAction;
 			sourceTree = "<group>";
 		};
 /* End PBXFileSystemSynchronizedRootGroup section */
@@ -72,6 +87,13 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		C0FFEE000000000000000023 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
@@ -80,6 +102,7 @@
 			children = (
 				C0FFEE000000000000000002 /* CurrencyRates */,
 				C0FFEE000000000000000011 /* CentoWidget */,
+				C0FFEE000000000000000021 /* CentoAction */,
 				C0FFEE000000000000000012 /* Shared */,
 				C0FFEE000000000000000005 /* Products */,
 			);
@@ -90,6 +113,7 @@
 			children = (
 				C0FFEE000000000000000001 /* CurrencyRates.app */,
 				C0FFEE000000000000000010 /* CentoWidget.appex */,
+				C0FFEE000000000000000020 /* CentoAction.appex */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -110,6 +134,7 @@
 			);
 			dependencies = (
 				C0FFEE00000000000000001D /* PBXTargetDependency */,
+				C0FFEE00000000000000002B /* PBXTargetDependency */,
 			);
 			fileSystemSynchronizedGroups = (
 				C0FFEE000000000000000002 /* CurrencyRates */,
@@ -145,6 +170,29 @@
 			productReference = C0FFEE000000000000000010 /* CentoWidget.appex */;
 			productType = "com.apple.product-type.app-extension";
 		};
+		C0FFEE000000000000000025 /* CentoAction */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = C0FFEE000000000000000026 /* Build configuration list for PBXNativeTarget "CentoAction" */;
+			buildPhases = (
+				C0FFEE000000000000000022 /* Sources */,
+				C0FFEE000000000000000023 /* Frameworks */,
+				C0FFEE000000000000000024 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			fileSystemSynchronizedGroups = (
+				C0FFEE000000000000000021 /* CentoAction */,
+				C0FFEE000000000000000012 /* Shared */,
+			);
+			name = CentoAction;
+			packageProductDependencies = (
+			);
+			productName = CentoAction;
+			productReference = C0FFEE000000000000000020 /* CentoAction.appex */;
+			productType = "com.apple.product-type.app-extension";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -159,6 +207,9 @@
 						CreatedOnToolsVersion = 26.0;
 					};
 					C0FFEE000000000000000016 = {
+						CreatedOnToolsVersion = 26.0;
+					};
+					C0FFEE000000000000000025 = {
 						CreatedOnToolsVersion = 26.0;
 					};
 				};
@@ -192,6 +243,7 @@
 			targets = (
 				C0FFEE000000000000000006 /* CurrencyRates */,
 				C0FFEE000000000000000016 /* CentoWidget */,
+				C0FFEE000000000000000025 /* CentoAction */,
 			);
 		};
 /* End PBXProject section */
@@ -205,6 +257,13 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 		C0FFEE000000000000000015 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		C0FFEE000000000000000024 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -228,6 +287,13 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		C0FFEE000000000000000022 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
@@ -235,6 +301,11 @@
 			isa = PBXTargetDependency;
 			target = C0FFEE000000000000000016 /* CentoWidget */;
 			targetProxy = C0FFEE00000000000000001C /* PBXContainerItemProxy */;
+		};
+		C0FFEE00000000000000002B /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = C0FFEE000000000000000025 /* CentoAction */;
+			targetProxy = C0FFEE00000000000000002A /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
@@ -356,6 +427,7 @@
 				INFOPLIST_KEY_CFBundleDisplayName = Cento;
 				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "Cento определяет страну, чтобы добавить вашу местную валюту и показать её в виджете «Путешествие».";
 				INFOPLIST_KEY_NSCameraUsageDescription = "Cento распознаёт цены через камеру и сразу пересчитывает их в вашу валюту. Снимки не сохраняются и никуда не отправляются.";
+				INFOPLIST_KEY_NSSupportsLiveActivities = YES;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.finance";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
@@ -391,6 +463,7 @@
 				INFOPLIST_KEY_CFBundleDisplayName = Cento;
 				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "Cento определяет страну, чтобы добавить вашу местную валюту и показать её в виджете «Путешествие».";
 				INFOPLIST_KEY_NSCameraUsageDescription = "Cento распознаёт цены через камеру и сразу пересчитывает их в вашу валюту. Снимки не сохраняются и никуда не отправляются.";
+				INFOPLIST_KEY_NSSupportsLiveActivities = YES;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.finance";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
@@ -457,6 +530,56 @@
 			};
 			name = Release;
 		};
+		C0FFEE000000000000000027 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				APPLICATION_EXTENSION_API_ONLY = YES;
+				CODE_SIGN_ENTITLEMENTS = Config/CentoAction.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "Config/CentoAction-Info.plist";
+				INFOPLIST_KEY_CFBundleDisplayName = "Пересчитать в Cento";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.bahruzakhundov.cento.CentoAction;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		C0FFEE000000000000000028 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				APPLICATION_EXTENSION_API_ONLY = YES;
+				CODE_SIGN_ENTITLEMENTS = Config/CentoAction.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "Config/CentoAction-Info.plist";
+				INFOPLIST_KEY_CFBundleDisplayName = "Пересчитать в Cento";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.bahruzakhundov.cento.CentoAction;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -483,6 +606,15 @@
 			buildConfigurations = (
 				C0FFEE000000000000000018 /* Debug */,
 				C0FFEE000000000000000019 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		C0FFEE000000000000000026 /* Build configuration list for PBXNativeTarget "CentoAction" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				C0FFEE000000000000000027 /* Debug */,
+				C0FFEE000000000000000028 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

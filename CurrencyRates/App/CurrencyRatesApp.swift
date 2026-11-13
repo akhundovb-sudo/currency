@@ -55,7 +55,11 @@ struct CurrencyRatesApp: App {
                     }
                 }
                 // Новые курсы — сразу и в виджеты.
-                .onChange(of: store.snapshot) { _, _ in WidgetBridge.publish(store) }
+                .onChange(of: store.snapshot) { _, _ in
+                    WidgetBridge.publish(store)
+                    // Новый курс — и в Live Activity поездки.
+                    TravelActivityController.update(store)
+                }
                 // Подписка меняет, какие валюты доступны в виджетах.
                 .onChange(of: store.isPro) { _, _ in WidgetBridge.publish(store) }
                 .overlay {
@@ -77,6 +81,8 @@ struct CurrencyRatesApp: App {
             store.applyLocalCurrency(currency)
             store.updateCurrentCountry(country, currency: currency)
             WidgetBridge.publish(store)
+            // В другой стране — курс на экране блокировки; дома — убираем.
+            TravelActivityController.update(store)
         }
     }
 
