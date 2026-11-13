@@ -14,13 +14,17 @@ enum TravelActivityController {
         guard ActivityAuthorizationInfo().areActivitiesEnabled else { return }
         let activities = Activity<TravelActivityAttributes>.activities
 
-        // Домашняя валюта — первая фиатная в списке. Поездка — когда местная валюта другая
-        // и это не валюта страны, где приложение установили.
-        guard let local = store.currentCountryCurrency,
-              let home = store.selectedCodes.first(where: { CryptoAsset.byCode[$0] == nil }),
-              local != home, local != store.localCurrency,
+        // Валюта показа — выбранная в настройках или первая фиатная в списке.
+        // Валюта курса — выбранная (показывается всегда) или местная: тогда только в поездке,
+        // то есть когда она не совпадает с домашней и с валютой страны, где приложение установили.
+        let home = store.travelActivityTarget ?? store.selectedCodes.first(where: { CryptoAsset.byCode[$0] == nil })
+        let local: String? = store.travelActivitySource ?? store.currentCountryCurrency.flatMap { code in
+            code == home || code == store.localCurrency ? nil : code
+        }
+        guard store.showsTravelActivity,
+              let local, let home, local != home,
               let rate = store.snapshot?.rate(from: local, to: home) else {
-            // Дома или курса нет — Live Activity не нужна.
+            // Выключена в настройках, дома или курса нет — Live Activity не нужна.
             end(activities)
             return
         }
@@ -41,7 +45,8 @@ enum TravelActivityController {
         end(activities)
         let attributes = TravelActivityAttributes(
             local: local,
-            country: store.currentCountry,
+            // Страна — только если курс местной валюты, а не выбранной вручную.
+            country: local == store.currentCountryCurrency ? store.currentCountry : nil,
             home: home,
             numberLocaleIdentifier: RateFormat.locale.identifier,
             languageIdentifier: store.language.locale.identifier

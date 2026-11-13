@@ -51,6 +51,21 @@ final class RatesStore {
         didSet { defaults?.set(theme.rawValue, forKey: Keys.theme) }
     }
 
+    /// Live Activity в поездке: курс местной валюты на экране блокировки. По умолчанию включена.
+    var showsTravelActivity: Bool {
+        didSet { defaults?.set(showsTravelActivity, forKey: Keys.showsTravelActivity) }
+    }
+
+    /// Валюта Live Activity: nil — местная по геолокации (только в поездке), иначе — всегда эта.
+    var travelActivitySource: String? {
+        didSet { defaults?.set(travelActivitySource, forKey: Keys.travelActivitySource) }
+    }
+
+    /// В какой валюте показывать курс: nil — первая фиатная в списке.
+    var travelActivityTarget: String? {
+        didSet { defaults?.set(travelActivityTarget, forKey: Keys.travelActivityTarget) }
+    }
+
     /// Язык интерфейса.
     var language: AppLanguage {
         didSet {
@@ -123,6 +138,9 @@ final class RatesStore {
         self.amountText = amountText ?? defaults?.string(forKey: Keys.amountText) ?? ""
         self.suspendedCodes = defaults?.stringArray(forKey: Keys.suspendedCodes) ?? []
         self.theme = defaults?.string(forKey: Keys.theme).flatMap(AppTheme.init(rawValue:)) ?? .system
+        self.showsTravelActivity = defaults?.object(forKey: Keys.showsTravelActivity) as? Bool ?? true
+        self.travelActivitySource = defaults?.string(forKey: Keys.travelActivitySource)
+        self.travelActivityTarget = defaults?.string(forKey: Keys.travelActivityTarget)
         // Язык выбирается в системных настройках приложения; при смене iOS перезапускает его.
         let language = AppLanguage.systemDefault
         self.language = language
@@ -474,6 +492,9 @@ final class RatesStore {
         static let sourceCode = "sourceCode"
         static let amountText = "amountText"
         static let theme = "theme"
+        static let showsTravelActivity = "showsTravelActivity"
+        static let travelActivitySource = "travelActivitySource"
+        static let travelActivityTarget = "travelActivityTarget"
         static let language = "language"
         static let isPro = "isPro"
         static let proPlan = "proPlan"

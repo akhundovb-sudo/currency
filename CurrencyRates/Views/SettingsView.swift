@@ -67,6 +67,9 @@ struct SettingsView: View {
                     NavigationLink { WidgetsGuideView() } label: {
                         rowLabel(L(.widgets), icon: "io-view-grid")
                     }
+                    NavigationLink { LiveActivitySettingsView() } label: {
+                        rowLabel(L(.liveActivity), icon: "io-airplane")
+                    }
                 }
 
                 #if DEBUG
