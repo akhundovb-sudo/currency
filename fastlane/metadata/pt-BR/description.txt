@@ -1,20 +1,27 @@
-Suas moedas e criptomoedas, juntas em uma só tela.
+Um conversor de moedas feito para viagens: aponte a câmera para um preço, converta preços de qualquer app e tenha a cotação local na Tela Bloqueada.
 
-Digite um valor no Cento e veja quanto ele vale em várias moedas ao mesmo tempo. Monte sua própria lista e compare os resultados sem trocar de tela.
+• Leitor de preços
+Aponte a câmera para uma etiqueta ou um cardápio. O Cento reconhece os preços no seu iPhone e mostra o valor convertido bem em cima do original. Símbolos e códigos de moeda (€, £, ₺, THB…) são identificados automaticamente. O reconhecimento acontece inteiramente no aparelho — as imagens nunca são salvas nem enviadas.
 
-• Várias moedas ao mesmo tempo
-Adicione as moedas de que precisa. Os valores são recalculados enquanto você digita.
+• Converta de qualquer app
+Selecione um preço no Safari, Notas, Mail ou num mensageiro, toque em “Compartilhar” → “Converter no Cento” e veja o valor em todas as suas moedas sem sair do app.
 
-• Moedas e criptomoedas juntas
-Veja moedas tradicionais ao lado de Bitcoin, Ethereum e outras criptomoedas na mesma lista.
+• A cotação da viagem na Tela Bloqueada
+No exterior, uma Live Activity mostra a moeda local na sua moeda de origem, na Tela Bloqueada e na Dynamic Island, com valores prontos como 100, 1.000 e 10.000. Ou fixe o par que quiser nos Ajustes.
+
+• Widgets
+Cotação, sua lista de moedas, gráficos de cotação, mercado cripto, um widget Viagem para o país onde você está e um botão “Ler preços” com uma colinha rápida.
+
+• Várias moedas de uma vez
+Digite uma vez e veja o valor em todas as moedas da sua lista, com moedas fiduciárias e criptomoedas lado a lado.
 
 • Calculadora integrada
-Some, subtraia, multiplique e divida diretamente no conversor.
+Some, subtraia, multiplique, divida e calcule porcentagens direto no conversor: digite 120 × 3 + 15% e veja o resultado em todas as moedas.
 
 • Do seu jeito
-Escolha seu ícone favorito e use o tema claro ou escuro.
+16 ícones de app feitos à mão, temas claro e escuro, formatos de número e 14 idiomas.
 
-Seja para comparar preços antes de uma viagem, conferir valores em outra moeda ou converter criptomoedas, o Cento reúne suas conversões em um só lugar.
+As cotações funcionam offline com base na última atualização, e sua moeda local é adicionada automaticamente pela sua localização.
 
 Termos de Uso: https://www.apple.com/legal/internet-services/itunes/dev/stdeula/
 Política de Privacidade: https://akhundovb-sudo.github.io/currency/privacy.html

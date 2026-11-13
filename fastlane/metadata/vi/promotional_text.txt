@@ -1,1 +1,1 @@
-Nhập số tiền và xem kết quả quy đổi sang nhiều loại tiền tệ và tiền mã hóa cùng lúc. So sánh trên một màn hình và tính toán bằng máy tính tích hợp.
+Hướng camera vào bảng giá hoặc thực đơn để xem giá bằng tiền của bạn. Quy đổi giá từ mọi ứng dụng qua Chia sẻ và xem tỷ giá địa phương trên Màn hình khóa khi du lịch.

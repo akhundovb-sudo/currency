@@ -1,20 +1,27 @@
-Döviz ve kripto paralarınız tek ekranda.
+Seyahat için tasarlanmış bir döviz çevirici: Kamerayı bir fiyata tutun, herhangi bir uygulamadaki fiyatı çevirin ve yerel kuru kilit ekranınızda görün.
 
-Cento’ya bir tutar girin ve farklı para birimlerindeki karşılığını aynı anda görün. Kendi listenizi oluşturun, ekranlar arasında geçiş yapmadan sonuçları karşılaştırın.
+• Fiyat tarayıcı
+Kamerayı bir fiyat etiketine ya da menüye tutun. Cento fiyatları doğrudan iPhone’unuzda tanır ve çevrilmiş tutarı orijinalin tam üzerine yerleştirir. Para birimi sembollerini ve kodlarını (€, £, ₺, THB…) otomatik olarak algılar. Tanıma tamamen cihazda yapılır; görüntüler asla kaydedilmez ve hiçbir yere gönderilmez.
 
-• Aynı anda birden fazla para birimi
-İhtiyacınız olan para birimlerini ekleyin. Siz yazarken listedeki tutarlar yeniden hesaplanır.
+• Her uygulamadan çevirin
+Safari, Notlar, Mail ya da bir mesajlaşma uygulamasında bir fiyatı seçin, “Paylaş” → “Cento’da Çevir”e dokunun ve bulunduğunuz uygulamadan çıkmadan tüm para birimlerinizde görün.
 
-• Döviz ve kripto bir arada
-Geleneksel para birimlerini Bitcoin, Ethereum ve diğer kripto paralarla aynı listede görüntüleyin.
+• Kilit ekranında seyahat kuru
+Yurt dışındayken bir Live Activity, yerel para birimini kendi para biriminizde kilit ekranında ve Dynamic Island’da gösterir; 100, 1.000 ve 10.000 gibi hazır tutarlarla. Ya da Ayarlar’da istediğiniz bir çifti sabitleyin.
 
-• Dahili hesap makinesi
-Toplama, çıkarma, çarpma ve bölme işlemlerini doğrudan çeviricide yapın.
+• Widget’lar
+Döviz kuru, para birimi listeniz, kur grafikleri, kripto piyasası, bulunduğunuz ülke için bir Seyahat widget’ı ve kısa bir kopya kâğıdıyla “Fiyat Tara” düğmesi.
 
-• Tarzınıza göre
-Sevdiğiniz uygulama simgesini seçin ve açık veya koyu temayı kullanın.
+• Aynı anda birçok para birimi
+Bir kez yazın, tutarı listenizdeki tüm para birimlerinde görün; itibari paralar ve kripto paralar yan yana.
 
-Seyahat öncesinde fiyatları karşılaştırırken, farklı para birimlerinde hesap yaparken veya kripto para çevirirken tüm sonuçlarınız Cento ile tek yerde.
+• Yerleşik hesap makinesi
+Toplama, çıkarma, çarpma, bölme ve yüzde hesaplarını doğrudan çeviricide yapın: 120 × 3 + 15% yazın, sonucu her yerde görün.
+
+• Size özel
+16 el yapımı uygulama simgesi, açık ve koyu temalar, sayı biçimleri ve 14 dil.
+
+Kurlar son güncellemeye göre çevrim dışı da çalışır; yerel para biriminiz konumunuza göre otomatik olarak eklenir.
 
 Kullanım Koşulları: https://www.apple.com/legal/internet-services/itunes/dev/stdeula/
 Gizlilik Politikası: https://akhundovb-sudo.github.io/currency/privacy.html

@@ -1,20 +1,27 @@
-Vos devises et cryptomonnaies, réunies sur un seul écran.
+Un convertisseur de devises pensé pour le voyage : pointez l’appareil photo vers un prix, convertissez un prix depuis n’importe quelle app et gardez le taux local sur l’écran verrouillé.
 
-Avec Cento, saisissez un montant et consultez sa valeur dans plusieurs devises à la fois. Composez votre liste et comparez les résultats sans passer d’un écran à l’autre.
+• Scanner de prix
+Pointez l’appareil photo vers une étiquette ou un menu. Cento reconnaît les prix directement sur votre iPhone et affiche le montant converti par-dessus l’original. Les symboles et codes de devises (€, £, ₺, THB…) sont détectés automatiquement. La reconnaissance s’effectue entièrement sur l’appareil : les images ne sont jamais enregistrées ni envoyées.
 
-• Conversion simultanée
-Ajoutez les devises qui vous intéressent : les montants se recalculent à mesure que vous saisissez.
+• Convertir depuis n’importe quelle app
+Sélectionnez un prix dans Safari, Notes, Mail ou une messagerie, touchez « Partager » → « Convertir avec Cento » et voyez-le dans toutes vos devises sans quitter l’app.
 
-• Devises et cryptomonnaies
-Affichez les monnaies traditionnelles aux côtés du Bitcoin, de l’Ethereum et d’autres cryptomonnaies.
+• Le taux du voyage sur l’écran verrouillé
+À l’étranger, une Live Activity affiche la devise locale dans votre devise habituelle, sur l’écran verrouillé et dans la Dynamic Island, avec des montants tout prêts comme 100, 1 000 et 10 000. Vous pouvez aussi épingler la paire de votre choix dans les Réglages.
+
+• Widgets
+Taux de change, votre liste de devises, graphiques des taux, marché crypto, un widget Voyage pour le pays où vous êtes et un bouton « Scanner les prix » avec un aide-mémoire.
+
+• Plusieurs devises à la fois
+Saisissez un montant une seule fois et voyez-le dans toutes les devises de votre liste, monnaies classiques et cryptos côte à côte.
 
 • Calculatrice intégrée
-Effectuez vos calculs directement dans le convertisseur.
+Additionnez, soustrayez, multipliez, divisez et calculez des pourcentages directement dans le convertisseur : tapez 120 × 3 + 15% et voyez le résultat partout.
 
-• Une interface à votre goût
-Choisissez une icône d’application et utilisez le thème clair ou sombre.
+• À votre image
+16 icônes d’app conçues à la main, thèmes clair et sombre, formats de nombres et 14 langues.
 
-Pour préparer un voyage, comparer des prix ou convertir un montant en crypto, gardez vos conversions sous les yeux avec Cento.
+Les taux fonctionnent hors ligne d’après la dernière mise à jour, et votre devise locale est ajoutée automatiquement selon votre position.
 
 Conditions d’utilisation: https://www.apple.com/legal/internet-services/itunes/dev/stdeula/
 Politique de confidentialité: https://akhundovb-sudo.github.io/currency/privacy.html

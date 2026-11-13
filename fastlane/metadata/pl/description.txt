@@ -1,20 +1,27 @@
-Twoje waluty i kryptowaluty na jednym ekranie.
+Przelicznik walut stworzony do podróży: skieruj aparat na cenę, przeliczaj ceny z dowolnej aplikacji i miej lokalny kurs na ekranie blokady.
 
-Wpisz kwotę w Cento i zobacz jej wartość w wielu walutach jednocześnie. Utwórz własną listę i porównuj wyniki bez przełączania ekranów.
+• Skaner cen
+Skieruj aparat na metkę albo menu. Cento rozpoznaje ceny bezpośrednio na iPhonie i nakłada przeliczoną kwotę na oryginał. Symbole i kody walut (€, £, ₺, THB…) są wykrywane automatycznie. Rozpoznawanie odbywa się w całości na urządzeniu — zdjęcia nigdy nie są zapisywane ani nigdzie wysyłane.
 
-• Wiele walut jednocześnie
-Dodaj potrzebne waluty. Przeliczone kwoty aktualizują się podczas wpisywania.
+• Przeliczanie z dowolnej aplikacji
+Zaznacz cenę w Safari, Notatkach, Mailu lub komunikatorze, stuknij „Udostępnij” → „Przelicz w Cento” i zobacz ją we wszystkich swoich walutach bez wychodzenia z aplikacji.
 
-• Waluty i kryptowaluty razem
-Wyświetlaj tradycyjne waluty obok Bitcoina, Ethereum i innych kryptowalut na tej samej liście.
+• Kurs podróżny na ekranie blokady
+Za granicą Live Activity pokazuje lokalną walutę w Twojej walucie — na ekranie blokady i w Dynamic Island, z gotowymi kwotami, np. 100, 1000 i 10 000. Możesz też przypiąć dowolną parę walut w Ustawieniach.
+
+• Widżety
+Kurs wymiany, Twoja lista walut, wykresy kursów, rynek kryptowalut, widżet Podróż dla kraju, w którym jesteś, oraz przycisk „Skanuj ceny” z krótką ściągą.
+
+• Wiele walut naraz
+Wpisz kwotę raz i zobacz ją we wszystkich walutach z listy — waluty tradycyjne i kryptowaluty obok siebie.
 
 • Wbudowany kalkulator
-Dodawaj, odejmuj, mnóż i dziel bezpośrednio w przeliczniku.
+Dodawaj, odejmuj, mnóż, dziel i licz procenty bezpośrednio w przeliczniku: wpisz 120 × 3 + 15% i zobacz wynik wszędzie.
 
-• Wygląd dopasowany do Ciebie
-Wybierz ulubioną ikonę aplikacji oraz jasny lub ciemny motyw.
+• Po Twojemu
+16 ręcznie zaprojektowanych ikon aplikacji, jasny i ciemny motyw, formaty liczb i 14 języków.
 
-Porównuj ceny przed podróżą, sprawdzaj kwoty w obcych walutach i przeliczaj kryptowaluty. Cento gromadzi wyniki w jednym miejscu.
+Kursy działają offline według ostatniej aktualizacji, a lokalna waluta jest dodawana automatycznie na podstawie Twojej lokalizacji.
 
 Warunki użytkowania: https://www.apple.com/legal/internet-services/itunes/dev/stdeula/
 Polityka prywatności: https://akhundovb-sudo.github.io/currency/privacy.html

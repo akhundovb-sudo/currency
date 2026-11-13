@@ -1,1 +1,1 @@
-Bir tutar girin, farklı para birimleri ve kripto paralardaki karşılığını aynı anda görün. Dahili hesap makinesiyle hesaplayın ve sonuçları tek ekranda karşılaştırın.
+Kamerayı bir fiyat etiketine veya menüye tutun, fiyatı kendi para biriminizde görün. Paylaş ile her uygulamadan fiyat çevirin, seyahatte yerel kuru kilit ekranında tutun.

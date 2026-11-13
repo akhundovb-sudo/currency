@@ -1,20 +1,27 @@
-Tiền tệ và tiền mã hóa của bạn trên cùng một màn hình.
+Ứng dụng chuyển đổi tiền tệ dành cho du lịch: hướng camera vào giá tiền, quy đổi giá từ bất kỳ ứng dụng nào và xem tỷ giá địa phương ngay trên Màn hình khóa.
 
-Nhập số tiền vào Cento và xem giá trị tương ứng bằng nhiều loại tiền tệ cùng lúc. Tạo danh sách riêng và so sánh kết quả mà không cần chuyển màn hình.
+• Quét giá
+Hướng camera vào bảng giá hoặc thực đơn. Cento nhận diện giá ngay trên iPhone và hiển thị số tiền đã quy đổi ngay trên giá gốc. Ký hiệu và mã tiền tệ (€, £, ₺, THB…) được nhận diện tự động. Quá trình nhận diện diễn ra hoàn toàn trên thiết bị — hình ảnh không bao giờ được lưu hay gửi đi đâu cả.
 
-• Quy đổi nhiều loại tiền tệ cùng lúc
-Thêm các loại tiền tệ bạn cần. Kết quả quy đổi được cập nhật ngay khi bạn nhập.
+• Quy đổi từ bất kỳ ứng dụng nào
+Chọn một mức giá trong Safari, Ghi chú, Mail hoặc ứng dụng nhắn tin, chạm vào “Chia sẻ” → “Convert in Cento” và xem giá đó bằng tất cả các loại tiền của bạn mà không cần rời khỏi ứng dụng đang dùng.
 
-• Tiền tệ và tiền mã hóa cùng nhau
-Xem các loại tiền tệ truyền thống bên cạnh Bitcoin, Ethereum và các loại tiền mã hóa khác trong cùng một danh sách.
+• Tỷ giá du lịch trên Màn hình khóa
+Khi ở nước ngoài, Live Activity hiển thị tiền tệ địa phương theo đồng tiền của bạn trên Màn hình khóa và Dynamic Island, kèm các mức tiền sẵn như 100, 1.000 và 10.000. Hoặc ghim bất kỳ cặp tiền tệ nào bạn muốn trong Cài đặt.
+
+• Tiện ích
+Tỷ giá, danh sách tiền tệ của bạn, biểu đồ tỷ giá, thị trường tiền mã hóa, tiện ích Du lịch cho quốc gia bạn đang ở và nút Quét giá kèm bảng tra nhanh.
+
+• Nhiều loại tiền cùng lúc
+Nhập một lần và xem số tiền bằng mọi loại tiền trong danh sách, tiền pháp định và tiền mã hóa đặt cạnh nhau.
 
 • Máy tính tích hợp
-Cộng, trừ, nhân và chia ngay trong ứng dụng.
+Cộng, trừ, nhân, chia và tính phần trăm ngay trong trình chuyển đổi: nhập 120 × 3 + 15% và xem kết quả ở mọi loại tiền.
 
-• Giao diện theo sở thích
-Chọn biểu tượng ứng dụng yêu thích và sử dụng giao diện sáng hoặc tối.
+• Theo phong cách của bạn
+16 biểu tượng ứng dụng được thiết kế thủ công, giao diện sáng và tối, định dạng số và 14 ngôn ngữ.
 
-Từ so sánh giá trước chuyến đi, kiểm tra số tiền bằng ngoại tệ đến quy đổi tiền mã hóa, Cento tập hợp các kết quả tại một nơi.
+Tỷ giá vẫn hoạt động ngoại tuyến theo lần cập nhật gần nhất, và tiền tệ địa phương được tự động thêm dựa trên vị trí của bạn.
 
 Điều khoản sử dụng: https://www.apple.com/legal/internet-services/itunes/dev/stdeula/
 Chính sách quyền riêng tư: https://akhundovb-sudo.github.io/currency/privacy.html

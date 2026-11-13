@@ -1,20 +1,27 @@
-Mata uang dan kripto Anda dalam satu layar.
+Konverter mata uang yang dibuat untuk bepergian: arahkan kamera ke harga, konversi harga dari app apa pun, dan lihat kurs lokal di Layar Terkunci.
 
-Masukkan nominal di Cento dan lihat nilainya dalam berbagai mata uang sekaligus. Buat daftar sendiri dan bandingkan hasil tanpa berpindah layar.
+• Pemindai harga
+Arahkan kamera ke label harga atau menu. Cento mengenali harga langsung di iPhone dan menampilkan jumlah hasil konversi tepat di atas harga aslinya. Simbol dan kode mata uang (€, £, ₺, THB…) dikenali secara otomatis. Pengenalan berlangsung sepenuhnya di perangkat — gambar tidak pernah disimpan atau dikirim ke mana pun.
 
-• Konversi beberapa mata uang sekaligus
-Tambahkan mata uang yang Anda butuhkan. Hasil konversi diperbarui saat Anda mengetik.
+• Konversi dari app apa pun
+Pilih harga di Safari, Catatan, Mail, atau aplikasi pesan, ketuk “Bagikan” → “Convert in Cento”, dan lihat harganya dalam semua mata uang Anda tanpa meninggalkan app yang sedang dibuka.
 
-• Mata uang dan kripto bersama
-Tampilkan mata uang tradisional bersama Bitcoin, Ethereum, dan kripto lainnya dalam daftar yang sama.
+• Kurs perjalanan di Layar Terkunci
+Saat di luar negeri, Live Activity menampilkan mata uang lokal dalam mata uang asal Anda di Layar Terkunci dan Dynamic Island, lengkap dengan jumlah siap pakai seperti 100, 1.000, dan 10.000. Atau sematkan pasangan mata uang pilihan Anda di Pengaturan.
+
+• Widget
+Kurs, daftar mata uang Anda, grafik kurs, pasar kripto, widget Perjalanan untuk negara tempat Anda berada, dan tombol Pindai Harga dengan contekan singkat.
+
+• Banyak mata uang sekaligus
+Ketik sekali dan lihat jumlahnya dalam setiap mata uang di daftar Anda, fiat dan kripto berdampingan.
 
 • Kalkulator bawaan
-Lakukan penjumlahan, pengurangan, perkalian, dan pembagian langsung di konverter.
+Tambah, kurang, kali, bagi, dan hitung persentase langsung di konverter: ketik 120 × 3 + 15% dan lihat hasilnya di semua mata uang.
 
-• Tampilan sesuai selera
-Pilih ikon aplikasi favorit dan gunakan tema terang atau gelap.
+• Sesuai selera Anda
+16 ikon app buatan tangan, tema terang dan gelap, format angka, dan 14 bahasa.
 
-Untuk membandingkan harga sebelum bepergian, memeriksa nominal dalam mata uang asing, atau mengonversi kripto, Cento menyatukan hasilnya di satu tempat.
+Kurs tetap berfungsi offline berdasarkan pembaruan terakhir, dan mata uang lokal Anda ditambahkan otomatis berdasarkan lokasi.
 
 Ketentuan Penggunaan: https://www.apple.com/legal/internet-services/itunes/dev/stdeula/
 Kebijakan Privasi: https://akhundovb-sudo.github.io/currency/privacy.html

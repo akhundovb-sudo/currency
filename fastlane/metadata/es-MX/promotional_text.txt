@@ -1,1 +1,1 @@
-Ingresa un monto y consulta su valor en varias divisas y criptomonedas a la vez. Compara los resultados en una sola pantalla con una calculadora integrada.
+Apunta la cámara a una etiqueta o un menú y ve el precio en tu moneda. Convierte precios desde cualquier app con Compartir y ten el cambio local en la pantalla bloqueada.

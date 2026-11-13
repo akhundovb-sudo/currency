@@ -1,20 +1,27 @@
-Tus divisas y criptomonedas, juntas en una sola pantalla.
+Un conversor de divisas pensado para viajar: apunta la cámara a un precio, convierte precios desde cualquier app y ten el tipo de cambio local en la pantalla de bloqueo.
 
-Introduce un importe en Cento y consulta su valor en varias divisas a la vez. Crea tu propia lista y compara los resultados sin cambiar de pantalla.
+• Escáner de precios
+Apunta la cámara a una etiqueta o a una carta. Cento reconoce los precios en tu iPhone y coloca el importe convertido justo encima del original. Detecta automáticamente símbolos y códigos de divisa (€, £, ₺, THB…). El reconocimiento se hace por completo en el dispositivo: las imágenes nunca se guardan ni se envían a ningún sitio.
 
-• Convierte varias divisas
-Añade las divisas que necesitas. Los importes se recalculan mientras escribes.
+• Convierte desde cualquier app
+Selecciona un precio en Safari, Notas, Mail o una app de mensajería, toca «Compartir» → «Convertir con Cento» y míralo en todas tus divisas sin salir de la app.
 
-• Divisas y criptomonedas juntas
-Consulta monedas tradicionales junto con Bitcoin, Ethereum y otras criptomonedas en la misma lista.
+• El tipo de cambio del viaje en la pantalla de bloqueo
+En el extranjero, una Live Activity muestra la moneda local en tu moneda habitual en la pantalla de bloqueo y en la Dynamic Island, con importes listos como 100, 1000 y 10 000. O fija el par que quieras en Ajustes.
+
+• Widgets
+Tipo de cambio, tu lista de divisas, gráficos de cotización, mercado cripto, un widget Viaje para el país en el que estás y un botón «Escanear precios» con una chuleta rápida.
+
+• Muchas divisas a la vez
+Escribe una vez y ve el importe en todas las divisas de tu lista, con monedas fiat y criptomonedas juntas.
 
 • Calculadora integrada
-Suma, resta, multiplica y divide directamente en el conversor.
+Suma, resta, multiplica, divide y calcula porcentajes en el propio conversor: escribe 120 × 3 + 15% y ve el resultado en todas partes.
 
-• A tu estilo
-Elige tu icono favorito y utiliza el tema claro u oscuro.
+• A tu manera
+16 iconos de app diseñados a mano, temas claro y oscuro, formatos de número y 14 idiomas.
 
-Ya sea para comparar precios antes de un viaje, consultar un importe en otra moneda o convertir criptomonedas, Cento reúne tus conversiones en un solo lugar.
+Los tipos de cambio funcionan sin conexión con la última actualización, y tu moneda local se añade automáticamente según tu ubicación.
 
 Términos de uso: https://www.apple.com/legal/internet-services/itunes/dev/stdeula/
 Política de privacidad: https://akhundovb-sudo.github.io/currency/privacy.html

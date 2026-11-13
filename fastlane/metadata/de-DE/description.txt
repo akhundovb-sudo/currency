@@ -1,20 +1,27 @@
-Deine Währungen und Kryptowährungen auf einem Bildschirm.
+Ein Währungsrechner für Reisen: Richte die Kamera auf einen Preis, rechne Preise aus jeder App um und behalte den lokalen Kurs auf dem Sperrbildschirm im Blick.
 
-Gib einen Betrag in Cento ein und sieh seinen Wert in mehreren Währungen gleichzeitig. Stelle deine eigene Liste zusammen und vergleiche die Ergebnisse, ohne zwischen Ansichten zu wechseln.
+• Preisscanner
+Richte die Kamera auf ein Preisschild oder eine Speisekarte. Cento erkennt Preise direkt auf deinem iPhone und blendet den umgerechneten Betrag genau über dem Original ein. Währungssymbole und -codes (€, £, ₺, THB…) werden automatisch erkannt. Die Erkennung läuft vollständig auf dem Gerät – Bilder werden weder gespeichert noch irgendwohin gesendet.
 
-• Mehrere Währungen gleichzeitig
-Füge die gewünschten Währungen hinzu. Die umgerechneten Beträge aktualisieren sich während der Eingabe.
+• Umrechnen aus jeder App
+Markiere einen Preis in Safari, Notizen, Mail oder einem Messenger, tippe auf „Teilen“ → „In Cento umrechnen“ und sieh ihn in all deinen Währungen, ohne die App zu verlassen.
 
-• Währungen und Krypto zusammen
-Zeige klassische Währungen gemeinsam mit Bitcoin, Ethereum und anderen Kryptowährungen an.
+• Reisekurs auf dem Sperrbildschirm
+Im Ausland zeigt eine Live Activity die Landeswährung in deiner Heimatwährung – auf dem Sperrbildschirm und in der Dynamic Island, mit fertigen Beträgen wie 100, 1.000 und 10.000. Oder lege in den Einstellungen ein beliebiges Währungspaar fest.
 
-• Integrierter Taschenrechner
-Addiere, subtrahiere, multipliziere und dividiere direkt im Währungsrechner.
+• Widgets
+Wechselkurs, deine Währungsliste, Kursdiagramme, Kryptomarkt, ein Reise-Widget für das Land, in dem du gerade bist, und eine Taste „Preise scannen“ mit kleinem Spickzettel.
 
-• Dein persönlicher Look
-Wähle dein Lieblings-App-Symbol und nutze das helle oder dunkle Design.
+• Viele Währungen auf einmal
+Einmal eingeben und den Betrag in jeder Währung deiner Liste sehen – Fiat- und Kryptowährungen nebeneinander.
 
-Ob du Reisepreise vergleichst, einen Fremdwährungsbetrag prüfst oder Kryptowährungen umrechnest: Mit Cento behältst du deine Umrechnungen im Blick.
+• Integrierter Rechner
+Addiere, subtrahiere, multipliziere, dividiere und rechne Prozente direkt im Umrechner: Gib 120 × 3 + 15% ein und sieh das Ergebnis überall.
+
+• Ganz nach deinem Geschmack
+16 handgestaltete App-Symbole, helles und dunkles Design, Zahlenformate und 14 Sprachen.
+
+Die Kurse funktionieren offline mit dem Stand der letzten Aktualisierung, und deine Landeswährung wird automatisch anhand deines Standorts hinzugefügt.
 
 Nutzungsbedingungen: https://www.apple.com/legal/internet-services/itunes/dev/stdeula/
 Datenschutzerklärung: https://akhundovb-sudo.github.io/currency/privacy.html
