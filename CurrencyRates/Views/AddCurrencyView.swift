@@ -137,6 +137,11 @@ struct AddCurrencyView: View {
                     KindSwitch(kind: $kind)
                 }
                 .hidingSharedGlass()
+                // Заголовок не показывается (обрезался рядом с переключателем), но остаётся для VoiceOver.
+                ToolbarItem(placement: .principal) {
+                    Text(verbatim: "")
+                        .accessibilityHidden(true)
+                }
             }
         }
     }
