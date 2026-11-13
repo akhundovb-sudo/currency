@@ -113,6 +113,95 @@
           }
         }
       }
+    },
+    "NSCameraUsageDescription" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "يقرأ Cento الأسعار عبر الكاميرا ويحوّلها فورًا إلى عملتك. لا يتم حفظ الصور أو إرسالها."
+          }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cento liest Preise mit der Kamera und rechnet sie sofort in deine Währung um. Bilder werden weder gespeichert noch gesendet."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cento reads prices through the camera and instantly converts them into your currency. Images aren’t saved or sent anywhere."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cento lee los precios con la cámara y los convierte al instante a tu divisa. Las imágenes no se guardan ni se envían."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cento lit les prix avec l’appareil photo et les convertit aussitôt dans votre devise. Les images ne sont ni enregistrées ni envoyées."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cento legge i prezzi con la fotocamera e li converte subito nella tua valuta. Le immagini non vengono salvate né inviate."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cento はカメラで価格を読み取り、すぐにあなたの通貨に換算します。画像は保存も送信もされません。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cento는 카메라로 가격을 읽고 즉시 내 통화로 환산합니다. 이미지는 저장되거나 전송되지 않습니다."
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cento odczytuje ceny aparatem i od razu przelicza je na Twoją walutę. Obrazy nie są zapisywane ani wysyłane."
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "O Cento lê preços pela câmera e os converte na hora para a sua moeda. As imagens não são salvas nem enviadas."
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cento распознаёт цены через камеру и сразу пересчитывает их в вашу валюту. Снимки не сохраняются и никуда не отправляются."
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cento, fiyatları kamerayla okur ve anında para biriminize çevirir. Görüntüler kaydedilmez ve hiçbir yere gönderilmez."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cento 通过相机读取价格并立即换算为你的货币。图像不会被保存或发送。"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cento 透過相機讀取價格並立即換算為你的貨幣。影像不會被儲存或傳送。"
+          }
+        }
+      }
     }
   },
   "version" : "1.0"

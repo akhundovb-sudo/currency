@@ -10,6 +10,7 @@ struct CentoWidgetBundle: WidgetBundle {
         ChartWidget()
         CryptoWidget()
         TravelWidget()
+        ScanWidget()
     }
 }
 

@@ -13,6 +13,16 @@
 		<string>ar</string><string>ja</string><string>pt-BR</string><string>ko</string>
 		<string>it</string><string>pl</string>
 	</array>
+	<!-- Ссылка cento://scan — виджет «Сканер цен» открывает камеру. -->
+	<key>CFBundleURLTypes</key>
+	<array>
+		<dict>
+			<key>CFBundleURLName</key>
+			<string>com.bahruzakhundov.cento</string>
+			<key>CFBundleURLSchemes</key>
+			<array><string>cento</string></array>
+		</dict>
+	</array>
 	<key>UIStatusBarHidden</key>
 	<true/>
 	<key>UILaunchScreen</key>

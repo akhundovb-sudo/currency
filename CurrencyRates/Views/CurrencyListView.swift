@@ -6,6 +6,7 @@ struct CurrencyListView: View {
     @Environment(RatesStore.self) private var store
     @State private var isAddPresented = false
     @State private var isSettingsPresented = false
+    @State private var isScannerPresented = false
     @State private var editMode: EditMode = .inactive
     @State private var isKeypadVisible = false
     @State private var isRefreshing = false
@@ -59,6 +60,17 @@ struct CurrencyListView: View {
             .overlay { IslandRefreshIndicator(isActive: isRefreshing, pull: pullTracker.progress, failed: store.errorMessage != nil) }
             .sheet(isPresented: $isSettingsPresented) {
                 SettingsView()
+            }
+            // Виджет «Сканер цен» открывает приложение по ссылке cento://scan.
+            .fullScreenCover(isPresented: $isScannerPresented) {
+                PriceScannerView()
+            }
+            .onOpenURL { url in
+                guard url.scheme == "cento", url.host() == "scan" else { return }
+                hideKeypad()
+                isAddPresented = false
+                isSettingsPresented = false
+                isScannerPresented = true
             }
         }
     }
