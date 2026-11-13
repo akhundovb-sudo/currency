@@ -1,0 +1,15 @@
+Cento is an original app, designed and developed by me from scratch in Swift and SwiftUI. It uses no templates and no third-party code (only public rate APIs: ExchangeRate-API for fiat, CoinGecko for crypto).
+
+What makes it different from other currency converters — please try these:
+
+1. Price scanner (camera): add the "Scan Prices" widget to the Home Screen and tap it (or open cento://scan in Safari). Point the camera at any price tag or menu; the converted price is placed right over the original. Recognition runs on device with VisionKit; nothing is uploaded.
+
+2. Share action: select a price in Safari or Notes → Share → "Convert in Cento". The price is shown in all the user's currencies on top of the current app.
+
+3. Travel Live Activity: Settings → Live Activity. Choose any currency under "Currency" to see the rate on the Lock Screen and in the Dynamic Island immediately (with "Local", it appears automatically when the device is in another country).
+
+4. Widgets: Settings → Widgets lists all six widgets (exchange rate, currency list, chart, crypto, travel, scan prices).
+
+5. Built-in calculator: tap any amount and type an expression such as 120 × 3 + 15%.
+
+No account or login is required. Pro features can be tested with the sandbox account.

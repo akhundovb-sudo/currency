@@ -1,20 +1,27 @@
-Your currencies and crypto, together on one screen.
+A currency converter built for travel: point your camera at a price, convert any price from any app, and keep the local rate on your Lock Screen.
 
-Enter an amount in Cento and see its value across multiple currencies at once. Build your own list and compare results without switching between screens.
+• Price scanner
+Point the camera at a price tag or a menu. Cento recognizes prices on your iPhone and lays the converted amount right over the original. It reads currency symbols and codes (€, £, ₺, THB…) automatically. Recognition runs fully on device — images are never saved or sent anywhere.
 
-• Convert multiple currencies
-Add the currencies you need. Converted amounts update as you type.
+• Convert from any app
+Select a price in Safari, Notes, Mail or a messenger, tap Share → Convert in Cento, and see it in all your currencies without leaving the app you’re in.
 
-• Currencies and crypto together
-View traditional currencies alongside Bitcoin, Ethereum, and other cryptocurrencies in the same list.
+• Travel rate on your Lock Screen
+Abroad, a Live Activity shows the local currency in your home currency on the Lock Screen and in the Dynamic Island, with ready amounts like 100, 1,000 and 10,000. Or pin any pair you want in Settings.
+
+• Widgets
+Exchange rate, your currency list, rate charts, crypto market, a Travel widget for the country you’re in, and a Scan Prices button with a quick cheat sheet.
+
+• Many currencies at once
+Type once and see the amount in every currency on your list, with fiat and crypto side by side.
 
 • Built-in calculator
-Add, subtract, multiply, and divide directly in the converter.
+Add, subtract, multiply, divide and take percentages right in the converter: type 120 × 3 + 15% and see the result everywhere.
 
 • Make it yours
-Choose your favorite app icon and use a light or dark theme.
+16 hand-crafted app icons, light and dark themes, number formats and 14 languages.
 
-Whether you’re comparing prices for a trip, checking an amount in another currency, or converting crypto, Cento keeps your conversions in one place.
+Rates work offline from the last update, and your local currency is added automatically from your location.
 
 Terms of Use: https://www.apple.com/legal/internet-services/itunes/dev/stdeula/
 Privacy Policy: https://akhundovb-sudo.github.io/currency/privacy.html
