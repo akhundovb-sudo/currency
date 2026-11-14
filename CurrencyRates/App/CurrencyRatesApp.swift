@@ -49,6 +49,8 @@ struct CurrencyRatesApp: App {
                         Task { await store.refreshIfStale() }
                         // Вернулись в приложение (может быть, уже в другой стране) — для «Путешествия».
                         requestCountry()
+                        // Без ответа геолокации — всё равно вернуть Live Activity, если её закрыли.
+                        TravelActivityController.update(store)
                     } else {
                         // Уходим с экрана — виджеты получают последние валюты и суммы.
                         WidgetBridge.publish(store)

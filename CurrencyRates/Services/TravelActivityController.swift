@@ -12,7 +12,9 @@ enum TravelActivityController {
 
     static func update(_ store: RatesStore) {
         guard ActivityAuthorizationInfo().areActivitiesEnabled else { return }
-        let activities = Activity<TravelActivityAttributes>.activities
+        // Смахнутые или закрытые системой (через ~8 часов) остаются в списке — их не обновляем,
+        // а начинаем новую, иначе курс на экран не вернётся.
+        let activities = Activity<TravelActivityAttributes>.activities.filter { $0.activityState == .active || $0.activityState == .stale }
 
         // Валюта показа — выбранная в настройках или первая фиатная в списке.
         // Валюта курса — выбранная (показывается всегда) или местная: тогда только в поездке,
